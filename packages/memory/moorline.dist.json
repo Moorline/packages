@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Memory",
+    "description": "Layered memory retrieval and memory writing for Moorline sessions.",
+    "version": "0.0.1"
+  }
+}

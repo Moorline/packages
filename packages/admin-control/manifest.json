@@ -1,0 +1,24 @@
+{
+  "id": "official/admin-control",
+  "name": "official/admin-control",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Provides admin-only runtime and provider lifecycle controls.",
+  "entrypoint": "index.mjs",
+  "capabilities": [
+    "runtime.control",
+    "transport.message.send"
+  ],
+  "hooks": [
+    "onAction"
+  ],
+  "defaultEnabled": true,
+  "dependencies": [
+    {
+      "surface": "transport",
+      "packageId": "official/discord",
+      "requiredState": "active",
+      "reason": "Admin controls are exposed through the official Discord transport."
+    }
+  ]
+}

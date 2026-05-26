@@ -1,0 +1,45 @@
+{
+  "id": "official/discord",
+  "name": "official/discord",
+  "version": "0.0.1",
+  "type": "transport",
+  "description": "Built-in Discord transport package.",
+  "entrypoint": "index.mjs",
+  "displayCategory": "Official Transports",
+  "activation": {
+    "uniqueKey": "transport"
+  },
+  "configSchema": {
+    "type": "object",
+    "required": ["authToken", "scopeId"],
+    "properties": {
+      "authToken": {
+        "type": "string",
+        "title": "Bot token",
+        "description": "Discord bot token for the managed application.",
+        "secret": true
+      },
+      "scopeId": {
+        "type": "string",
+        "title": "Server ID",
+        "description": "Discord server or scope id."
+      },
+      "applicationId": {
+        "type": "string",
+        "title": "Application ID",
+        "description": "System-managed Discord application id derived from the bot token."
+      },
+      "actorId": {
+        "type": "string",
+        "title": "Bot user ID",
+        "description": "System-managed Discord bot user id derived from the bot token."
+      },
+      "invitePermissions": {
+        "type": "string",
+        "title": "Invite permissions",
+        "description": "System-managed Discord invite permissions bitfield required for the managed namespace.",
+        "default": "268528720"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "official/persona",
+  "name": "official/persona",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Contributes the default Moorline persona and system prompt.",
+  "entrypoint": "index.mjs",
+  "capabilities": [
+    "fs.read"
+  ],
+  "hooks": [
+    "beforeAgentPrompt"
+  ],
+  "defaultEnabled": true
+}

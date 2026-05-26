@@ -1,0 +1,36 @@
+{
+  "name": "@moorline/self-edit",
+  "version": "0.0.1",
+  "description": "Allows Moorline to generate and update visible runtime skills.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "files": [
+    "manifest.json",
+    "moorline.dist.json",
+    "*.mjs",
+    "*.mjs.d.ts",
+    "*.md",
+    "skills"
+  ],
+  "scripts": {
+    "build": "true",
+    "typecheck": "true"
+  },
+  "dependencies": {
+    "@moorline/contracts": "0.0.1"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "official/self-edit",
+    "kind": "plugin",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/self-edit"
+  }
+}

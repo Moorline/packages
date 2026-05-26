@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Basic Essentials",
+    "description": "Shared official plugins for memory, model selection, skills, self-editing, and session orchestration.",
+    "version": "0.0.1",
+    "category": "Recommended Essentials",
+    "tags": ["official", "shared", "bundle", "essentials"],
+    "publisher": "Moorline"
+  },
+  "distribution": {
+    "audiences": ["setup", "catalog"],
+    "recommendedForSetup": true,
+    "setupOrder": 30
+  },
+  "release": {
+    "recommendedRef": "v0.0.1",
+    "channel": "stable"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@moorline/admin-control",
+  "version": "0.0.1",
+  "description": "Provides admin-only runtime and provider lifecycle controls.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "types": "./index.mjs.d.ts",
+  "files": [
+    "manifest.json",
+    "moorline.dist.json",
+    "*.mjs",
+    "*.mjs.d.ts",
+    "*.md",
+    "skills"
+  ],
+  "scripts": {
+    "build": "true",
+    "typecheck": "true"
+  },
+  "dependencies": {
+    "@moorline/contracts": "0.0.1"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "official/admin-control",
+    "kind": "plugin",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/admin-control"
+  }
+}

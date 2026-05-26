@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Session Orchestration",
+    "description": "Agent-facing tools for managing bounded and scheduled worker sessions.",
+    "version": "0.0.1"
+  }
+}

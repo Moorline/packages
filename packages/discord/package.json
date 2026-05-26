@@ -1,0 +1,36 @@
+{
+  "name": "@moorline/discord",
+  "version": "0.0.1",
+  "description": "Built-in Discord transport package.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "types": "./dist/runtimePackage.d.ts",
+  "files": [
+    "dist",
+    "index.mjs",
+    "manifest.json",
+    "moorline.dist.json"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-package-dist.mjs discord && tsc -p tsconfig.json && node ../../scripts/flatten-package-dist.mjs discord",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@moorline/contracts": "0.0.1",
+    "discord.js": "^14.22.1"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "official/discord",
+    "kind": "transport",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/discord"
+  }
+}

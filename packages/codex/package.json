@@ -1,0 +1,35 @@
+{
+  "name": "@moorline/codex",
+  "version": "0.0.1",
+  "description": "Built-in Codex provider package.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "types": "./dist/runtimePackage.d.ts",
+  "files": [
+    "dist",
+    "index.mjs",
+    "manifest.json",
+    "moorline.dist.json"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/clean-package-dist.mjs codex && tsc -p tsconfig.json && node ../../scripts/flatten-package-dist.mjs codex",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@moorline/contracts": "0.0.1"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "official/codex",
+    "kind": "provider",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/codex"
+  }
+}

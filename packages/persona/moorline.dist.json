@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Moorline Persona",
+    "description": "Default Moorline persona and system prompt contribution.",
+    "version": "0.0.1",
+    "tags": ["persona", "prompt"]
+  }
+}

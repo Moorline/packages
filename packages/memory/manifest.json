@@ -1,0 +1,18 @@
+{
+  "id": "official/memory",
+  "name": "official/memory",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Layered memory retrieval and memory writing for Discord sessions.",
+  "entrypoint": "index.mjs",
+  "capabilities": [
+    "memory.read",
+    "memory.write",
+    "fs.write"
+  ],
+  "hooks": [
+    "beforeAgentPrompt",
+    "afterAgentResponse"
+  ],
+  "defaultEnabled": true
+}

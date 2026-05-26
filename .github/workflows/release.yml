@@ -1,0 +1,52 @@
+name: Manual Release Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-official-packages:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: packages
+      - uses: actions/checkout@v4
+        with:
+          repository: Moorline/moorline
+          path: moorline
+      - uses: actions/checkout@v4
+        with:
+          repository: Moorline/kit
+          path: kit
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: bun --cwd ../moorline install --frozen-lockfile
+      - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
+      - run: bun --cwd ../kit install --frozen-lockfile
+      - run: bun --cwd ../kit run build:packages
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run build
+      - run: bun run build:official-npm-packages
+      - run: find dist/installable-archives -type f -name '*.tar.gz' -print0 | sort -z | xargs -0 sha256sum > dist/installable-archives/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: official-installable-archives
+          path: |
+            dist/installable-archives/**/*.tar.gz
+            dist/installable-archives/SHA256SUMS.txt
+            dist/resources/official-catalog.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: official-npm-package-directories
+          path: dist/npm-packages

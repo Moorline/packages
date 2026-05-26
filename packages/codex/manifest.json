@@ -1,0 +1,24 @@
+{
+  "id": "official/codex",
+  "name": "official/codex",
+  "version": "0.0.1",
+  "type": "provider",
+  "description": "Built-in Codex provider package.",
+  "entrypoint": "index.mjs",
+  "displayCategory": "Official Providers",
+  "activation": {
+    "uniqueKey": "provider"
+  },
+  "configSchema": {
+    "type": "object",
+    "required": ["command"],
+    "properties": {
+      "command": {
+        "type": "string",
+        "title": "Codex command",
+        "description": "Executable name or path for the Codex CLI.",
+        "default": "codex"
+      }
+    }
+  }
+}

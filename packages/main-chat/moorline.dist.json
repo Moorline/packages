@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Main Chat",
+    "description": "Routes Moorline chat channel messages through the Discord transport.",
+    "version": "0.0.1"
+  }
+}

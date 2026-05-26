@@ -1,0 +1,10 @@
+{
+  "id": "official/codex-default",
+  "name": "official/codex-default",
+  "version": "0.0.1",
+  "type": "bundle",
+  "description": "Official Codex provider bundle.",
+  "members": [
+    { "kind": "provider", "packageId": "official/codex", "version": "~0.0.1", "activation": "select" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "official/self-edit",
+  "name": "official/self-edit",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Allows Moorline to generate and update visible runtime skills.",
+  "entrypoint": "index.mjs",
+  "priority": 10,
+  "capabilities": [
+    "fs.write",
+    "fs.read"
+  ],
+  "hooks": [
+    "beforeAgentPrompt"
+  ],
+  "defaultEnabled": true
+}

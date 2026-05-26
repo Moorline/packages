@@ -1,0 +1,16 @@
+{
+  "id": "official/skills",
+  "name": "official/skills",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Exposes the visible skill catalog and the load_skill tool.",
+  "entrypoint": "index.mjs",
+  "priority": 20,
+  "capabilities": [
+    "fs.read"
+  ],
+  "hooks": [
+    "beforeAgentPrompt"
+  ],
+  "defaultEnabled": true
+}

@@ -1,0 +1,26 @@
+{
+  "id": "official/status",
+  "name": "official/status",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Provides runtime status and control actions.",
+  "entrypoint": "index.mjs",
+  "capabilities": [
+    "memory.read",
+    "transport.message.send",
+    "net.connect"
+  ],
+  "hooks": [
+    "onAction",
+    "onDomainEvent"
+  ],
+  "defaultEnabled": true,
+  "dependencies": [
+    {
+      "surface": "transport",
+      "packageId": "official/discord",
+      "requiredState": "active",
+      "reason": "Status actions are delivered through the official Discord transport."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@moorline/channel-lifecycle",
+  "version": "0.0.1",
+  "description": "Provides archive and delete controls for Moorline-managed Discord spaces.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "types": "./index.mjs.d.ts",
+  "files": [
+    "manifest.json",
+    "moorline.dist.json",
+    "*.mjs",
+    "*.mjs.d.ts",
+    "*.md",
+    "skills"
+  ],
+  "scripts": {
+    "build": "true",
+    "typecheck": "true"
+  },
+  "dependencies": {
+    "@moorline/contracts": "0.0.1"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "official/channel-lifecycle",
+    "kind": "plugin",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/channel-lifecycle"
+  }
+}
