@@ -33,6 +33,18 @@ function officialNpmName(packageId) {
   return `@moorline/${name}`;
 }
 
+function packageDirForOfficialPackageId(packageId) {
+  const [namespace, name] = packageId.split('/');
+  if (namespace !== 'official' || !name) {
+    throw new Error(`Official bundle members must use official/* package ids: ${packageId}`);
+  }
+  const dir = join(projectRoot, 'packages', name);
+  if (!existsSync(join(dir, 'manifest.json'))) {
+    throw new Error(`Unable to find official bundle member source for ${packageId}: ${dir}`);
+  }
+  return dir;
+}
+
 const packageRoot = join(projectRoot, 'dist', 'npm-packages');
 const tarballRoot = join(projectRoot, 'dist', 'npm-tarballs');
 removeDir(packageRoot);
@@ -42,7 +54,7 @@ mkdirSync(tarballRoot, { recursive: true });
 
 const { npmPackPackage, validatePackagePath } = await loadPackageKit();
 const packages = [];
-const surfaces = ['provider', 'transport', 'plugin', 'skill', 'bundle'];
+const surfaces = ['bundle'];
 
 for (const surface of surfaces) {
   for (const packageDir of listPackageDirs(surface)) {
@@ -55,7 +67,8 @@ for (const surface of surfaces) {
       sourceDir: packageDir,
       outDir: packageRoot,
       npmName,
-      access: 'public'
+      access: 'public',
+      embeddedMemberSourceDirs: (validated.manifest.members ?? []).map((member) => packageDirForOfficialPackageId(member.packageId))
     });
     packages.push({
       packageId: packed.packageId,
@@ -63,6 +76,7 @@ for (const surface of surfaces) {
       version: packed.version,
       npmName: packed.npmName,
       directory: relative(projectRoot, packed.npmPackageDir),
+      embeddedMembers: validated.manifest.members?.length ?? 0,
       tarball: packed.tarballPath ? relative(projectRoot, packed.tarballPath) : null
     });
   }

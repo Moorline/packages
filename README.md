@@ -32,6 +32,14 @@ bun run build
 
 `bun run build` generates installable archives in `dist/installable-archives` and the catalog artifact in `dist/resources/official-catalog.json`.
 
+`bun run build:official-npm-packages` generates only the public official bundle npm packages for now:
+
+- `@moorline/basic-essentials`
+- `@moorline/codex-default`
+- `@moorline/discord-default`
+
+Those bundle packages embed their member provider, transport, and plugin packages so the public npm surface stays focused on user-meaningful install choices.
+
 ## Releases
 
 Publishing is manual for now. The release workflow only builds and smoke-tests artifacts; it does not publish npm packages or upload GitHub release assets.

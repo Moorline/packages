@@ -82,6 +82,8 @@ describe('official package repository contract', () => {
     const catalog = readFileSync(join(root, 'tools', 'installables', 'build-official-catalog.mjs'), 'utf8');
     expect(installables).toContain("import('@moorline/package-kit')");
     expect(npmPackages).toContain("import('@moorline/package-kit')");
+    expect(npmPackages).toContain("const surfaces = ['bundle'];");
+    expect(npmPackages).toContain('embeddedMemberSourceDirs');
     expect(catalog).toContain('github.com/Moorline/packages/releases/download');
     expect(installables).not.toContain("packages', 'package-kit'");
     expect(npmPackages).not.toContain("packages', 'package-kit'");

@@ -71,8 +71,8 @@ jobs:
       - run: bun run build:official-npm-packages
       - run: find dist/installable-archives -type f -name '*.tar.gz' -print | sort
       - run: test -f dist/resources/official-catalog.json
-      - run: npm pack ./dist/npm-packages/@moorline/codex
-      - run: npm pack ./dist/npm-packages/@moorline/discord
+      - run: npm pack ./dist/npm-packages/@moorline/basic-essentials
+      - run: npm pack ./dist/npm-packages/@moorline/discord-default
 
   full-gate:
     needs: installable-smoke
