@@ -33,9 +33,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: bun --cwd ../moorline install --frozen-lockfile
+      - run: cd ../moorline && bun install --frozen-lockfile
       - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
-      - run: bun --cwd ../kit install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile
       - run: bun --cwd ../kit run build:packages
       - run: bun install --frozen-lockfile
       - run: bun run build:packages
@@ -65,9 +65,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: bun --cwd ../moorline install --frozen-lockfile
+      - run: cd ../moorline && bun install --frozen-lockfile
       - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
-      - run: bun --cwd ../kit install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile
       - run: bun --cwd ../kit run build:packages
       - run: bun install --frozen-lockfile
       - run: bun run build
@@ -101,9 +101,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: bun --cwd ../moorline install --frozen-lockfile
+      - run: cd ../moorline && bun install --frozen-lockfile
       - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
-      - run: bun --cwd ../kit install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile
       - run: bun --cwd ../kit run build:packages
       - run: bun install --frozen-lockfile
       - run: bun run check
