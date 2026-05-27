@@ -129,10 +129,6 @@
       },
     },
   },
-  "overrides": {
-    "@moorline/contracts": "file:../moorline/packages/contracts",
-    "@moorline/package-kit": "file:../kit/packages/package-kit",
-  },
   "packages": {
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
 
@@ -262,6 +258,8 @@
 
     "@moorline/codex-default": ["@moorline/codex-default@workspace:packages/codex-default"],
 
+    "@moorline/contracts": ["@moorline/contracts@0.0.1", "", {}, "sha512-P08ZAIAVrHn7X2eIjc9SddmUgajBXOBOI6/6ByiS+vXML46CGqh7loqsWXlRusB3I9OwksDIox6I9c/Ulsds2w=="],
+
     "@moorline/discord": ["@moorline/discord@workspace:packages/discord"],
 
     "@moorline/discord-default": ["@moorline/discord-default@workspace:packages/discord-default"],
@@ -272,7 +270,7 @@
 
     "@moorline/model-picker": ["@moorline/model-picker@workspace:packages/model-picker"],
 
-    "@moorline/package-kit": ["@moorline/package-kit@file:../kit/packages/package-kit", { "dependencies": { "@moorline/contracts": "0.0.1", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "./dist/cli.js" } }],
+    "@moorline/package-kit": ["@moorline/package-kit@0.0.1", "", { "dependencies": { "@moorline/contracts": "0.0.1", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }, "sha512-jnHFJFNjgIjLXe3BKCgubWaIc8CNV1Bl8yHqzamUzHaWKYWQ0RSBzaEE8g72Njmytbv9lYs3OQvvJucUpMK15A=="],
 
     "@moorline/persona": ["@moorline/persona@workspace:packages/persona"],
 
@@ -705,36 +703,6 @@
     "@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 
     "@eslint/eslintrc/ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
-
-    "@moorline/admin-control/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/channel-lifecycle/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/codex/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/discord/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/main-chat/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/memory/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/model-picker/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/package-kit/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/persona/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/self-edit/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/session-agent/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/session-commands/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/session-orchestration/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/skills/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
-
-    "@moorline/status/@moorline/contracts": ["@moorline/contracts@file:../moorline/packages/contracts", {}],
 
     "@typescript-eslint/typescript-estree/minimatch": ["minimatch@10.2.5", "", { "dependencies": { "brace-expansion": "^5.0.5" } }, "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg=="],
 
