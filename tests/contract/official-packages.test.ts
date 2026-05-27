@@ -70,6 +70,12 @@ describe('official package repository contract', () => {
     }
   });
 
+  it('keeps self-edit fallback SOUL asset packaged locally', () => {
+    const source = readFileSync(join(root, 'packages', 'self-edit', 'index.mjs'), 'utf8');
+    expect(source).toContain("new URL('./SOUL.md', import.meta.url)");
+    expect(existsSync(join(root, 'packages', 'self-edit', 'SOUL.md'))).toBe(true);
+  });
+
   it('builds archives and catalog artifacts from package-kit without a local kit source tree', () => {
     const installables = readFileSync(join(root, 'tools', 'installables', 'build-official-installables.mjs'), 'utf8');
     const npmPackages = readFileSync(join(root, 'tools', 'installables', 'build-official-npm-packages.mjs'), 'utf8');

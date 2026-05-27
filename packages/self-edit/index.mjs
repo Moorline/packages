@@ -9,7 +9,7 @@ import {
 } from './soul-document.mjs';
 import manifest from './manifest.json' with { type: 'json' };
 
-const defaultSoul = readFile(new URL('../../persona/SOUL.md', import.meta.url), 'utf8');
+const defaultSoul = readFile(new URL('./SOUL.md', import.meta.url), 'utf8');
 
 function soulPath(context) {
   const runtimeRoot = typeof context.config?.runtimeRoot === 'string' ? context.config.runtimeRoot : '';
