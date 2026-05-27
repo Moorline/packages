@@ -34,14 +34,14 @@ jobs:
         with:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
-      - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
+      - run: cd ../moorline && bun run --filter '@moorline/contracts' build
       - run: cd ../kit && bun install --frozen-lockfile
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
           rm -rf ../kit/node_modules/@moorline/contracts
           ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" ../kit/node_modules/@moorline/contracts
-      - run: bun --cwd ../kit run build:packages
+      - run: cd ../kit && bun run build:packages
       - run: bun install --frozen-lockfile
       - name: Link local split-repo packages
         run: |
@@ -77,14 +77,14 @@ jobs:
         with:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
-      - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
+      - run: cd ../moorline && bun run --filter '@moorline/contracts' build
       - run: cd ../kit && bun install --frozen-lockfile
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
           rm -rf ../kit/node_modules/@moorline/contracts
           ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" ../kit/node_modules/@moorline/contracts
-      - run: bun --cwd ../kit run build:packages
+      - run: cd ../kit && bun run build:packages
       - run: bun install --frozen-lockfile
       - name: Link local split-repo packages
         run: |
@@ -124,14 +124,14 @@ jobs:
         with:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
-      - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
+      - run: cd ../moorline && bun run --filter '@moorline/contracts' build
       - run: cd ../kit && bun install --frozen-lockfile
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
           rm -rf ../kit/node_modules/@moorline/contracts
           ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" ../kit/node_modules/@moorline/contracts
-      - run: bun --cwd ../kit run build:packages
+      - run: cd ../kit && bun run build:packages
       - run: bun install --frozen-lockfile
       - name: Link local split-repo packages
         run: |
