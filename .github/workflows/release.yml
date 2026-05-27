@@ -33,8 +33,19 @@ jobs:
       - run: cd ../moorline && bun install --frozen-lockfile
       - run: bun --cwd ../moorline run --filter '@moorline/contracts' build
       - run: cd ../kit && bun install --frozen-lockfile
+      - name: Link local contracts into kit checkout
+        run: |
+          mkdir -p ../kit/node_modules/@moorline
+          rm -rf ../kit/node_modules/@moorline/contracts
+          ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" ../kit/node_modules/@moorline/contracts
       - run: bun --cwd ../kit run build:packages
       - run: bun install --frozen-lockfile
+      - name: Link local split-repo packages
+        run: |
+          mkdir -p node_modules/@moorline
+          rm -rf node_modules/@moorline/contracts node_modules/@moorline/package-kit
+          ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" node_modules/@moorline/contracts
+          ln -s "${GITHUB_WORKSPACE}/kit/packages/package-kit" node_modules/@moorline/package-kit
       - run: bun run check
       - run: bun run build
       - run: bun run build:official-npm-packages
