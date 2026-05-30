@@ -56,7 +56,6 @@ jobs:
           path: |
             dist/installable-archives/**/*.tar.gz
             dist/installable-archives/SHA256SUMS.txt
-            dist/resources/official-catalog.json
       - uses: actions/upload-artifact@v4
         with:
           name: official-npm-package-directories
