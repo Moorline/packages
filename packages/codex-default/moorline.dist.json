@@ -9,8 +9,7 @@
     "publisher": "Moorline"
   },
   "distribution": {
-    "audiences": ["setup", "catalog"],
-    "recommendedForSetup": true,
+    "audiences": ["setup"],
     "setupOrder": 20
   },
   "release": {

@@ -1,7 +1,7 @@
 {
   "name": "@moorline/discord",
   "version": "0.0.1",
-  "description": "Built-in Discord transport package.",
+  "description": "Official Discord transport package.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",

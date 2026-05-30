@@ -3,7 +3,7 @@
   "name": "official/codex",
   "version": "0.0.1",
   "type": "provider",
-  "description": "Built-in Codex provider package.",
+  "description": "Official Codex provider package.",
   "entrypoint": "index.mjs",
   "displayCategory": "Official Providers",
   "activation": {
