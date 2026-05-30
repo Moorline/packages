@@ -10,8 +10,7 @@
     "experimental": false
   },
   "distribution": {
-    "audiences": ["catalog"],
-    "recommendedForSetup": false,
+    "audiences": ["advanced"],
     "setupOrder": 10
   },
   "release": {

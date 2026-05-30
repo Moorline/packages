@@ -2,7 +2,7 @@
   "name": "moorline-packages-workspace",
   "version": "0.0.1",
   "private": true,
-  "description": "Official installable Moorline packages and catalog artifacts",
+  "description": "Official installable Moorline packages",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,12 +14,11 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "node scripts/clean-dist.mjs && bun run build:packages && bun run build:installables && bun run build:catalog",
+    "build": "node scripts/clean-dist.mjs && bun run build:packages && bun run build:installables",
     "build:packages": "bun run --filter './packages/*' build",
     "build:installables": "bun run build:packages && node tools/installables/build-official-installables.mjs",
-    "build:catalog": "node tools/installables/build-official-catalog.mjs",
     "build:official-npm-packages": "bun run build:packages && node tools/installables/build-official-npm-packages.mjs",
-    "validate:installables": "bun run build:installables && bun run build:catalog && node tools/installables/build-official-installables.mjs --validate-only",
+    "validate:installables": "bun run build:installables && node tools/installables/build-official-installables.mjs --validate-only",
     "check:fast": "bun run typecheck && bun run lint && bun run test:fast",
     "check": "bun run check:fast && bun run validate:installables",
     "typecheck": "bun run --filter './packages/*' typecheck",

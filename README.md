@@ -1,6 +1,6 @@
 # Moorline Official Packages
 
-This repository owns the official installable Moorline package catalog: providers, transports, plugins, skills, and bundles.
+This repository owns the official installable Moorline packages: providers, transports, plugins, skills, and bundles.
 
 The host runtime, CLI, contracts, control API, and default HTTP adapter live in `Moorline/moorline`. Package authoring tools live in `Moorline/kit`.
 
@@ -40,7 +40,7 @@ bun run test:fast
 bun run build
 ```
 
-`bun run build` generates installable archives in `dist/installable-archives` and the catalog artifact in `dist/resources/official-catalog.json`.
+`bun run build` generates installable archives in `dist/installable-archives`. Published npm package metadata is the package discovery surface.
 
 `bun run build:official-npm-packages` generates only the public official bundle npm packages for now:
 

@@ -3,7 +3,7 @@
   "name": "official/discord",
   "version": "0.0.1",
   "type": "transport",
-  "description": "Built-in Discord transport package.",
+  "description": "Official Discord transport package.",
   "entrypoint": "index.mjs",
   "displayCategory": "Official Transports",
   "activation": {

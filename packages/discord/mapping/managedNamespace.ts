@@ -1,5 +1,5 @@
 import { PermissionFlagsBits, PermissionsBitField } from 'discord.js';
-import type { RuntimeSurfaceState } from '@moorline/contracts';
+import type { RuntimeSurfaceNames, RuntimeSurfaceState } from '@moorline/contracts';
 import type {
   DiscordChannelRecord,
   DiscordOperator,
@@ -261,7 +261,7 @@ export async function bootstrapManagedNamespace(
 
   const sessionsCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
     key: 'sessionsCategoryId',
-    name: input.names.sessionsCategoryName,
+    name: (input.names as RuntimeSurfaceNames & { sessionsGroupName?: string }).sessionsGroupName ?? input.names.sessionsCategoryName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy
@@ -269,7 +269,7 @@ export async function bootstrapManagedNamespace(
 
   const missionsCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
     key: 'missionsCategoryId',
-    name: input.names.missionsCategoryName,
+    name: (input.names as RuntimeSurfaceNames & { missionsGroupName?: string }).missionsGroupName ?? input.names.missionsCategoryName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy
@@ -277,7 +277,7 @@ export async function bootstrapManagedNamespace(
 
   const archiveCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
     key: 'archiveCategoryId',
-    name: input.names.archiveCategoryName,
+    name: (input.names as RuntimeSurfaceNames & { archiveGroupName?: string }).archiveGroupName ?? input.names.archiveCategoryName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy

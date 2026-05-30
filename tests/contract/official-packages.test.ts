@@ -76,15 +76,13 @@ describe('official package repository contract', () => {
     expect(existsSync(join(root, 'packages', 'self-edit', 'SOUL.md'))).toBe(true);
   });
 
-  it('builds archives and catalog artifacts from package-kit without a local kit source tree', () => {
+  it('builds archives and npm package artifacts from package-kit without a local kit source tree', () => {
     const installables = readFileSync(join(root, 'tools', 'installables', 'build-official-installables.mjs'), 'utf8');
     const npmPackages = readFileSync(join(root, 'tools', 'installables', 'build-official-npm-packages.mjs'), 'utf8');
-    const catalog = readFileSync(join(root, 'tools', 'installables', 'build-official-catalog.mjs'), 'utf8');
     expect(installables).toContain("import('@moorline/package-kit')");
     expect(npmPackages).toContain("import('@moorline/package-kit')");
     expect(npmPackages).toContain("const surfaces = ['bundle'];");
     expect(npmPackages).toContain('embeddedMemberSourceDirs');
-    expect(catalog).toContain('github.com/Moorline/packages/releases/download');
     expect(installables).not.toContain("packages', 'package-kit'");
     expect(npmPackages).not.toContain("packages', 'package-kit'");
   });
@@ -100,7 +98,6 @@ describe('official package repository contract', () => {
   it('keeps public docs and tooling pointed at the Moorline org', () => {
     const files = [
       'README.md',
-      'tools/installables/build-official-catalog.mjs',
       '.github/workflows/release.yml'
     ];
     for (const file of files) {

@@ -1,7 +1,7 @@
 {
   "name": "@moorline/codex",
   "version": "0.0.1",
-  "description": "Built-in Codex provider package.",
+  "description": "Official Codex provider package.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
