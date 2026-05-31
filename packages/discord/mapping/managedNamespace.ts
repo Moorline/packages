@@ -35,7 +35,6 @@ interface ExpectedResource {
     | 'chatChannelId'
     | 'statusChannelId'
     | 'sessionsCategoryId'
-    | 'missionsCategoryId'
     | 'archiveCategoryId';
   name: string;
   type: 'text' | 'category';
@@ -267,14 +266,6 @@ export async function bootstrapManagedNamespace(
     permissionOverwrites: policy
   });
 
-  const missionsCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
-    key: 'missionsCategoryId',
-    name: (input.names as RuntimeSurfaceNames & { missionsGroupName?: string }).missionsGroupName ?? input.names.missionsCategoryName,
-    type: 'category',
-    parentId: null,
-    permissionOverwrites: policy
-  });
-
   const archiveCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
     key: 'archiveCategoryId',
     name: (input.names as RuntimeSurfaceNames & { archiveGroupName?: string }).archiveGroupName ?? input.names.archiveCategoryName,
@@ -307,11 +298,10 @@ export async function bootstrapManagedNamespace(
     chatChannelId: chat.id,
     statusChannelId: status.id,
     sessionsCategoryId: sessionsCategory.id,
-    missionsCategoryId: missionsCategory.id,
     archiveCategoryId: archiveCategory.id,
     ...(adminRole ? { adminAccessGroupId: adminRole.id } : {}),
     ...(userRole ? { memberAccessGroupId: userRole.id } : {}),
     createdAt: input.previousState?.createdAt ?? input.nowIso,
     updatedAt: input.nowIso
-  };
+  } as RuntimeSurfaceState;
 }

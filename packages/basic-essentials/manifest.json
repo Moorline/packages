@@ -6,6 +6,7 @@
   "description": "Shared Moorline essentials for memory, model selection, skills, self-editing, and orchestration.",
   "members": [
     { "kind": "plugin", "packageId": "official/memory", "version": "~0.0.1", "activation": "enable" },
+    { "kind": "plugin", "packageId": "official/missions", "version": "~0.0.1", "activation": "enable" },
     { "kind": "plugin", "packageId": "official/model-picker", "version": "~0.0.1", "activation": "enable" },
     { "kind": "plugin", "packageId": "official/persona", "version": "~0.0.1", "activation": "enable" },
     { "kind": "plugin", "packageId": "official/self-edit", "version": "~0.0.1", "activation": "enable" },

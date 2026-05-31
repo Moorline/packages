@@ -364,7 +364,6 @@ export default {
             { name: 'Chat', value: `<#${namespace.chatChannelId}>`, inline: true },
             { name: 'Status', value: `<#${namespace.statusChannelId}>`, inline: true },
             { name: 'Sessions', value: namespace.sessionsCategoryId, inline: true },
-            { name: 'Missions', value: namespace.missionsCategoryId, inline: true },
             { name: 'Archive', value: namespace.archiveCategoryId, inline: true }
           ],
           timestamp: context.nowIso()

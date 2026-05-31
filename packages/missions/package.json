@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/session-orchestration",
+  "name": "@moorline/missions",
   "version": "0.0.1",
-  "description": "Agent-facing tools for managing bounded worker sessions.",
+  "description": "Package-owned scheduled missions implemented as durable sessions.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/session-orchestration",
+    "packageId": "official/missions",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"
@@ -32,6 +32,6 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Moorline/packages.git",
-    "directory": "packages/session-orchestration"
+    "directory": "packages/missions"
   }
 }

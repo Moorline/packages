@@ -10,9 +10,7 @@
     "transport.space.update",
     "transport.space.delete",
     "session.archive",
-    "session.delete",
-    "mission.archive",
-    "mission.delete"
+    "session.delete"
   ],
   "hooks": [
     "onAction"

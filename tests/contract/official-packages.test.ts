@@ -14,6 +14,7 @@ const officialPackages = [
   'discord-default',
   'main-chat',
   'memory',
+  'missions',
   'model-picker',
   'persona',
   'self-edit',

@@ -3,7 +3,7 @@
   "name": "official/session-commands",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Provides Discord actions for creating, listing, archiving, deleting, and scheduling sessions.",
+  "description": "Provides Discord actions for creating, listing, archiving, and deleting sessions.",
   "entrypoint": "index.mjs",
   "capabilities": [
     "transport.message.send",
@@ -12,10 +12,7 @@
     "transport.space.delete",
     "session.create",
     "session.archive",
-    "session.delete",
-    "mission.create",
-    "mission.control",
-    "mission.inspect"
+    "session.delete"
   ],
   "hooks": [
     "onAction"

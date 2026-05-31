@@ -1,5 +1,4 @@
 import manifest from './manifest.json' with { type: 'json' };
-import missionCommands from './mission-actions.mjs';
 
 function discordAction(id, title, commandName, commandDescription, subcommandName, subcommandDescription, options, policy) {
   return {
@@ -168,14 +167,10 @@ export default {
         'Manage Moorline coding sessions',
         'list',
         'List active and archived sessions'
-      ),
-      ...missionCommands.actions()
+      )
     ];
   },
   async onAction(event, context) {
-    if (event.actionId.startsWith('mission.')) {
-      return await missionCommands.onAction(event, context);
-    }
     if (!event.actionId.startsWith('session.')) {
       return { handled: false };
     }

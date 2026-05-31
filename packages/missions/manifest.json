@@ -1,23 +1,23 @@
 {
-  "id": "official/session-orchestration",
-  "name": "official/session-orchestration",
+  "id": "official/missions",
+  "name": "official/missions",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Agent-facing tools for managing bounded worker sessions.",
+  "description": "Package-owned scheduled missions implemented as durable sessions.",
   "entrypoint": "index.mjs",
   "capabilities": [
     "transport.message.send",
     "transport.space.create",
     "transport.space.update",
-    "transport.space.delete",
-    "net.connect",
     "session.inspect",
     "session.create",
     "session.direct",
-    "session.archive",
-    "session.delete"
+    "package.state.read",
+    "package.state.write",
+    "package.job.manage"
   ],
   "hooks": [
+    "onAction",
     "beforeAgentPrompt"
   ],
   "defaultEnabled": true
