@@ -72,6 +72,13 @@
         "@moorline/contracts": "0.0.1",
       },
     },
+    "packages/missions": {
+      "name": "@moorline/missions",
+      "version": "0.0.1",
+      "dependencies": {
+        "@moorline/contracts": "0.0.1",
+      },
+    },
     "packages/model-picker": {
       "name": "@moorline/model-picker",
       "version": "0.0.1",
@@ -267,6 +274,8 @@
     "@moorline/main-chat": ["@moorline/main-chat@workspace:packages/main-chat"],
 
     "@moorline/memory": ["@moorline/memory@workspace:packages/memory"],
+
+    "@moorline/missions": ["@moorline/missions@workspace:packages/missions"],
 
     "@moorline/model-picker": ["@moorline/model-picker@workspace:packages/model-picker"],
 
