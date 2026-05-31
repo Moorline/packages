@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Default",
-    "description": "Discord transport plus the official Discord chat, session, mission, status, admin, and lifecycle plugins.",
+    "description": "Discord transport plus the official Discord chat, session, status, admin, lifecycle, and mission plugins.",
     "version": "0.0.1",
     "category": "Recommended Transports",
     "tags": ["official", "discord", "bundle", "transport"],

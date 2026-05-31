@@ -1,7 +1,7 @@
 {
   "name": "@moorline/session-commands",
   "version": "0.0.1",
-  "description": "Provides Discord actions for creating, listing, archiving, deleting, and scheduling sessions.",
+  "description": "Provides Discord actions for creating, listing, archiving, and deleting sessions.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",

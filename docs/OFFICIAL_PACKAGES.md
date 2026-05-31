@@ -29,6 +29,11 @@ Codex package notes:
 - Run `codex login status` before starting provider-backed sessions.
 - Runtime modes are selected by Moorline and passed through the provider contract.
 
+Missions package notes:
+
+- `official/missions` owns recurring objectives as package state and package jobs.
+- Missions create and direct normal Moorline sessions; the host does not have a special mission surface.
+
 Bundle notes:
 
 - `official/discord-default`, `official/codex-default`, and `official/basic-essentials` are user-meaningful bundle packages.

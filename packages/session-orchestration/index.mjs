@@ -26,11 +26,6 @@ function parseRuntimeMode(value, toolName) {
   return runtimeMode;
 }
 
-function missionStateLabel(mission) {
-  if (mission.archivedAt) return 'archived';
-  return mission.pausedAt ? 'paused' : mission.lifecycleStatus;
-}
-
 function formatSnapshot(snapshot) {
   const { session, receipt, pendingRequests, recentActivities } = snapshot;
   const fields = [
@@ -53,21 +48,6 @@ function formatSnapshot(snapshot) {
     const latest = recentActivities[recentActivities.length - 1];
     fields.push(`latestActivity=${latest.kind}:${latest.title}`);
   }
-  return `- ${fields.join(' | ')}`;
-}
-
-function formatMission(mission, latestRun) {
-  const fields = [
-    `missionId=${mission.missionId}`,
-    `spaceId=${mission.spaceId}`,
-    `state=${missionStateLabel(mission)}`,
-    `mode=${mission.runtimeMode}`,
-    `schedule=${mission.scheduleText}`,
-    `nextRunAt=${mission.nextRunAt ?? 'none'}`
-  ];
-  if (mission.goal) fields.push(`goal=${mission.goal}`);
-  if (mission.lastError) fields.push(`lastError=${mission.lastError}`);
-  if (latestRun) fields.push(`latestRun=${latestRun.lifecycleStatus}@${latestRun.startedAt}`);
   return `- ${fields.join(' | ')}`;
 }
 
@@ -137,7 +117,7 @@ export default {
             },
             owner_kind: {
               type: 'string',
-              description: 'Optional owner kind filter: mission, run, parent_session, or orchestrator.'
+              description: 'Optional owner kind filter such as run, parent_session, or orchestrator.'
             },
             owner_id: {
               type: 'string',
@@ -196,11 +176,11 @@ export default {
             },
             objective: {
               type: 'string',
-              description: 'Optional durable objective for supervision and querying. If omitted for mission-owned workers, the mission goal is inherited.'
+              description: 'Optional durable objective for supervision and querying.'
             },
             owner_kind: {
               type: 'string',
-              description: 'Optional owner kind override. Use mission, run, parent_session, or orchestrator when you need an explicit owner link.'
+              description: 'Optional owner kind override. Use run, parent_session, or orchestrator when you need an explicit owner link.'
             },
             owner_id: {
               type: 'string',
@@ -421,184 +401,16 @@ export default {
             ? { content: `Deleted archived session ${deleted.sessionId} and removed its local workspace (${workspaceDisplay(deleted.sessionId)}).` }
             : { content: 'No matching archived session found.' };
         }
-      },
-      {
-        name: 'query_missions',
-        description:
-          'List long-lived missions. Missions are scheduled objectives that wake up on a cadence and can spawn or direct worker sessions over time.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            lifecycle_statuses: {
-              type: 'array',
-              items: { type: 'string' },
-              description: 'Optional mission state filter such as active, sleeping, waiting_on_user, failed, stopped, paused, or archived.'
-            },
-            limit: { type: 'number', description: 'Maximum number of missions to return.' }
-          },
-          additionalProperties: false
-        },
-        requiredCapability: 'mission.inspect',
-        execute: async (input) => {
-          const lifecycleStatuses = new Set(stringList(input.lifecycle_statuses));
-          const limit = typeof input.limit === 'number' ? input.limit : undefined;
-          const missions = context
-            .listMissions()
-            .filter((mission) =>
-              lifecycleStatuses.size === 0 ||
-              lifecycleStatuses.has(missionStateLabel(mission))
-            )
-            .slice(0, limit ?? Number.MAX_SAFE_INTEGER);
-          if (missions.length === 0) {
-            return { content: 'No missions matched the requested filters.' };
-          }
-          return {
-            content: [
-              'Missions:',
-              ...missions.map((mission) => formatMission(mission, context.listMissionRuns(mission.missionId, 1)[0]))
-            ].join('\n')
-          };
-        }
-      },
-      {
-        name: 'create_mission',
-        description:
-          'Create a scheduled long-lived mission. Use this for recurring or durable objectives, not one-off delegated coding passes. Set run_immediately to kick off the first mission pass now.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            title: { type: 'string', description: 'Short mission title.' },
-            goal: { type: 'string', description: 'Long-lived objective and expected behavior across repeated runs.' },
-            schedule: {
-              type: 'string',
-              description: 'Cadence like every hour, every 2 hours, every 15 minutes, or daily.'
-            },
-            start_time: {
-              type: 'string',
-              description: 'Optional anchor like 09:00, 2026-03-25 09:00, or 2026-03-25T09:00:00-04:00.'
-            },
-            runtime_mode: {
-              type: 'string',
-              description: 'Runtime mode for mission runs, usually full-access or approval-required.'
-            },
-            run_immediately: {
-              type: 'boolean',
-              description: 'When true, trigger the first mission run immediately after creation.'
-            }
-          },
-          required: ['title', 'goal', 'schedule', 'runtime_mode'],
-          additionalProperties: false
-        },
-        requiredCapability: 'mission.create',
-        execute: async (input) => {
-          const title = trimString(input.title);
-          const goal = trimString(input.goal);
-          const schedule = trimString(input.schedule);
-          if (!title || !goal || !schedule) {
-            return { content: 'create_mission error: title, goal, schedule, and runtime_mode are required.' };
-          }
-          let runtimeMode;
-          try {
-            runtimeMode = parseRuntimeMode(input.runtime_mode, 'create_mission');
-          } catch (error) {
-            return { content: error instanceof Error ? error.message : String(error) };
-          }
-          const created = await context.createMission({
-            title,
-            goal,
-            schedule,
-            startTime: trimString(input.start_time) || undefined,
-            runtimeMode
-          });
-          context.appendAuditEvent('api.mission.created', {
-            action: 'create_mission',
-            target: created.mission.missionId,
-            spaceId: created.spaceId
-          });
-          const lines = [
-            `Created mission ${created.mission.missionId}.`,
-            `Space: ${created.spaceId}`,
-            `Mode: ${created.mission.runtimeMode}`,
-            `Schedule: ${created.mission.scheduleText}`,
-            `Goal: ${created.mission.goal}`
-          ];
-          if (input.run_immediately === true) {
-            const launched = await context.runMissionNow({
-              spaceId: created.spaceId,
-              missionId: created.mission.missionId
-            });
-            if (launched) {
-              context.appendAuditEvent('api.mission.run_now', {
-                action: 'create_mission',
-                target: launched.missionId,
-                spaceId: created.spaceId
-              });
-            }
-            lines.push(launched ? `Triggered mission ${launched.missionId} immediately.` : 'Mission was created but could not be triggered immediately.');
-          }
-          return { content: lines.join('\n') };
-        }
-      },
-      {
-        name: 'control_mission',
-        description: 'Pause, resume, stop, or manually trigger a mission.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            action: {
-              type: 'string',
-              description: 'Required mission action: pause, resume, stop, or run_now.'
-            },
-            mission_id: { type: 'string', description: 'Preferred unique target mission id.' },
-            space_id: { type: 'string', description: 'Alternate target by mission space id.' }
-          },
-          required: ['action'],
-          additionalProperties: false
-        },
-        requiredCapability: 'mission.control',
-        execute: async (input) => {
-          const action = trimString(input.action);
-          const spaceId = trimString(input.space_id) || context.getMissionById(trimString(input.mission_id) || '')?.spaceId;
-          if (!spaceId) {
-            return { content: 'control_mission error: mission_id or space_id is required.' };
-          }
-          const missionId = trimString(input.mission_id) || undefined;
-          const mission =
-            action === 'pause'
-              ? await context.pauseMission({ spaceId, missionId })
-              : action === 'resume'
-                ? await context.resumeMission({ spaceId, missionId })
-                : action === 'stop'
-                  ? await context.stopMission({ spaceId, missionId })
-                  : action === 'run_now'
-                    ? await context.runMissionNow({ spaceId, missionId })
-                    : null;
-          if (!mission && !['pause', 'resume', 'stop', 'run_now'].includes(action)) {
-            return { content: 'control_mission error: action must be one of pause, resume, stop, or run_now.' };
-          }
-          if (mission) {
-            context.appendAuditEvent('api.mission.controlled', {
-              action: 'control_mission',
-              target: mission.missionId,
-              control: action,
-              spaceId
-            });
-          }
-          return { content: mission ? `${action} applied to mission ${mission.missionId}.` : 'No matching mission found.' };
-        }
       }
     ];
   },
   async beforeAgentPrompt() {
     return [
-      'You can manage two different orchestration primitives with tools: managed sessions and missions.',
+      'You can manage bounded worker sessions with tools.',
       'A managed session is a bounded worker thread with its own workspace. Use it for one-off delegated implementation, review, investigation, or follow-up work.',
-      'A mission is a long-lived scheduled objective. Use it for recurring or durable work that should wake up on a cadence, such as periodic triage, monitoring, or repeated review passes.',
-      'When the operator asks for a recurring, scheduled, or ongoing objective, prefer create_mission. When they ask for a one-time parallel worker or focused child thread, prefer create_managed_session.',
+      'When the operator asks for a one-time parallel worker or focused child thread, prefer create_managed_session.',
       'For managed sessions, requested_name sets the session label, runtime_mode controls execution permissions, initial_instruction can kick off the first turn immediately, and objective is durable supervision metadata.',
-      'For missions, title is the short label, goal is the durable long-lived objective, schedule is the cadence text, start_time optionally anchors the schedule, runtime_mode controls mission-run permissions, and run_immediately starts the first pass now.',
-      'Mission-owned worker sessions automatically inherit mission ownership and, by default, the mission goal as their objective when you create them from a mission context.',
-      'Use query_sessions and query_missions to inspect current state before creating duplicates or when you need to supervise or redirect ongoing work.',
+      'Use query_sessions to inspect current state before creating duplicates or when you need to supervise or redirect ongoing work.',
       'When the operator wants a real Discord attachment for an existing workspace artifact, use send_workspace_file instead of pasting the file contents inline.'
     ];
   }

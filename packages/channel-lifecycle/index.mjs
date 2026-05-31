@@ -46,19 +46,10 @@ function workspaceDisplay(id) {
 }
 
 function summarizeArchivedTarget(target) {
-  if (target.kind === 'session') {
-    return {
-      noun: 'session',
-      id: target.session.sessionId,
-      spaceId: target.session.spaceId,
-      workspacePath: target.session.workspacePath
-    };
-  }
   return {
-    noun: 'mission',
-    id: target.mission.missionId,
-    spaceId: target.mission.spaceId,
-    workspacePath: target.mission.workspacePath
+    id: target.session.sessionId,
+    spaceId: target.session.spaceId,
+    workspacePath: target.session.workspacePath
   };
 }
 
@@ -69,17 +60,17 @@ export default {
     return [
       discordAction(
         'space.archive',
-        'Archive the current Moorline session or mission space',
+        'Archive the current Moorline session space',
         'archive',
-        'Archive the current Moorline session or mission space',
+        'Archive the current Moorline session space',
         undefined,
         { allowedWhileDraining: true, bypassQueue: true }
       ),
       discordAction(
         'space.delete',
-        'Delete the current archived Moorline session or mission space',
+        'Delete the current archived Moorline session space',
         'delete',
-        'Delete the current archived Moorline session or mission space',
+        'Delete the current archived Moorline session space',
         [
           {
             type: 'string',
@@ -102,46 +93,46 @@ export default {
         const archived = await context.archiveSpaceTarget({ spaceId: event.spaceId });
         if (!archived) {
           return await reply(event, {
-            content: 'This space is not an archivable Moorline session or mission.',
+            content: 'This space is not an archivable Moorline session.',
             ephemeral: true
           });
         }
         const target = summarizeArchivedTarget(archived);
         await context.sendMessage(target.spaceId, {
-          text: `${target.noun === 'session' ? 'Session' : 'Mission'} archived. Use \`/delete confirm:delete\` to remove the local workspace.`,
+          text: 'Session archived. Use `/delete confirm:delete` to remove the local workspace.',
           blocks: [
             {
               kind: 'fields',
-              title: `${target.noun === 'session' ? 'Session' : 'Mission'} Archived`,
+              title: 'Session Archived',
               tone: 'warning',
               fields: [
-                { label: target.noun === 'session' ? 'Session' : 'Mission', value: target.id },
+                { label: 'Session', value: target.id },
                 { label: 'Workspace', value: workspaceDisplay(target.id) }
               ]
             }
           ]
         });
         await context.sendStatusUpdate({
-          text: `Archived ${target.noun} ${target.id} from ${target.spaceId}.`,
+          text: `Archived session ${target.id} from ${target.spaceId}.`,
           blocks: [
             {
               kind: 'fields',
-              title: `${target.noun === 'session' ? 'Session' : 'Mission'} Archived`,
+              title: 'Session Archived',
               tone: 'warning',
               fields: [
-                { label: target.noun === 'session' ? 'Session' : 'Mission', value: target.id },
+                { label: 'Session', value: target.id },
                 { label: 'Space', value: target.spaceId }
               ]
             }
           ]
         });
-        context.appendAuditEvent(`${target.noun}.archived`, {
-          [`${target.noun}Id`]: target.id,
+        context.appendAuditEvent('session.archived', {
+          sessionId: target.id,
           spaceId: target.spaceId,
           pluginId: manifest.id
         });
         return await reply(event, {
-          content: `Archived ${target.noun} ${target.id}.`,
+          content: `Archived session ${target.id}.`,
           ephemeral: true
         });
       } catch (error) {
@@ -171,16 +162,9 @@ export default {
           ephemeral: true
         });
       }
-      const mission = context.getMissionBySpaceId(event.spaceId);
-      if (mission && !mission.archivedAt) {
+      if (!session) {
         return await reply(event, {
-          content: `Mission ${mission.missionId} must be archived before deletion.`,
-          ephemeral: true
-        });
-      }
-      if (!session && !mission) {
-        return await reply(event, {
-          content: 'This space is not a deletable Moorline session or mission.',
+          content: 'This space is not a deletable Moorline session.',
           ephemeral: true
         });
       }
@@ -196,27 +180,27 @@ export default {
         }
         const target = summarizeArchivedTarget(deleted);
         await context.sendStatusUpdate({
-          text: `Deleted archived ${target.noun} ${target.id} and removed its local workspace.`,
+          text: `Deleted archived session ${target.id} and removed its local workspace.`,
           blocks: [
             {
               kind: 'fields',
-              title: `${target.noun === 'session' ? 'Session' : 'Mission'} Deleted`,
+              title: 'Session Deleted',
               tone: 'danger',
               fields: [
-                { label: target.noun === 'session' ? 'Session' : 'Mission', value: target.id },
+                { label: 'Session', value: target.id },
                 { label: 'Workspace', value: workspaceDisplay(target.id) }
               ]
             }
           ]
         });
-        context.appendAuditEvent(`${target.noun}.deleted`, {
-          [`${target.noun}Id`]: target.id,
+        context.appendAuditEvent('session.deleted', {
+          sessionId: target.id,
           spaceId: target.spaceId,
           workspacePath: target.workspacePath,
           pluginId: manifest.id
         });
         return await reply(event, {
-          content: `Deleted archived ${target.noun} ${target.id} and removed its local workspace (${workspaceDisplay(target.id)}).`,
+          content: `Deleted archived session ${target.id} and removed its local workspace (${workspaceDisplay(target.id)}).`,
           ephemeral: true
         });
       } catch (error) {

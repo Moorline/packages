@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Session Commands",
-    "description": "Session lifecycle and scheduled-session commands for Discord.",
+    "description": "Session lifecycle commands for Discord.",
     "version": "0.0.1"
   }
 }

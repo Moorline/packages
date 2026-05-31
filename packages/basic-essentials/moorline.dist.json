@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Basic Essentials",
-    "description": "Shared official plugins for memory, model selection, skills, self-editing, and session orchestration.",
+    "description": "Shared official plugins for memory, missions, model selection, skills, self-editing, and session orchestration.",
     "version": "0.0.1",
     "category": "Recommended Essentials",
     "tags": ["official", "shared", "bundle", "essentials"],
