@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Codex Default",
-    "description": "Official Codex provider for local Moorline sessions.",
+    "description": "Official Codex provider for Moorline sessions.",
     "version": "0.0.1",
     "category": "Recommended Providers",
     "tags": ["official", "codex", "bundle", "provider"],

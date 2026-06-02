@@ -2,7 +2,9 @@
 
 This repository owns the official installable Moorline packages: providers, transports, plugins, skills, and bundles.
 
-The host runtime, CLI, contracts, control API, and default HTTP adapter live in `Moorline/moorline`. Package authoring tools live in `Moorline/kit`.
+These packages extend Moorline as an operator-controlled event/work orchestration runtime. Discord chat, Codex-backed sessions, scheduled missions, memory, skills, and lifecycle controls are official package examples, not privileged host features.
+
+The host runtime, CLI, contracts, control API, and default HTTP adapter live in `Moorline/moorline`. Package authoring tools live in `Moorline/kit`; official-package terminology lives in `docs/TERMINOLOGY.md`.
 
 ## Development
 

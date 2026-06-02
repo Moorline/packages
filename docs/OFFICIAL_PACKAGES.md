@@ -2,6 +2,8 @@
 
 This repo owns the first-party provider, transport, plugin, skill, and bundle packages.
 
+Official packages are normal installable packages. They should demonstrate Moorline's extension boundaries: transports connect external surfaces, providers execute agent work, plugins add trusted runtime behavior, skills contribute instructions, and bundles compose package selections.
+
 Typical package setup:
 
 ```bash
@@ -22,6 +24,7 @@ Discord package notes:
 - `official/discord` needs a Discord bot token and a scope/server id.
 - Verification may derive package-owned metadata such as application id, actor id, and invite permissions. Those values belong to the package config payload, not the Moorline host config schema.
 - The Discord package creates and repairs only its Moorline-managed namespace.
+- Discord is one transport shape. Official Discord chat/session plugins should not imply that chat is Moorline's architectural center.
 
 Codex package notes:
 
@@ -33,6 +36,14 @@ Missions package notes:
 
 - `official/missions` owns recurring objectives as package state and package jobs.
 - Missions create and direct normal Moorline sessions; the host does not have a special mission surface.
+- Missions intentionally use package jobs because they are scheduled recurring objectives. Event-driven packages should prefer host-owned work items once they need idempotency, leases, retries, or resource/session binding.
+
+Event/work package notes:
+
+- Packages that react to GitHub, CI, email, incident, or similar non-chat events should use `external.event.received` and `onExternalEvent` rather than pretending those events are chat messages.
+- Packages with durable event-driven work should use `package.work.manage` work items instead of hand-rolled active/seen queues in package state.
+- Packages that need deterministic readiness checks should record gates with runtime gate APIs instead of leaving readiness entirely in prompts.
+- Packages that need one-shot assessment should use session-backed headless runs when available, and keep provider-specific process spawning inside provider packages.
 
 Bundle notes:
 

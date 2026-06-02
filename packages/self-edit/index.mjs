@@ -113,7 +113,7 @@ export default {
     return [
       {
         name: 'save_skill',
-        description: 'Create or update an Moorline skill in the visible runtime skills directory.',
+        description: 'Create or update a Moorline skill in the visible runtime skills directory.',
         inputSchema: {
           type: 'object',
           properties: {

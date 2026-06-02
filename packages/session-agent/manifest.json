@@ -3,7 +3,7 @@
   "name": "official/session-agent",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Routes session-channel messages into live coding sessions.",
+  "description": "Routes Discord session-channel messages into provider-backed sessions.",
   "entrypoint": "index.mjs",
   "priority": 100,
   "capabilities": [

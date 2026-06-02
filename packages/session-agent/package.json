@@ -1,7 +1,7 @@
 {
   "name": "@moorline/session-agent",
   "version": "0.0.1",
-  "description": "Routes session-channel messages into live coding sessions.",
+  "description": "Routes Discord session-channel messages into provider-backed sessions.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
