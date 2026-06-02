@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/main-chat",
+  "name": "@moorline/coordination",
   "version": "0.0.1",
-  "description": "Routes #moorline-chat to the main coordination assistant.",
+  "description": "Routes #moorline-coordination to the main coordination assistant.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/main-chat",
+    "packageId": "official/coordination",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"
@@ -31,6 +31,6 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Moorline/packages.git",
-    "directory": "packages/main-chat"
+    "directory": "packages/coordination"
   }
 }

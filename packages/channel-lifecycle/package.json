@@ -1,7 +1,7 @@
 {
   "name": "@moorline/channel-lifecycle",
   "version": "0.0.1",
-  "description": "Provides archive and delete controls for Moorline-managed Discord spaces.",
+  "description": "Provides archive and delete controls for Moorline-managed Discord resources.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",

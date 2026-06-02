@@ -53,8 +53,8 @@ async function reply(event, payload) {
   return { handled: true, reply: toRuntimeReply(payload) };
 }
 
-function currentThreadIdOrNull(context, spaceId) {
-  return context.getSessionBySpaceId(spaceId)?.threadId ?? null;
+function currentThreadIdOrNull(context, transportResourceId) {
+  return context.getSessionByTransportResourceId(transportResourceId)?.threadId ?? null;
 }
 
 export default {
@@ -217,10 +217,10 @@ export default {
     }
 
     if (event.actionId === 'runtime.admin.provider-stop') {
-      const threadId = stringOption(event.input, 'scope') === 'current' && event.spaceId ? currentThreadIdOrNull(context, event.spaceId) : null;
+      const threadId = stringOption(event.input, 'scope') === 'current' && event.transportResourceId ? currentThreadIdOrNull(context, event.transportResourceId) : null;
       if (stringOption(event.input, 'scope') === 'current' && !threadId) {
         return await reply(event, {
-          content: 'This space does not map to an active Moorline session.',
+          content: 'This resource does not map to an active Moorline session.',
           ephemeral: true
         });
       }
@@ -236,10 +236,10 @@ export default {
     }
 
     if (event.actionId === 'runtime.admin.provider-start') {
-      const threadId = stringOption(event.input, 'scope') === 'current' && event.spaceId ? currentThreadIdOrNull(context, event.spaceId) : null;
+      const threadId = stringOption(event.input, 'scope') === 'current' && event.transportResourceId ? currentThreadIdOrNull(context, event.transportResourceId) : null;
       if (stringOption(event.input, 'scope') === 'current' && !threadId) {
         return await reply(event, {
-          content: 'This space does not map to an active Moorline session.',
+          content: 'This resource does not map to an active Moorline session.',
           ephemeral: true
         });
       }

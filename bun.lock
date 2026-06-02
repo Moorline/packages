@@ -46,6 +46,13 @@
       "name": "@moorline/codex-default",
       "version": "0.0.1",
     },
+    "packages/coordination": {
+      "name": "@moorline/coordination",
+      "version": "0.0.1",
+      "dependencies": {
+        "@moorline/contracts": "0.0.1",
+      },
+    },
     "packages/discord": {
       "name": "@moorline/discord",
       "version": "0.0.1",
@@ -57,13 +64,6 @@
     "packages/discord-default": {
       "name": "@moorline/discord-default",
       "version": "0.0.1",
-    },
-    "packages/main-chat": {
-      "name": "@moorline/main-chat",
-      "version": "0.0.1",
-      "dependencies": {
-        "@moorline/contracts": "0.0.1",
-      },
     },
     "packages/memory": {
       "name": "@moorline/memory",
@@ -267,11 +267,11 @@
 
     "@moorline/contracts": ["@moorline/contracts@0.0.1", "", {}, "sha512-P08ZAIAVrHn7X2eIjc9SddmUgajBXOBOI6/6ByiS+vXML46CGqh7loqsWXlRusB3I9OwksDIox6I9c/Ulsds2w=="],
 
+    "@moorline/coordination": ["@moorline/coordination@workspace:packages/coordination"],
+
     "@moorline/discord": ["@moorline/discord@workspace:packages/discord"],
 
     "@moorline/discord-default": ["@moorline/discord-default@workspace:packages/discord-default"],
-
-    "@moorline/main-chat": ["@moorline/main-chat@workspace:packages/main-chat"],
 
     "@moorline/memory": ["@moorline/memory@workspace:packages/memory"],
 

@@ -1,7 +1,7 @@
 {
   "name": "@moorline/memory",
   "version": "0.0.1",
-  "description": "Layered memory retrieval and memory writing for Discord sessions.",
+  "description": "Layered memory retrieval and memory writing for Moorline sessions.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",

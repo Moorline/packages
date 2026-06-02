@@ -58,7 +58,7 @@ const runtimePackage: RuntimeTransportPackage = {
     };
   },
   createTransport() {
-    return new DiscordTransportAdapter();
+    return new DiscordTransportAdapter() as unknown as ReturnType<RuntimeTransportPackage['createTransport']>;
   }
 };
 

@@ -12,7 +12,7 @@ async function loadPromptSections(context) {
       ? context.config.surfaces.provider.config.command.trim()
       : "";
   sections.push(
-    "Transport surface: Discord text chat.",
+    "Transport surface: Discord coordination resource.",
     `Provider package: ${context.config?.surfaces?.provider?.activePackageId ?? "unknown"}.`,
     `Default model preference: ${context.config?.defaults?.model ?? "latest"}.`,
     providerCommand ? `Provider command: ${providerCommand}.` : "Provider command: unknown."
@@ -20,7 +20,7 @@ async function loadPromptSections(context) {
   return sections;
 }
 
-function mainChatRuntimeMode(context) {
+function mainCoordinationRuntimeMode(context) {
   return context.config?.defaults?.runtimeMode === 'approval-required' ? 'approval-required' : 'full-access';
 }
 
@@ -32,28 +32,28 @@ export default {
       return { handled: false };
     }
 
-    const namespace = context.getNamespaceState();
-    if (event.spaceId !== namespace.chatChannelId) {
+    const surface = context.getSurfaceState();
+    if (event.transportResourceId !== surface.coordinationResourceId) {
       return { handled: false };
     }
 
     const reply = await context.runAgent({
-      surface: 'main_chat',
-      spaceId: event.spaceId,
+      surface: 'coordination',
+      transportResourceId: event.transportResourceId,
       actorId: event.actor.actorId,
       actorLabel: event.actor.displayName ?? event.actor.actorId,
       text: event.message.text,
       attachments: event.message.attachments,
       session: null,
-      cwd: context.getChatWorkspacePath(),
-      runtimeMode: mainChatRuntimeMode(context),
+      cwd: context.getCoordinationWorkspacePath(),
+      runtimeMode: mainCoordinationRuntimeMode(context),
       basePromptSections: await loadPromptSections(context)
     });
 
-    await context.sendMessage(event.spaceId, reply);
-    const runtimeMode = mainChatRuntimeMode(context);
-    context.appendAuditEvent('chat.replied', {
-      spaceId: event.spaceId,
+    await context.sendMessage(event.transportResourceId, reply);
+    const runtimeMode = mainCoordinationRuntimeMode(context);
+    context.appendAuditEvent('coordination.replied', {
+      transportResourceId: event.transportResourceId,
       mode: runtimeMode,
       pluginId: manifest.id
     });

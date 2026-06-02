@@ -3,7 +3,7 @@
   "name": "official/memory",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Layered memory retrieval and memory writing for Discord sessions.",
+  "description": "Layered memory retrieval and memory writing for Moorline sessions.",
   "entrypoint": "index.mjs",
   "capabilities": [
     "memory.read",

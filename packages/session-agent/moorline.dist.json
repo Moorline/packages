@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Session Agent",
-    "description": "Session routing for Discord channel surfaces.",
+    "description": "Session routing for Discord resources.",
     "version": "0.0.1"
   }
 }

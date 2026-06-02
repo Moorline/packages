@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -10,9 +10,9 @@ const officialPackages = [
   'channel-lifecycle',
   'codex',
   'codex-default',
+  'coordination',
   'discord',
   'discord-default',
-  'main-chat',
   'memory',
   'missions',
   'model-picker',
@@ -31,6 +31,17 @@ function readJson(path: string): Record<string, unknown> {
 
 function packageJson(name: string): Record<string, unknown> {
   return readJson(join(root, 'packages', name, 'package.json'));
+}
+
+function collectFiles(dir: string, extensions: Set<string>): string[] {
+  return readdirSync(dir).flatMap((entry) => {
+    const path = join(dir, entry);
+    const stat = statSync(path);
+    if (stat.isDirectory()) {
+      return collectFiles(path, extensions);
+    }
+    return extensions.has(entry.slice(entry.lastIndexOf('.'))) ? [path] : [];
+  });
 }
 
 describe('official package repository contract', () => {
@@ -103,6 +114,33 @@ describe('official package repository contract', () => {
     ];
     for (const file of files) {
       expect(readFileSync(join(root, file), 'utf8')).not.toContain(legacyRepoSlug);
+    }
+  });
+
+  it('keeps package-facing text aligned with operator-controlled runtime language', () => {
+    const files = [
+      join(root, 'README.md'),
+      join(root, 'docs', 'OFFICIAL_PACKAGES.md'),
+      ...collectFiles(join(root, 'packages'), new Set(['.json', '.md', '.mjs']))
+    ].filter((file) => !file.endsWith('docs/TERMINOLOGY.md'));
+    const forbidden = [
+      'local-first',
+      'local first',
+      'chat-centered',
+      'main chat',
+      'main-chat',
+      'trusted local runtime',
+      'local runtime code',
+      'durable local state',
+      'live coding sessions',
+      'session-channel',
+      'discord sessions'
+    ];
+    for (const file of files) {
+      const lower = readFileSync(file, 'utf8').toLowerCase();
+      for (const phrase of forbidden) {
+        expect(lower, `${file} should not contain "${phrase}"`).not.toContain(phrase);
+      }
     }
   });
 });

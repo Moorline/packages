@@ -3,12 +3,12 @@
   "name": "official/channel-lifecycle",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Provides archive and delete controls for Moorline-managed Discord spaces.",
+  "description": "Provides archive and delete controls for Moorline-managed Discord resources.",
   "entrypoint": "index.mjs",
   "capabilities": [
     "transport.message.send",
-    "transport.space.update",
-    "transport.space.delete",
+    "transport.resource.update",
+    "transport.resource.delete",
     "session.archive",
     "session.delete"
   ],
@@ -21,7 +21,7 @@
       "surface": "transport",
       "packageId": "official/discord",
       "requiredState": "active",
-      "reason": "Space lifecycle controls target Discord-managed spaces."
+      "reason": "Resource lifecycle controls target Discord-managed resources."
     }
   ]
 }

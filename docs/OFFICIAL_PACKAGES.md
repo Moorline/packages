@@ -21,7 +21,7 @@ Discord package notes:
 
 - `official/discord` needs a Discord bot token and a scope/server id.
 - Verification may derive package-owned metadata such as application id, actor id, and invite permissions. Those values belong to the package config payload, not the Moorline host config schema.
-- The Discord package creates and repairs only its Moorline-managed namespace.
+- The Discord package creates and repairs only its Moorline-managed surface.
 
 Codex package notes:
 

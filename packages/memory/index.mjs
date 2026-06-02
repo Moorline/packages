@@ -37,12 +37,12 @@ export default {
     const retrieval = await context.retrieveMemory({
       query: input.text,
       scopeId,
-      spaceId: input.surface === 'session' ? input.spaceId : undefined,
+      transportResourceId: input.surface === 'session' ? input.transportResourceId : undefined,
       threadId: input.session?.threadId ?? null,
       maxResults: input.surface === 'session' ? 5 : 4,
       enableRerank: true
     });
-    if (input.surface === 'main_chat') {
+    if (input.surface === 'coordination') {
       return ['Memory context:', summarizeSessions(context.listSessions()), ...formatRetrievedMemory(retrieval)];
     }
     return [`Current session summary: ${input.session?.summary ?? 'No prior summary recorded yet.'}`, ...formatRetrievedMemory(retrieval)];
@@ -51,14 +51,14 @@ export default {
     if (input.surface !== 'session' || !input.session) return;
     const summary = trimSummary(input.replyMessage);
     const nowIso = context.nowIso();
-    const sourceRef = makeSourceRef(context.config.transport.scopeId, input.spaceId, input.session.threadId, nowIso);
+    const sourceRef = makeSourceRef(context.config.transport.scopeId, input.transportResourceId, input.session.threadId, nowIso);
     const facts = extractFacts(input.replyMessage);
     const tasks = extractTasks(input.replyMessage);
     const authorLine = formatAuthorLine(input);
-    await context.updateSessionSummary(input.spaceId, summary, nowIso);
+    await context.updateSessionSummary(input.transportResourceId, summary, nowIso);
     await context.writeSessionMemory({
       scopeId: context.config.transport.scopeId,
-      spaceId: input.spaceId,
+      transportResourceId: input.transportResourceId,
       threadId: input.session.threadId,
       kind: 'log',
       content: `${authorLine}: ${input.text}\n\nMoorline: ${input.replyMessage}`,
@@ -66,7 +66,7 @@ export default {
     });
     await context.writeSessionMemory({
       scopeId: context.config.transport.scopeId,
-      spaceId: input.spaceId,
+      transportResourceId: input.transportResourceId,
       threadId: input.session.threadId,
       kind: 'summary',
       content: summary,
@@ -76,7 +76,7 @@ export default {
       const factsBody = facts.map((fact) => `- ${fact}`).join('\n');
       await context.writeSessionMemory({
         scopeId: context.config.transport.scopeId,
-        spaceId: input.spaceId,
+        transportResourceId: input.transportResourceId,
         threadId: input.session.threadId,
         kind: 'facts',
         content: factsBody,
@@ -89,7 +89,7 @@ export default {
       const tasksBody = tasks.map((task) => `- ${task}`).join('\n');
       await context.writeSessionMemory({
         scopeId: context.config.transport.scopeId,
-        spaceId: input.spaceId,
+        transportResourceId: input.transportResourceId,
         threadId: input.session.threadId,
         kind: 'tasks',
         content: tasksBody,

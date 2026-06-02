@@ -8,29 +8,21 @@ import {
   type TextChannel
 } from 'discord.js';
 import { URLSearchParams } from 'node:url';
-import type { RuntimeSurfaceBootstrapInput, RuntimeSurfaceNames, RuntimeSurfaceState } from '@moorline/contracts';
+import type { RuntimeSurfaceBootstrapInput, RuntimeSurfaceState } from '@moorline/contracts';
 import type {
   RuntimeAccessGroupInput,
   RuntimeAccessGroupRecord,
   RuntimeActionDefinition,
   RuntimeActorIdentity,
-  RuntimeCreateSpaceInput,
-  RuntimeDeleteSpaceInput,
   RuntimeMessagePayload,
   RuntimeMessageReceipt,
-  RuntimeMessageTarget,
   RuntimeNativeActionRegistration,
   RuntimeScopeId,
-  RuntimeSpaceRecord,
   RuntimeTransportAccessInput,
   RuntimeTransportAuth,
-  RuntimeTransportCapabilities,
-  RuntimeTransportEvent,
-  RuntimeTransport,
   RuntimeTransportVerification,
-  RuntimeUpdateSpaceInput
 } from '@moorline/contracts';
-import { bootstrapManagedNamespace } from '../mapping/managedNamespace.js';
+import { bootstrapManagedSurface } from '../mapping/managedSurface.js';
 import {
   DISCORD_EPHEMERAL_FLAG,
   resolveReplyFlags,
@@ -81,6 +73,99 @@ export interface DiscordRoleRecord {
   id: string;
   name: string;
   permissions: string;
+}
+
+type RuntimeTransportResourceKind = 'root' | 'collection' | 'conversation' | 'item' | 'direct' | 'external';
+
+interface RuntimeTransportResourceRecord {
+  id: string;
+  name: string;
+  kind: RuntimeTransportResourceKind;
+  parentId: string | null;
+  metadata?: Record<string, unknown>;
+}
+
+interface RuntimeCreateTransportResourceInput {
+  scopeId: RuntimeScopeId;
+  name: string;
+  kind: RuntimeTransportResourceKind;
+  parentId?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
+interface RuntimeUpdateTransportResourceInput {
+  scopeId: RuntimeScopeId;
+  transportResourceId: string;
+  name?: string;
+  parentId?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
+interface RuntimeDeleteTransportResourceInput {
+  scopeId: RuntimeScopeId;
+  transportResourceId: string;
+}
+
+interface RuntimeMessageTarget {
+  scopeId?: RuntimeScopeId;
+  transportResourceId: string;
+  threadId?: string;
+}
+
+interface RuntimeTransportCapabilities {
+  nativeActions: boolean;
+  resources: {
+    list: boolean;
+    create: boolean;
+    update: boolean;
+    delete: boolean;
+  };
+  presence: boolean;
+  maxMessageTextLength?: number;
+  maxAttachmentBytes?: number;
+  metadata?: Record<string, unknown>;
+}
+
+type RuntimeTransportEvent =
+  | {
+      type: 'message.received';
+      scopeId: RuntimeScopeId;
+      transportResourceId: string;
+      actor: RuntimeActorIdentity;
+      message: { id?: string; text: string; attachments?: unknown[]; metadata?: Record<string, unknown> };
+    }
+  | {
+      type: 'action.invoked';
+      scopeId: RuntimeScopeId;
+      transportResourceId?: string;
+      actor: RuntimeActorIdentity;
+      actionId: string;
+      input: Record<string, unknown>;
+      native?: { kind: string; id?: string; payload?: unknown };
+    }
+  | {
+      type: 'resource.lifecycle';
+      scopeId: RuntimeScopeId;
+      resource: RuntimeTransportResourceRecord;
+      action: 'created' | 'updated' | 'deleted';
+      previous?: Partial<RuntimeTransportResourceRecord>;
+    };
+
+interface RuntimeTransport {
+  verifyAccess(input: RuntimeTransportAccessInput): Promise<RuntimeTransportVerification>;
+  start(auth: RuntimeTransportAuth): Promise<void>;
+  stop(): Promise<void>;
+  capabilities(): RuntimeTransportCapabilities;
+  onEvent(handler: (event: RuntimeTransportEvent) => Promise<void>): void;
+  sendMessage(target: RuntimeMessageTarget, payload: RuntimeMessagePayload): Promise<RuntimeMessageReceipt>;
+}
+
+interface RuntimeSurfaceNames {
+  mainCategoryName: string;
+  coordinationResourceName: string;
+  statusResourceName: string;
+  sessionsGroupName: string;
+  archiveGroupName: string;
 }
 
 export interface DiscordCommandDefinition {
@@ -322,7 +407,7 @@ export class DiscordJsOperator implements DiscordOperator {
   capabilities(): RuntimeTransportCapabilities {
     return {
       nativeActions: true,
-      spaces: {
+      resources: {
         list: true,
         create: true,
         update: true,
@@ -397,7 +482,7 @@ export class DiscordJsOperator implements DiscordOperator {
       await this.transportEventHandler?.({
         type: 'message.received',
         scopeId: event.scopeId,
-        spaceId: event.channelId,
+        transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.authorId,
           displayName: event.authorLabel,
@@ -422,7 +507,7 @@ export class DiscordJsOperator implements DiscordOperator {
       await this.transportEventHandler?.({
         type: 'action.invoked',
         scopeId: event.scopeId,
-        spaceId: event.channelId,
+        transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.userId,
           displayName: event.userMention,
@@ -447,7 +532,7 @@ export class DiscordJsOperator implements DiscordOperator {
       await this.transportEventHandler?.({
         type: 'action.invoked',
         scopeId: event.scopeId,
-        spaceId: event.channelId,
+        transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.userId,
           accessGroupIds: event.memberRoleIds,
@@ -475,7 +560,7 @@ export class DiscordJsOperator implements DiscordOperator {
       await this.transportEventHandler?.({
         type: 'action.invoked',
         scopeId: event.scopeId,
-        spaceId: event.channelId,
+        transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.userId,
           accessGroupIds: event.memberRoleIds,
@@ -503,8 +588,8 @@ export class DiscordJsOperator implements DiscordOperator {
         type: 'resource.lifecycle',
         scopeId: event.scopeId,
         action: event.action,
-        resource: this.toRuntimeSpaceRecord(event.channel),
-        ...(event.previous ? { previous: this.toRuntimeSpaceRecord(event.previous) } : {})
+        resource: this.toRuntimeTransportResourceRecord(event.channel),
+        ...(event.previous ? { previous: this.toRuntimeTransportResourceRecord(event.previous) } : {})
       });
     });
   }
@@ -572,8 +657,8 @@ export class DiscordJsOperator implements DiscordOperator {
     if (!input.actorId || !input.names || !input.managedAdminAccessGroup || !input.managedMemberAccessGroup) {
       throw new Error('Discord runtime surface reconciliation requires actor, names, and managed access group configuration.');
     }
-    const names = input.names as RuntimeSurfaceNames;
-    return await bootstrapManagedNamespace(this, {
+    const names = input.names as unknown as RuntimeSurfaceNames;
+    return await bootstrapManagedSurface(this, {
       scopeId: input.scopeId,
       actorId: input.actorId,
       names,
@@ -583,7 +668,7 @@ export class DiscordJsOperator implements DiscordOperator {
       explicitAdminUserIds: input.explicitAdminUserIds ?? [],
       previousState: input.previousState,
       nowIso: input.nowIso
-    });
+    }) as unknown as RuntimeSurfaceState;
   }
 
   onMessage(handler: (event: DiscordMessageEvent) => Promise<void>): void {
@@ -1144,28 +1229,28 @@ export class DiscordJsOperator implements DiscordOperator {
     );
   }
 
-  async listSpaces(scopeId: RuntimeScopeId): Promise<RuntimeSpaceRecord[]> {
-    return (await this.listChannels(scopeId)).map((channel) => this.toRuntimeSpaceRecord(channel));
+  async listTransportResources(scopeId: RuntimeScopeId): Promise<RuntimeTransportResourceRecord[]> {
+    return (await this.listChannels(scopeId)).map((channel) => this.toRuntimeTransportResourceRecord(channel));
   }
 
-  async createSpace(input: RuntimeCreateSpaceInput): Promise<RuntimeSpaceRecord> {
+  async createTransportResource(input: RuntimeCreateTransportResourceInput): Promise<RuntimeTransportResourceRecord> {
     const created =
-      input.kind === 'group' || input.kind === 'root'
+      input.kind === 'collection' || input.kind === 'root'
         ? await this.createCategory(input.scopeId, input.name)
         : await this.createTextChannel(input.scopeId, input.name, input.parentId ?? null);
-    return this.toRuntimeSpaceRecord(created);
+    return this.toRuntimeTransportResourceRecord(created);
   }
 
-  async updateSpace(input: RuntimeUpdateSpaceInput): Promise<RuntimeSpaceRecord> {
-    const updated = await this.updateChannel(input.scopeId, input.spaceId, {
+  async updateTransportResource(input: RuntimeUpdateTransportResourceInput): Promise<RuntimeTransportResourceRecord> {
+    const updated = await this.updateChannel(input.scopeId, input.transportResourceId, {
       ...(input.name ? { name: input.name } : {}),
       ...(input.parentId !== undefined ? { parentId: input.parentId } : {})
     });
-    return this.toRuntimeSpaceRecord(updated);
+    return this.toRuntimeTransportResourceRecord(updated);
   }
 
-  async deleteSpace(input: RuntimeDeleteSpaceInput): Promise<void> {
-    await this.deleteChannel(input.scopeId, input.spaceId);
+  async deleteTransportResource(input: RuntimeDeleteTransportResourceInput): Promise<void> {
+    await this.deleteChannel(input.scopeId, input.transportResourceId);
   }
 
   async registerNativeActions(input: RuntimeNativeActionRegistration): Promise<void> {
@@ -1180,7 +1265,7 @@ export class DiscordJsOperator implements DiscordOperator {
   async sendMessage(target: RuntimeMessageTarget, payload: RuntimeMessagePayload): Promise<DiscordMessageReceipt>;
   async sendMessage(channelId: string, payload: RuntimeMessagePayload): Promise<DiscordMessageReceipt>;
   async sendMessage(target: RuntimeMessageTarget | string, payload: RuntimeMessagePayload): Promise<DiscordMessageReceipt> {
-    const channelId = typeof target === 'string' ? target : target.spaceId;
+    const channelId = typeof target === 'string' ? target : target.transportResourceId;
     const discordPayload = toDiscordPayload(payload);
     const sent = await this.withTextChannel(channelId, async (channel) => {
       const sanitized = sanitizeDiscordPayload(discordPayload);
@@ -1267,11 +1352,11 @@ export class DiscordJsOperator implements DiscordOperator {
     };
   }
 
-  private toRuntimeSpaceRecord(channel: DiscordChannelRecord): RuntimeSpaceRecord {
+  private toRuntimeTransportResourceRecord(channel: DiscordChannelRecord): RuntimeTransportResourceRecord {
     return {
       id: channel.id,
       name: channel.name,
-      kind: channel.type === 'category' ? 'group' : channel.type === 'thread' ? 'thread' : 'room',
+      kind: channel.type === 'category' ? 'collection' : 'conversation',
       parentId: channel.parentId
     };
   }
@@ -1384,7 +1469,7 @@ function assertRecord(record: DiscordChannelRecord | null, label: string): Disco
   return record;
 }
 
-export interface NamespaceBootstrapInput {
+export interface SurfaceBootstrapInput {
   scopeId?: string;
   guildId?: string;
   actorId: string;
