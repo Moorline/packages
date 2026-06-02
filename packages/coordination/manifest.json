@@ -1,9 +1,9 @@
 {
-  "id": "official/main-chat",
-  "name": "official/main-chat",
+  "id": "official/coordination",
+  "name": "official/coordination",
   "version": "0.0.1",
   "type": "plugin",
-  "description": "Routes #moorline-chat to the main coordination assistant.",
+  "description": "Routes #moorline-coordination to the main coordination assistant.",
   "entrypoint": "index.mjs",
   "priority": 100,
   "capabilities": [
@@ -20,7 +20,7 @@
       "surface": "transport",
       "packageId": "official/discord",
       "requiredState": "active",
-      "reason": "Main chat routing depends on the official Discord transport."
+      "reason": "Coordination routing depends on the official Discord transport."
     }
   ]
 }

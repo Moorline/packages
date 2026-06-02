@@ -12,7 +12,7 @@ async function loadPromptSections(context, dynamicSections = []) {
       ? context.config.surfaces.provider.config.command.trim()
       : "";
   sections.push(
-    "Transport surface: Discord session channel.",
+    "Transport surface: Discord session resource.",
     `Provider package: ${context.config?.surfaces?.provider?.activePackageId ?? "unknown"}.`,
     `Default model preference: ${context.config?.defaults?.model ?? "latest"}.`,
     providerCommand ? `Provider command: ${providerCommand}.` : "Provider command: unknown."
@@ -34,14 +34,14 @@ export default {
       return { handled: false };
     }
 
-    const session = context.getSessionBySpaceId(event.spaceId);
+    const session = context.getSessionByTransportResourceId(event.transportResourceId);
     if (!session || session.lifecycleStatus === 'archived') {
       return { handled: false };
     }
 
     const reply = await context.runAgent({
       surface: 'session',
-      spaceId: event.spaceId,
+      transportResourceId: event.transportResourceId,
       actorId: event.actor.actorId,
       actorLabel: event.actor.displayName ?? event.actor.actorId,
       text: event.message.text,
@@ -56,10 +56,10 @@ export default {
       ])
     });
 
-    await context.sendMessage(event.spaceId, reply);
+    await context.sendMessage(event.transportResourceId, reply);
     context.appendAuditEvent('session.replied', {
       sessionId: session.sessionId,
-      spaceId: event.spaceId,
+      transportResourceId: event.transportResourceId,
       pluginId: manifest.id
     });
     return { handled: true };

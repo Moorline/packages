@@ -30,7 +30,7 @@ function formatSnapshot(snapshot) {
   const { session, receipt, pendingRequests, recentActivities } = snapshot;
   const fields = [
     `sessionId=${session.sessionId}`,
-    `spaceId=${session.spaceId}`,
+    `transportResourceId=${session.transportResourceId}`,
     `lifecycle=${session.lifecycleStatus}`,
     `mode=${session.runtimeMode}`,
     `provider=${session.providerStatus}`,
@@ -101,7 +101,7 @@ export default {
       {
         name: 'query_sessions',
         description:
-          'List managed worker sessions. Sessions are bounded coding threads with their own workspace, mode, owner link, and optional kickoff objective.',
+          'List managed worker sessions. Sessions are bounded worker threads with their own workspace, mode, owner link, and optional kickoff objective.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -164,7 +164,7 @@ export default {
           properties: {
             requested_name: {
               type: 'string',
-              description: 'Short human name for the worker. Used to derive the session space name.'
+              description: 'Short human name for the worker. Used to derive the session resource name.'
             },
             runtime_mode: {
               type: 'string',
@@ -224,12 +224,12 @@ export default {
           context.appendAuditEvent('api.session.created', {
             action: 'create_managed_session',
             target: created.session.sessionId,
-            spaceId: created.spaceId
+            transportResourceId: created.transportResourceId
           });
           return {
             content: [
               `Created managed session ${created.session.sessionId}.`,
-              `Space: ${created.spaceId}`,
+              `Resource: ${created.transportResourceId}`,
               `Mode: ${created.session.runtimeMode}`,
               `Owner: ${created.session.ownerKind ?? 'none'}:${created.session.ownerId ?? 'none'}`,
               `Objective: ${created.session.objective ?? '(none)'}`,
@@ -246,7 +246,7 @@ export default {
           type: 'object',
           properties: {
             session_id: { type: 'string', description: 'Preferred unique target session id.' },
-            space_id: { type: 'string', description: 'Alternate target by session space id.' },
+            transport_resource_id: { type: 'string', description: 'Alternate target by session transport resource id.' },
             instruction: { type: 'string', description: 'Required follow-up instruction for the worker.' },
             reason: { type: 'string', description: 'Optional short supervisory reason, such as review feedback or retry after failure.' }
           },
@@ -261,14 +261,14 @@ export default {
           }
           const result = await context.directSession({
             sessionId: trimString(input.session_id) || undefined,
-            spaceId: trimString(input.space_id) || undefined,
+            transportResourceId: trimString(input.transport_resource_id) || undefined,
             instruction,
             reason: trimString(input.reason) || undefined
           });
           context.appendAuditEvent('api.session.directed', {
             action: 'direct_session',
             target: result.session.sessionId,
-            spaceId: result.session.spaceId
+            transportResourceId: result.session.transportResourceId
           });
           return {
             content: [
@@ -301,9 +301,9 @@ export default {
               type: 'string',
               description: 'Optional attachment description.'
             },
-            space_id: {
+            transport_resource_id: {
               type: 'string',
-              description: 'Optional alternate transport space target. Defaults to the current space.'
+              description: 'Optional alternate transport resource target. Defaults to the current resource.'
             }
           },
           required: ['path'],
@@ -312,8 +312,8 @@ export default {
         requiredCapability: 'transport.message.send',
         execute: async (input) => {
           const realPath = resolveWorkspaceFile(context.getCurrentWorkspacePath(), input.path);
-          const spaceId = trimString(input.space_id) || context.getCurrentSpaceId();
-          await context.sendMessage(spaceId, {
+          const transportResourceId = trimString(input.transport_resource_id) || context.getCurrentTransportResourceId();
+          await context.sendMessage(transportResourceId, {
             ...(trimString(input.caption) ? { text: trimString(input.caption) } : {}),
             attachments: [
               {
@@ -326,13 +326,13 @@ export default {
           });
           context.appendAuditEvent('api.message.sent', {
             action: 'send_workspace_file',
-            target: spaceId,
+            target: transportResourceId,
             file: basename(realPath)
           });
           return {
             content: [
               `Attached workspace file ${basename(realPath)} to the current surface.`,
-              `Space: ${spaceId}`,
+              `Resource: ${transportResourceId}`,
               `Path: ${trimString(input.path) || basename(realPath)}`
             ].join('\n')
           };
@@ -345,25 +345,25 @@ export default {
           type: 'object',
           properties: {
             session_id: { type: 'string', description: 'Preferred unique target session id.' },
-            space_id: { type: 'string', description: 'Alternate target by session space id.' }
+            transport_resource_id: { type: 'string', description: 'Alternate target by session transport resource id.' }
           },
           additionalProperties: false
         },
         requiredCapability: 'session.archive',
         execute: async (input) => {
-          const spaceId = trimString(input.space_id) || context.getSessionById(trimString(input.session_id) || '')?.spaceId;
-          if (!spaceId) {
-            return { content: 'archive_managed_session error: session_id or space_id is required.' };
+          const transportResourceId = trimString(input.transport_resource_id) || context.getSessionById(trimString(input.session_id) || '')?.transportResourceId;
+          if (!transportResourceId) {
+            return { content: 'archive_managed_session error: session_id or transport_resource_id is required.' };
           }
           const archived = await context.archiveSession({
-            spaceId,
+            transportResourceId,
             sessionId: trimString(input.session_id) || undefined
           });
           if (archived) {
             context.appendAuditEvent('api.session.archived', {
               action: 'archive_managed_session',
               target: archived.sessionId,
-              spaceId: archived.spaceId
+              transportResourceId: archived.transportResourceId
             });
           }
           return { content: archived ? `Archived session ${archived.sessionId}.` : 'No matching session found.' };
@@ -376,25 +376,25 @@ export default {
           type: 'object',
           properties: {
             session_id: { type: 'string', description: 'Preferred unique target session id.' },
-            space_id: { type: 'string', description: 'Alternate target by session space id.' }
+            transport_resource_id: { type: 'string', description: 'Alternate target by session transport resource id.' }
           },
           additionalProperties: false
         },
         requiredCapability: 'session.delete',
         execute: async (input) => {
-          const spaceId = trimString(input.space_id) || context.getSessionById(trimString(input.session_id) || '')?.spaceId;
-          if (!spaceId) {
-            return { content: 'delete_managed_session error: session_id or space_id is required.' };
+          const transportResourceId = trimString(input.transport_resource_id) || context.getSessionById(trimString(input.session_id) || '')?.transportResourceId;
+          if (!transportResourceId) {
+            return { content: 'delete_managed_session error: session_id or transport_resource_id is required.' };
           }
           const deleted = await context.deleteArchivedSession({
-            spaceId,
+            transportResourceId,
             sessionId: trimString(input.session_id) || undefined
           });
           if (deleted) {
             context.appendAuditEvent('api.session.deleted', {
               action: 'delete_managed_session',
               target: deleted.sessionId,
-              spaceId: deleted.spaceId
+              transportResourceId: deleted.transportResourceId
             });
           }
           return deleted

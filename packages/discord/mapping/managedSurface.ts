@@ -1,12 +1,32 @@
 import { PermissionFlagsBits, PermissionsBitField } from 'discord.js';
-import type { RuntimeSurfaceNames, RuntimeSurfaceState } from '@moorline/contracts';
 import type {
   DiscordChannelRecord,
   DiscordOperator,
   DiscordRoleRecord,
-  NamespaceBootstrapInput,
+  SurfaceBootstrapInput,
   RuntimePermissionOverwrite
 } from '../adapter/discordInstaller.js';
+
+interface ManagedSurfaceNames {
+  mainCategoryName: string;
+  coordinationResourceName: string;
+  statusResourceName: string;
+  sessionsGroupName: string;
+  archiveGroupName: string;
+}
+
+interface ManagedSurfaceState {
+  scopeId?: string;
+  mainCategoryId: string;
+  coordinationResourceId: string;
+  statusResourceId: string;
+  sessionsCategoryId: string;
+  archiveCategoryId: string;
+  adminAccessGroupId?: string;
+  memberAccessGroupId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const MOORLINE_PARTICIPANT_CHANNEL_PERMISSIONS = [
   'ViewChannel',
@@ -32,14 +52,18 @@ const MANAGED_ADMIN_ROLE_PERMISSIONS = new PermissionsBitField(PermissionFlagsBi
 interface ExpectedResource {
   key:
     | 'mainCategoryId'
-    | 'chatChannelId'
-    | 'statusChannelId'
+    | 'coordinationResourceId'
+    | 'statusResourceId'
     | 'sessionsCategoryId'
     | 'archiveCategoryId';
   name: string;
   type: 'text' | 'category';
   parentId: string | null;
   permissionOverwrites: RuntimePermissionOverwrite[];
+}
+
+function surfaceNames(input: SurfaceBootstrapInput): ManagedSurfaceNames {
+  return input.names as unknown as ManagedSurfaceNames;
 }
 
 function findById(channels: DiscordChannelRecord[], id: string | undefined): DiscordChannelRecord | null {
@@ -65,7 +89,7 @@ async function ensureResource(
   operator: DiscordOperator,
   scopeId: string,
   channels: DiscordChannelRecord[],
-  previousState: RuntimeSurfaceState | null,
+  previousState: ManagedSurfaceState | null,
   resource: ExpectedResource
 ): Promise<DiscordChannelRecord> {
   const tracked = findById(channels, previousState?.[resource.key]);
@@ -121,8 +145,8 @@ async function ensureAdminRole(
   operator: DiscordOperator,
   scopeId: string,
   roles: DiscordRoleRecord[],
-  previousState: RuntimeSurfaceState | null,
-  input: NamespaceBootstrapInput
+  previousState: ManagedSurfaceState | null,
+  input: SurfaceBootstrapInput
 ): Promise<DiscordRoleRecord | null> {
   if (input.managedAdminAccessGroup.enabled !== true) {
     return null;
@@ -154,8 +178,8 @@ async function ensureUserRole(
   operator: DiscordOperator,
   scopeId: string,
   roles: DiscordRoleRecord[],
-  previousState: RuntimeSurfaceState | null,
-  input: NamespaceBootstrapInput
+  previousState: ManagedSurfaceState | null,
+  input: SurfaceBootstrapInput
 ): Promise<DiscordRoleRecord | null> {
   if (input.managedMemberAccessGroup.enabled !== true) {
     return null;
@@ -231,16 +255,18 @@ function accessPolicy(input: {
   return policy;
 }
 
-export async function bootstrapManagedNamespace(
+export async function bootstrapManagedSurface(
   operator: DiscordOperator,
-  input: NamespaceBootstrapInput
-) : Promise<RuntimeSurfaceState> {
+  input: SurfaceBootstrapInput
+) {
   const scopeId = input.scopeId ?? input.guildId ?? '';
+  const names = surfaceNames(input);
+  const previousState = input.previousState as unknown as ManagedSurfaceState | null;
   const existingChannels = await operator.listChannels(scopeId);
   const existingRoles = await operator.listRoles(scopeId);
-  const adminRole = await ensureAdminRole(operator, scopeId, existingRoles, input.previousState, input);
+  const adminRole = await ensureAdminRole(operator, scopeId, existingRoles, previousState, input);
   const refreshedRoles = await operator.listRoles(scopeId);
-  const userRole = await ensureUserRole(operator, scopeId, refreshedRoles, input.previousState, input);
+  const userRole = await ensureUserRole(operator, scopeId, refreshedRoles, previousState, input);
   const policy = accessPolicy({
     scopeId,
     actorId: input.actorId,
@@ -250,25 +276,25 @@ export async function bootstrapManagedNamespace(
     explicitAdminUserIds: input.explicitAdminUserIds
   });
 
-  const mainCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
+  const mainCategory = await ensureResource(operator, scopeId, existingChannels, previousState, {
     key: 'mainCategoryId',
-    name: input.names.mainCategoryName,
+    name: names.mainCategoryName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy
   });
 
-  const sessionsCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
+  const sessionsCategory = await ensureResource(operator, scopeId, existingChannels, previousState, {
     key: 'sessionsCategoryId',
-    name: (input.names as RuntimeSurfaceNames & { sessionsGroupName?: string }).sessionsGroupName ?? input.names.sessionsCategoryName,
+    name: names.sessionsGroupName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy
   });
 
-  const archiveCategory = await ensureResource(operator, scopeId, existingChannels, input.previousState, {
+  const archiveCategory = await ensureResource(operator, scopeId, existingChannels, previousState, {
     key: 'archiveCategoryId',
-    name: (input.names as RuntimeSurfaceNames & { archiveGroupName?: string }).archiveGroupName ?? input.names.archiveCategoryName,
+    name: names.archiveGroupName,
     type: 'category',
     parentId: null,
     permissionOverwrites: policy
@@ -276,17 +302,17 @@ export async function bootstrapManagedNamespace(
 
   const refreshedChannels = await operator.listChannels(scopeId);
 
-  const chat = await ensureResource(operator, scopeId, refreshedChannels, input.previousState, {
-    key: 'chatChannelId',
-    name: input.names.chatChannelName,
+  const coordination = await ensureResource(operator, scopeId, refreshedChannels, previousState, {
+    key: 'coordinationResourceId',
+    name: names.coordinationResourceName,
     type: 'text',
     parentId: mainCategory.id,
     permissionOverwrites: policy
   });
 
-  const status = await ensureResource(operator, scopeId, refreshedChannels, input.previousState, {
-    key: 'statusChannelId',
-    name: input.names.statusChannelName,
+  const status = await ensureResource(operator, scopeId, refreshedChannels, previousState, {
+    key: 'statusResourceId',
+    name: names.statusResourceName,
     type: 'text',
     parentId: mainCategory.id,
     permissionOverwrites: policy
@@ -295,13 +321,13 @@ export async function bootstrapManagedNamespace(
   return {
     scopeId,
     mainCategoryId: mainCategory.id,
-    chatChannelId: chat.id,
-    statusChannelId: status.id,
+    coordinationResourceId: coordination.id,
+    statusResourceId: status.id,
     sessionsCategoryId: sessionsCategory.id,
     archiveCategoryId: archiveCategory.id,
     ...(adminRole ? { adminAccessGroupId: adminRole.id } : {}),
     ...(userRole ? { memberAccessGroupId: userRole.id } : {}),
-    createdAt: input.previousState?.createdAt ?? input.nowIso,
+    createdAt: previousState?.createdAt ?? input.nowIso,
     updatedAt: input.nowIso
-  } as RuntimeSurfaceState;
+  };
 }

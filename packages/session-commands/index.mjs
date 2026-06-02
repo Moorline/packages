@@ -113,11 +113,11 @@ export default {
     return [
       discordAction(
         'session.create',
-        'Create a new coding session',
+        'Create a new worker session',
         'session',
-        'Manage Moorline coding sessions',
+        'Manage Moorline worker sessions',
         'create',
-        'Create a new coding session',
+        'Create a new worker session',
         [
           { type: 'string', name: 'name', description: 'Short session name', required: true },
           {
@@ -135,9 +135,9 @@ export default {
         'session.archive',
         'Archive a session',
         'session',
-        'Manage Moorline coding sessions',
+        'Manage Moorline worker sessions',
         'archive',
-        'Archive a session space',
+        'Archive a session resource',
         [{ type: 'string', name: 'session_id', description: 'Archive a specific session id' }],
         { allowedWhileDraining: true, bypassQueue: true }
       ),
@@ -145,7 +145,7 @@ export default {
         'session.delete',
         'Delete an archived session',
         'session',
-        'Manage Moorline coding sessions',
+        'Manage Moorline worker sessions',
         'delete',
         'Delete an archived session and its local workspace',
         [
@@ -164,7 +164,7 @@ export default {
         'session.list',
         'List sessions',
         'session',
-        'Manage Moorline coding sessions',
+        'Manage Moorline worker sessions',
         'list',
         'List active and archived sessions'
       )
@@ -192,7 +192,7 @@ export default {
       });
       const notificationErrors = [];
       try {
-        await context.sendMessage(created.spaceId, {
+        await context.sendMessage(created.transportResourceId, {
           text: `Session ready: ${created.session.sessionId}. Start by sharing your first task.`
         });
       } catch (error) {
@@ -200,14 +200,14 @@ export default {
       }
       context.appendAuditEvent('session.created', {
         sessionId: created.session.sessionId,
-        spaceId: created.spaceId,
+        transportResourceId: created.transportResourceId,
         runtimeMode,
         pluginId: manifest.id
       });
       if (notificationErrors.length > 0) {
         context.appendAuditEvent('session.created.notification_failed', {
           sessionId: created.session.sessionId,
-          spaceId: created.spaceId,
+          transportResourceId: created.transportResourceId,
           runtimeMode,
           errors: notificationErrors,
           pluginId: manifest.id
@@ -216,22 +216,22 @@ export default {
       return await reply(event, {
         content:
           notificationErrors.length === 0
-            ? `Created session ${created.session.sessionId} in <#${created.spaceId}>.`
-            : `Created session ${created.session.sessionId} in <#${created.spaceId}>. Warning: follow-up notifications failed; check runtime status.`,
+            ? `Created session ${created.session.sessionId} in <#${created.transportResourceId}>.`
+            : `Created session ${created.session.sessionId} in <#${created.transportResourceId}>. Warning: follow-up notifications failed; check runtime status.`,
         ephemeral: true
       });
     }
 
     if (event.actionId === 'session.archive') {
-      if (!event.spaceId && !stringOption(event.input, 'session_id')) {
+      if (!event.transportResourceId && !stringOption(event.input, 'session_id')) {
         return await reply(event, {
-          content: 'Run this in a session channel or pass session_id.',
+          content: 'Run this in a session resource or pass session_id.',
           ephemeral: true
         });
       }
       try {
         const session = await context.archiveSession({
-          spaceId: event.spaceId ?? '',
+          transportResourceId: event.transportResourceId ?? '',
           ...(stringOption(event.input, 'session_id') ? { sessionId: stringOption(event.input, 'session_id') } : {})
         });
         if (!session) {
@@ -239,7 +239,7 @@ export default {
         }
         context.appendAuditEvent('session.archived', {
           sessionId: session.sessionId,
-          spaceId: session.spaceId,
+          transportResourceId: session.transportResourceId,
           pluginId: manifest.id
         });
         return await reply(event, {
@@ -249,23 +249,23 @@ export default {
       } catch (error) {
         if (!isMissingPermissions(error)) throw error;
         return await reply(event, {
-          content: 'Archive failed: Moorline needs permission to update the session space and archive area.',
+          content: 'Archive failed: Moorline needs permission to update the session resource and archive area.',
           ephemeral: true
         });
       }
     }
 
     if (event.actionId === 'session.delete') {
-      if (!event.spaceId && !stringOption(event.input, 'session_id')) {
+      if (!event.transportResourceId && !stringOption(event.input, 'session_id')) {
         return await reply(event, {
-          content: 'Run this in a session channel or pass session_id.',
+          content: 'Run this in a session resource or pass session_id.',
           ephemeral: true
         });
       }
       const requestedSessionId = stringOption(event.input, 'session_id');
       const target =
         (requestedSessionId ? context.getSessionById(requestedSessionId) : null) ??
-        (event.spaceId ? context.getSessionBySpaceId(event.spaceId) : null);
+        (event.transportResourceId ? context.getSessionByTransportResourceId(event.transportResourceId) : null);
       if (!target) {
         return await reply(event, { content: 'No matching session found.', ephemeral: true });
       }
@@ -281,12 +281,12 @@ export default {
           ephemeral: true
         });
       }
-      if (event.spaceId && target.spaceId === event.spaceId) {
+      if (event.transportResourceId && target.transportResourceId === event.transportResourceId) {
         await defer(event, { ephemeral: true });
       }
       try {
         const deleted = await context.deleteArchivedSession({
-          spaceId: event.spaceId ?? target.spaceId,
+          transportResourceId: event.transportResourceId ?? target.transportResourceId,
           ...(requestedSessionId ? { sessionId: requestedSessionId } : {})
         });
         if (!deleted) {
@@ -294,7 +294,7 @@ export default {
         }
         context.appendAuditEvent('session.deleted', {
           sessionId: deleted.sessionId,
-          spaceId: deleted.spaceId,
+          transportResourceId: deleted.transportResourceId,
           workspacePath: deleted.workspacePath,
           pluginId: manifest.id
         });
@@ -305,7 +305,7 @@ export default {
       } catch (error) {
         if (!isMissingPermissions(error)) throw error;
         return await reply(event, {
-          content: 'Delete failed: Moorline needs permission to delete the archived session space.',
+          content: 'Delete failed: Moorline needs permission to delete the archived session resource.',
           ephemeral: true
         });
       }

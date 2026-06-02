@@ -107,7 +107,7 @@ export default {
         'runtime.status',
         'Show runtime status',
         'status',
-        'Show Moorline namespace and runtime status',
+        'Show Moorline surface and runtime status',
         undefined,
         undefined,
         undefined,
@@ -154,7 +154,7 @@ export default {
     ];
   },
   async onDomainEvent(event, context) {
-    if (event.spaceId === null) return;
+    if (event.transportResourceId === null) return;
     if (event.type === 'turn.waiting_for_approval' || event.type === 'turn.waiting_for_input') {
       await context.sendStatusUpdate({
         text: `Session ${event.sessionId ?? event.threadId} is waiting.`,
@@ -181,13 +181,13 @@ export default {
   },
   async onAction(event, context) {
     if (event.actionId === 'runtime.turn.stop') {
-      if (!event.spaceId) {
-        return await reply(event, { content: 'This action requires a target session space.', ephemeral: true });
+      if (!event.transportResourceId) {
+        return await reply(event, { content: 'This action requires a target session resource.', ephemeral: true });
       }
-      const session = context.getSessionBySpaceId(event.spaceId);
+      const session = context.getSessionByTransportResourceId(event.transportResourceId);
       if (!session) {
         return await reply(event, {
-          content: 'This space does not have an active Moorline session.',
+          content: 'This resource does not have an active Moorline session.',
           ephemeral: true
         });
       }
@@ -199,17 +199,17 @@ export default {
     }
 
     if (event.actionId === 'runtime.request.cancel' || event.actionId === 'runtime.request.answer') {
-      if (!event.spaceId) {
-        return await reply(event, { content: 'This action requires a target space.', ephemeral: true });
+      if (!event.transportResourceId) {
+        return await reply(event, { content: 'This action requires a target resource.', ephemeral: true });
       }
       const requestId = stringOption(event.input, 'request_id');
       if (!requestId) {
         return await reply(event, { content: 'request_id is required.', ephemeral: true });
       }
-      const request = context.listPendingRequests(event.spaceId).find((entry) => entry.requestId === requestId);
+      const request = context.listPendingRequests(event.transportResourceId).find((entry) => entry.requestId === requestId);
       if (!request) {
         return await reply(event, {
-          content: `No pending request ${requestId} was found in this space.`,
+          content: `No pending request ${requestId} was found in this resource.`,
           ephemeral: true
         });
       }
@@ -261,7 +261,7 @@ export default {
       return { handled: false };
     }
 
-    const namespace = context.getNamespaceState();
+    const surface = context.getSurfaceState();
     const runtimeStatus = context.getRuntimeStatus();
     const providerDiagnostics = context.getProviderDiagnostics();
     const overview = context.getRuntimeOverview();
@@ -358,13 +358,13 @@ export default {
           timestamp: context.nowIso()
         },
         {
-          title: 'Managed Namespace',
+          title: 'Managed Surface',
           color: 0x3498db,
           fields: [
-            { name: 'Chat', value: `<#${namespace.chatChannelId}>`, inline: true },
-            { name: 'Status', value: `<#${namespace.statusChannelId}>`, inline: true },
-            { name: 'Sessions', value: namespace.sessionsCategoryId, inline: true },
-            { name: 'Archive', value: namespace.archiveCategoryId, inline: true }
+            { name: 'Coordination', value: `<#${surface.coordinationResourceId}>`, inline: true },
+            { name: 'Status', value: `<#${surface.statusResourceId}>`, inline: true },
+            { name: 'Sessions', value: surface.sessionsCategoryId, inline: true },
+            { name: 'Archive', value: surface.archiveCategoryId, inline: true }
           ],
           timestamp: context.nowIso()
         }

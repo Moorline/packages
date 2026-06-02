@@ -37,7 +37,7 @@
       "invitePermissions": {
         "type": "string",
         "title": "Invite permissions",
-        "description": "System-managed Discord invite permissions bitfield required for the managed namespace.",
+        "description": "System-managed Discord invite permissions bitfield required for the managed surface.",
         "default": "268528720"
       }
     }

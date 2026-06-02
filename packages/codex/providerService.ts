@@ -82,14 +82,15 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
     }
 
     const resumeThreadId = input.session.resumeThreadId;
+    const session = input.session as RuntimeProviderSessionInput & { transportResourceId?: string };
     const providerSession = await this.manager.startSession({
       threadId: input.session.threadId,
       runtimeMode: input.session.runtimeMode,
       cwd: input.session.workspacePath,
       codexCommand: this.codexCommand,
       runtimeRoot: input.runtimeRoot,
-      spaceId: input.session.spaceId,
-      surface: input.session.sessionId.startsWith('chat-') ? 'main_chat' : 'session',
+      transportResourceId: session.transportResourceId ?? input.session.threadId,
+      surface: input.session.sessionId.startsWith('coordination-') ? 'coordination' : 'session',
       ...(input.model ? { model: input.model } : {}),
       ...(resumeThreadId ? { resumeCursor: { threadId: resumeThreadId } } : {})
     });
@@ -134,7 +135,6 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
     for (const session of input.sessions) {
       if (
         session.lifecycleStatus === 'archived' ||
-        session.sessionId.startsWith('chat-') ||
         session.providerAutoStartEnabled === false
       ) {
         continue;
@@ -196,7 +196,7 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
         cwd: workspacePath,
         codexCommand: this.codexCommand,
         runtimeRoot: input.runtimeRoot,
-        spaceId: 'provider-test',
+        transportResourceId: 'provider-test',
         surface: 'session',
         ...(input.model ? { model: input.model } : {})
       });

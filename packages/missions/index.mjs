@@ -111,13 +111,13 @@ function getMissionById(context, missionId) {
   return id ? hydrateMission(context, context.getPackageState(missionKey(id))) : null;
 }
 
-function getMissionBySpaceId(context, spaceId) {
-  const id = trimString(spaceId);
-  return id ? listMissions(context).find((mission) => mission.spaceId === id) ?? null : null;
+function getMissionBySpaceId(context, transportResourceId) {
+  const id = trimString(transportResourceId);
+  return id ? listMissions(context).find((mission) => mission.transportResourceId === id) ?? null : null;
 }
 
 function resolveMission(context, input, fallbackSpaceId) {
-  return getMissionById(context, input?.missionId ?? input?.mission_id) ?? getMissionBySpaceId(context, input?.spaceId ?? input?.space_id ?? fallbackSpaceId);
+  return getMissionById(context, input?.missionId ?? input?.mission_id) ?? getMissionBySpaceId(context, input?.transportResourceId ?? input?.transport_resource_id ?? fallbackSpaceId);
 }
 
 async function saveMission(context, mission) {
@@ -218,7 +218,7 @@ async function createMission(context, input) {
       nextRunAt: job.nextRunAt,
       runtimeMode,
       sessionId: created.session.sessionId,
-      spaceId: created.spaceId,
+      transportResourceId: created.transportResourceId,
       status: 'active',
       createdAt,
       updatedAt: createdAt,
@@ -229,10 +229,10 @@ async function createMission(context, input) {
     context.appendAuditEvent('mission.created', {
       missionId,
       sessionId: created.session.sessionId,
-      spaceId: created.spaceId,
+      transportResourceId: created.transportResourceId,
       pluginId: manifest.id
     });
-    return { mission: hydrateMission(context, mission), spaceId: created.spaceId };
+    return { mission: hydrateMission(context, mission), transportResourceId: created.transportResourceId };
   } catch (error) {
     await context.cancelPackageJob(missionJobId(missionId));
     throw error;
@@ -282,7 +282,7 @@ function formatMission(mission) {
   const fields = [
     `missionId=${mission.missionId}`,
     `sessionId=${mission.sessionId}`,
-    `spaceId=${mission.spaceId}`,
+    `transportResourceId=${mission.transportResourceId}`,
     `state=${missionStateLabel(mission)}`,
     `mode=${mission.runtimeMode}`,
     `schedule=${mission.scheduleText}`,
@@ -456,7 +456,7 @@ export default {
             const lines = [
               `Created mission ${created.mission.missionId}.`,
               `Session: ${created.mission.sessionId}`,
-              `Space: ${created.spaceId}`,
+              `Resource: ${created.transportResourceId}`,
               `Mode: ${created.mission.runtimeMode}`,
               `Schedule: ${created.mission.scheduleText}`,
               `Goal: ${created.mission.goal}`
@@ -479,7 +479,7 @@ export default {
           properties: {
             action: { type: 'string', description: 'Required mission action: pause, resume, stop, or run_now.' },
             mission_id: { type: 'string', description: 'Preferred unique target mission id.' },
-            space_id: { type: 'string', description: 'Alternate target by mission session space id.' }
+            transport_resource_id: { type: 'string', description: 'Alternate target by mission session transport resource id.' }
           },
           required: ['action'],
           additionalProperties: false
@@ -537,7 +537,7 @@ export default {
           startTime: stringOption(event.input, 'start_time'),
           runtimeMode: stringOption(event.input, 'mode')
         });
-        await context.sendMessage(created.spaceId, {
+        await context.sendMessage(created.transportResourceId, {
           text: `Mission ${created.mission.missionId} is scheduled.`,
           blocks: [
             {
@@ -553,7 +553,7 @@ export default {
           ]
         });
         return await reply(event, {
-          content: `Created mission ${created.mission.missionId} in <#${created.spaceId}>.`,
+          content: `Created mission ${created.mission.missionId} in <#${created.transportResourceId}>.`,
           ephemeral: true
         });
       } catch (error) {
@@ -565,7 +565,7 @@ export default {
     }
 
     if (event.actionId === 'mission.pause' || event.actionId === 'mission.resume' || event.actionId === 'mission.stop') {
-      const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.spaceId);
+      const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.transportResourceId);
       const verb = event.actionId.split('.').at(-1);
       const updated =
         verb === 'pause'
@@ -581,7 +581,7 @@ export default {
 
     if (event.actionId === 'mission.run-now') {
       try {
-        const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.spaceId);
+        const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.transportResourceId);
         const updated = await runMission(context, mission, 'manual');
         return await reply(event, {
           content: updated ? `Triggered mission ${updated.missionId}.` : 'No matching mission found.',
@@ -596,7 +596,7 @@ export default {
     }
 
     if (event.actionId === 'mission.status') {
-      const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.spaceId);
+      const mission = resolveMission(context, { mission_id: stringOption(event.input, 'mission_id') }, event.transportResourceId);
       if (!mission) {
         return await reply(event, { content: 'No matching mission found.', ephemeral: true });
       }

@@ -7,9 +7,9 @@
   "entrypoint": "index.mjs",
   "capabilities": [
     "transport.message.send",
-    "transport.space.create",
-    "transport.space.update",
-    "transport.space.delete",
+    "transport.resource.create",
+    "transport.resource.update",
+    "transport.resource.delete",
     "session.create",
     "session.archive",
     "session.delete"

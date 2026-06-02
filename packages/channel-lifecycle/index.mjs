@@ -48,7 +48,7 @@ function workspaceDisplay(id) {
 function summarizeArchivedTarget(target) {
   return {
     id: target.session.sessionId,
-    spaceId: target.session.spaceId,
+    transportResourceId: target.session.transportResourceId,
     workspacePath: target.session.workspacePath
   };
 }
@@ -59,18 +59,18 @@ export default {
   actions() {
     return [
       discordAction(
-        'space.archive',
-        'Archive the current Moorline session space',
+        'resource.archive',
+        'Archive the current Moorline session resource',
         'archive',
-        'Archive the current Moorline session space',
+        'Archive the current Moorline session resource',
         undefined,
         { allowedWhileDraining: true, bypassQueue: true }
       ),
       discordAction(
-        'space.delete',
-        'Delete the current archived Moorline session space',
+        'resource.delete',
+        'Delete the current archived Moorline session resource',
         'delete',
-        'Delete the current archived Moorline session space',
+        'Delete the current archived Moorline session resource',
         [
           {
             type: 'string',
@@ -85,20 +85,20 @@ export default {
     ];
   },
   async onAction(event, context) {
-    if (event.actionId === 'space.archive') {
-      if (!event.spaceId) {
-        return await reply(event, { content: 'This action requires a target space.', ephemeral: true });
+    if (event.actionId === 'resource.archive') {
+      if (!event.transportResourceId) {
+        return await reply(event, { content: 'This action requires a target resource.', ephemeral: true });
       }
       try {
-        const archived = await context.archiveSpaceTarget({ spaceId: event.spaceId });
+        const archived = await context.archiveTransportResourceTarget({ transportResourceId: event.transportResourceId });
         if (!archived) {
           return await reply(event, {
-            content: 'This space is not an archivable Moorline session.',
+            content: 'This resource is not an archivable Moorline session.',
             ephemeral: true
           });
         }
         const target = summarizeArchivedTarget(archived);
-        await context.sendMessage(target.spaceId, {
+        await context.sendMessage(target.transportResourceId, {
           text: 'Session archived. Use `/delete confirm:delete` to remove the local workspace.',
           blocks: [
             {
@@ -113,7 +113,7 @@ export default {
           ]
         });
         await context.sendStatusUpdate({
-          text: `Archived session ${target.id} from ${target.spaceId}.`,
+          text: `Archived session ${target.id} from ${target.transportResourceId}.`,
           blocks: [
             {
               kind: 'fields',
@@ -121,14 +121,14 @@ export default {
               tone: 'warning',
               fields: [
                 { label: 'Session', value: target.id },
-                { label: 'Space', value: target.spaceId }
+                { label: 'Resource', value: target.transportResourceId }
               ]
             }
           ]
         });
         context.appendAuditEvent('session.archived', {
           sessionId: target.id,
-          spaceId: target.spaceId,
+          transportResourceId: target.transportResourceId,
           pluginId: manifest.id
         });
         return await reply(event, {
@@ -138,24 +138,24 @@ export default {
       } catch (error) {
         if (!isMissingPermissions(error)) throw error;
         return await reply(event, {
-          content: 'Archive failed: Moorline needs permission to update the current space and archive area.',
+          content: 'Archive failed: Moorline needs permission to update the current resource and archive area.',
           ephemeral: true
         });
       }
     }
 
-    if (event.actionId === 'space.delete') {
-      if (!event.spaceId) {
-        return await reply(event, { content: 'This action requires a target space.', ephemeral: true });
+    if (event.actionId === 'resource.delete') {
+      if (!event.transportResourceId) {
+        return await reply(event, { content: 'This action requires a target resource.', ephemeral: true });
       }
       if (stringOption(event.input, 'confirm') !== 'delete') {
         return await reply(event, {
-          content: 'Deletion cancelled: pass confirm:delete to remove the archived space.',
+          content: 'Deletion cancelled: pass confirm:delete to remove the archived resource.',
           ephemeral: true
         });
       }
 
-      const session = context.getSessionBySpaceId(event.spaceId);
+      const session = context.getSessionByTransportResourceId(event.transportResourceId);
       if (session && session.lifecycleStatus !== 'archived') {
         return await reply(event, {
           content: `Session ${session.sessionId} must be archived before deletion.`,
@@ -164,17 +164,17 @@ export default {
       }
       if (!session) {
         return await reply(event, {
-          content: 'This space is not a deletable Moorline session.',
+          content: 'This resource is not a deletable Moorline session.',
           ephemeral: true
         });
       }
 
       await defer(event, { ephemeral: true });
       try {
-        const deleted = await context.deleteArchivedSpaceTarget({ spaceId: event.spaceId });
+        const deleted = await context.deleteArchivedTransportResourceTarget({ transportResourceId: event.transportResourceId });
         if (!deleted) {
           return await reply(event, {
-            content: 'This archived space could not be deleted.',
+            content: 'This archived resource could not be deleted.',
             ephemeral: true
           });
         }
@@ -195,7 +195,7 @@ export default {
         });
         context.appendAuditEvent('session.deleted', {
           sessionId: target.id,
-          spaceId: target.spaceId,
+          transportResourceId: target.transportResourceId,
           workspacePath: target.workspacePath,
           pluginId: manifest.id
         });
@@ -206,7 +206,7 @@ export default {
       } catch (error) {
         if (!isMissingPermissions(error)) throw error;
         return await reply(event, {
-          content: 'Delete failed: Moorline needs permission to delete the archived space.',
+          content: 'Delete failed: Moorline needs permission to delete the archived resource.',
           ephemeral: true
         });
       }

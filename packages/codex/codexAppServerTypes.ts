@@ -33,8 +33,8 @@ export interface CodexAppServerStartSessionInput {
   cwd: string;
   codexCommand: string;
   runtimeRoot: string;
-  spaceId: string;
-  surface: 'main_chat' | 'session';
+  transportResourceId: string;
+  surface: 'coordination' | 'session';
   model?: string;
   codexHomePath?: string;
   resumeCursor?: {
