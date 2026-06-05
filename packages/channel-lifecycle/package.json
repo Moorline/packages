@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/channel-lifecycle",
+  "name": "@rync/moorline-channel-lifecycle",
   "version": "0.0.1",
   "description": "Provides archive and delete controls for Moorline-managed Discord resources.",
   "type": "module",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/channel-lifecycle",
+    "packageId": "rync/channel-lifecycle",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

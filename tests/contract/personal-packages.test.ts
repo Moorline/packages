@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const root = process.cwd();
 const legacyRepoSlug = [`Ryz${'on3'}`, 'Moorline'].join('/');
-const officialPackages = [
+const ryncPackages = [
   'admin-control',
   'basic-essentials',
   'channel-lifecycle',
@@ -44,9 +44,9 @@ function collectFiles(dir: string, extensions: Set<string>): string[] {
   });
 }
 
-describe('official package repository contract', () => {
-  it('contains only official installable packages', () => {
-    expect(readdirSync(join(root, 'packages')).sort()).toEqual(officialPackages);
+describe('personal package repository contract', () => {
+  it('contains only personal installable packages', () => {
+    expect(readdirSync(join(root, 'packages')).sort()).toEqual(ryncPackages);
     expect(existsSync(join(root, 'packages', 'http'))).toBe(false);
     expect(existsSync(join(root, 'packages', 'package-kit'))).toBe(false);
   });
@@ -61,7 +61,7 @@ describe('official package repository contract', () => {
     expect((pkg.devDependencies as Record<string, string>)['@moorline/package-kit']).toBe('0.0.1');
   });
 
-  it('keeps official package metadata aligned with manifest surfaces', () => {
+  it('keeps personal package metadata aligned with manifest surfaces', () => {
     const expectedKinds: Record<string, string> = {
       codex: 'provider',
       discord: 'transport',
@@ -69,10 +69,10 @@ describe('official package repository contract', () => {
       'codex-default': 'bundle',
       'discord-default': 'bundle'
     };
-    for (const name of officialPackages) {
+    for (const name of ryncPackages) {
       const manifest = readJson(join(root, 'packages', name, 'manifest.json')) as { id: string; type: string };
       const expectedKind = expectedKinds[name] ?? 'plugin';
-      expect(manifest.id).toBe(`official/${name}`);
+      expect(manifest.id).toBe(`rync/${name}`);
       expect(manifest.type).toBe(expectedKind);
       expect(packageJson(name).license).toBe('MIT');
       expect(packageJson(name).moorline).toMatchObject({
@@ -89,8 +89,8 @@ describe('official package repository contract', () => {
   });
 
   it('builds archives and npm package artifacts from package-kit without a local kit source tree', () => {
-    const installables = readFileSync(join(root, 'tools', 'installables', 'build-official-installables.mjs'), 'utf8');
-    const npmPackages = readFileSync(join(root, 'tools', 'installables', 'build-official-npm-packages.mjs'), 'utf8');
+    const installables = readFileSync(join(root, 'tools', 'installables', 'build-personal-installables.mjs'), 'utf8');
+    const npmPackages = readFileSync(join(root, 'tools', 'installables', 'build-personal-npm-packages.mjs'), 'utf8');
     expect(installables).toContain("import('@moorline/package-kit')");
     expect(npmPackages).toContain("import('@moorline/package-kit')");
     expect(npmPackages).toContain("const surfaces = ['bundle'];");
@@ -120,7 +120,7 @@ describe('official package repository contract', () => {
   it('keeps package-facing text aligned with operator-controlled runtime language', () => {
     const files = [
       join(root, 'README.md'),
-      join(root, 'docs', 'OFFICIAL_PACKAGES.md'),
+      join(root, 'docs', 'PERSONAL_PACKAGES.md'),
       ...collectFiles(join(root, 'packages'), new Set(['.json', '.md', '.mjs']))
     ].filter((file) => !file.endsWith('docs/TERMINOLOGY.md'));
     const forbidden = [

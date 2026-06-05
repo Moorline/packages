@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/coordination",
+  "name": "@rync/moorline-coordination",
   "version": "0.0.1",
   "description": "Routes #moorline-coordination to the main coordination assistant.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/coordination",
+    "packageId": "rync/coordination",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

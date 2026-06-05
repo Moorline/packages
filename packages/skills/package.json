@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/skills",
+  "name": "@rync/moorline-skills",
   "version": "0.0.1",
   "description": "Exposes the visible skill catalog and the load_skill tool.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/skills",
+    "packageId": "rync/skills",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

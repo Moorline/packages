@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/discord-default",
+  "name": "@rync/moorline-discord-default",
   "version": "0.0.1",
-  "description": "Official Discord transport and Discord runtime features.",
+  "description": "Rync Discord transport and Discord runtime features.",
   "type": "module",
   "private": false,
   "files": [
@@ -18,7 +18,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/discord-default",
+    "packageId": "rync/discord-default",
     "kind": "bundle",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

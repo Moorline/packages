@@ -18,43 +18,43 @@
       },
     },
     "packages/admin-control": {
-      "name": "@moorline/admin-control",
+      "name": "@rync/moorline-admin-control",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/basic-essentials": {
-      "name": "@moorline/basic-essentials",
+      "name": "@rync/moorline-basic-essentials",
       "version": "0.0.1",
     },
     "packages/channel-lifecycle": {
-      "name": "@moorline/channel-lifecycle",
+      "name": "@rync/moorline-channel-lifecycle",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/codex": {
-      "name": "@moorline/codex",
+      "name": "@rync/moorline-codex",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/codex-default": {
-      "name": "@moorline/codex-default",
+      "name": "@rync/moorline-codex-default",
       "version": "0.0.1",
     },
     "packages/coordination": {
-      "name": "@moorline/coordination",
+      "name": "@rync/moorline-coordination",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/discord": {
-      "name": "@moorline/discord",
+      "name": "@rync/moorline-discord",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
@@ -62,74 +62,74 @@
       },
     },
     "packages/discord-default": {
-      "name": "@moorline/discord-default",
+      "name": "@rync/moorline-discord-default",
       "version": "0.0.1",
     },
     "packages/memory": {
-      "name": "@moorline/memory",
+      "name": "@rync/moorline-memory",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/missions": {
-      "name": "@moorline/missions",
+      "name": "@rync/moorline-missions",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/model-picker": {
-      "name": "@moorline/model-picker",
+      "name": "@rync/moorline-model-picker",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/persona": {
-      "name": "@moorline/persona",
+      "name": "@rync/moorline-persona",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/self-edit": {
-      "name": "@moorline/self-edit",
+      "name": "@rync/moorline-self-edit",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/session-agent": {
-      "name": "@moorline/session-agent",
+      "name": "@rync/moorline-session-agent",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/session-commands": {
-      "name": "@moorline/session-commands",
+      "name": "@rync/moorline-session-commands",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/session-orchestration": {
-      "name": "@moorline/session-orchestration",
+      "name": "@rync/moorline-session-orchestration",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/skills": {
-      "name": "@moorline/skills",
+      "name": "@rync/moorline-skills",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
       },
     },
     "packages/status": {
-      "name": "@moorline/status",
+      "name": "@rync/moorline-status",
       "version": "0.0.1",
       "dependencies": {
         "@moorline/contracts": "0.0.1",
@@ -255,45 +255,9 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@moorline/admin-control": ["@moorline/admin-control@workspace:packages/admin-control"],
-
-    "@moorline/basic-essentials": ["@moorline/basic-essentials@workspace:packages/basic-essentials"],
-
-    "@moorline/channel-lifecycle": ["@moorline/channel-lifecycle@workspace:packages/channel-lifecycle"],
-
-    "@moorline/codex": ["@moorline/codex@workspace:packages/codex"],
-
-    "@moorline/codex-default": ["@moorline/codex-default@workspace:packages/codex-default"],
-
     "@moorline/contracts": ["@moorline/contracts@0.0.1", "", {}, "sha512-P08ZAIAVrHn7X2eIjc9SddmUgajBXOBOI6/6ByiS+vXML46CGqh7loqsWXlRusB3I9OwksDIox6I9c/Ulsds2w=="],
 
-    "@moorline/coordination": ["@moorline/coordination@workspace:packages/coordination"],
-
-    "@moorline/discord": ["@moorline/discord@workspace:packages/discord"],
-
-    "@moorline/discord-default": ["@moorline/discord-default@workspace:packages/discord-default"],
-
-    "@moorline/memory": ["@moorline/memory@workspace:packages/memory"],
-
-    "@moorline/missions": ["@moorline/missions@workspace:packages/missions"],
-
-    "@moorline/model-picker": ["@moorline/model-picker@workspace:packages/model-picker"],
-
     "@moorline/package-kit": ["@moorline/package-kit@0.0.1", "", { "dependencies": { "@moorline/contracts": "0.0.1", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }, "sha512-jnHFJFNjgIjLXe3BKCgubWaIc8CNV1Bl8yHqzamUzHaWKYWQ0RSBzaEE8g72Njmytbv9lYs3OQvvJucUpMK15A=="],
-
-    "@moorline/persona": ["@moorline/persona@workspace:packages/persona"],
-
-    "@moorline/self-edit": ["@moorline/self-edit@workspace:packages/self-edit"],
-
-    "@moorline/session-agent": ["@moorline/session-agent@workspace:packages/session-agent"],
-
-    "@moorline/session-commands": ["@moorline/session-commands@workspace:packages/session-commands"],
-
-    "@moorline/session-orchestration": ["@moorline/session-orchestration@workspace:packages/session-orchestration"],
-
-    "@moorline/skills": ["@moorline/skills@workspace:packages/skills"],
-
-    "@moorline/status": ["@moorline/status@workspace:packages/status"],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
@@ -346,6 +310,42 @@
     "@rollup/rollup-win32-x64-gnu": ["@rollup/rollup-win32-x64-gnu@4.60.4", "", { "os": "win32", "cpu": "x64" }, "sha512-DRS4G7mi9lJxqEDezIkKCaUIKCrLUUDCUaCsTPCi/rtqaC6D/jjwslMQyiDU50Ka0JKpeXeRBFBAXwArY52vBw=="],
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.60.4", "", { "os": "win32", "cpu": "x64" }, "sha512-QVTUovf40zgTqlFVrKA1uXMVvU2QWEFWfAH8Wdc48IxLvrJMQVMBRjuQyUpzZCDkakImib9eVazbWlC6ksWtJw=="],
+
+    "@rync/moorline-admin-control": ["@rync/moorline-admin-control@workspace:packages/admin-control"],
+
+    "@rync/moorline-basic-essentials": ["@rync/moorline-basic-essentials@workspace:packages/basic-essentials"],
+
+    "@rync/moorline-channel-lifecycle": ["@rync/moorline-channel-lifecycle@workspace:packages/channel-lifecycle"],
+
+    "@rync/moorline-codex": ["@rync/moorline-codex@workspace:packages/codex"],
+
+    "@rync/moorline-codex-default": ["@rync/moorline-codex-default@workspace:packages/codex-default"],
+
+    "@rync/moorline-coordination": ["@rync/moorline-coordination@workspace:packages/coordination"],
+
+    "@rync/moorline-discord": ["@rync/moorline-discord@workspace:packages/discord"],
+
+    "@rync/moorline-discord-default": ["@rync/moorline-discord-default@workspace:packages/discord-default"],
+
+    "@rync/moorline-memory": ["@rync/moorline-memory@workspace:packages/memory"],
+
+    "@rync/moorline-missions": ["@rync/moorline-missions@workspace:packages/missions"],
+
+    "@rync/moorline-model-picker": ["@rync/moorline-model-picker@workspace:packages/model-picker"],
+
+    "@rync/moorline-persona": ["@rync/moorline-persona@workspace:packages/persona"],
+
+    "@rync/moorline-self-edit": ["@rync/moorline-self-edit@workspace:packages/self-edit"],
+
+    "@rync/moorline-session-agent": ["@rync/moorline-session-agent@workspace:packages/session-agent"],
+
+    "@rync/moorline-session-commands": ["@rync/moorline-session-commands@workspace:packages/session-commands"],
+
+    "@rync/moorline-session-orchestration": ["@rync/moorline-session-orchestration@workspace:packages/session-orchestration"],
+
+    "@rync/moorline-skills": ["@rync/moorline-skills@workspace:packages/skills"],
+
+    "@rync/moorline-status": ["@rync/moorline-status@workspace:packages/status"],
 
     "@sapphire/async-queue": ["@sapphire/async-queue@1.5.5", "", {}, "sha512-cvGzxbba6sav2zZkH8GPf2oGk9yYoD5qrNWdu9fRehifgnFZJMV+nuy2nON2roRO4yQQ+v7MK/Pktl/HgfsUXg=="],
 

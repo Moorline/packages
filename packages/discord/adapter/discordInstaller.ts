@@ -415,7 +415,7 @@ export class DiscordJsOperator implements DiscordOperator {
       },
       presence: false,
       metadata: {
-        packageId: 'official/discord'
+        packageId: 'rync/discord'
       }
     };
   }

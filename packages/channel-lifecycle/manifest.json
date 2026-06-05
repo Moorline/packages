@@ -1,6 +1,6 @@
 {
-  "id": "official/channel-lifecycle",
-  "name": "official/channel-lifecycle",
+  "id": "rync/channel-lifecycle",
+  "name": "rync/channel-lifecycle",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Provides archive and delete controls for Moorline-managed Discord resources.",
@@ -19,7 +19,7 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
       "reason": "Resource lifecycle controls target Discord-managed resources."
     }

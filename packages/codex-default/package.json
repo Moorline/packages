@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/codex-default",
+  "name": "@rync/moorline-codex-default",
   "version": "0.0.1",
-  "description": "Official Codex provider bundle.",
+  "description": "Rync Codex provider bundle.",
   "type": "module",
   "private": false,
   "files": [
@@ -18,7 +18,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/codex-default",
+    "packageId": "rync/codex-default",
     "kind": "bundle",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

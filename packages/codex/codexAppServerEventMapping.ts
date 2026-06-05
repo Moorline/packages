@@ -18,7 +18,7 @@ import {
   type JsonRpcRequest
 } from './codexAppServerProtocol.js';
 
-const CODEX_PROVIDER_PACKAGE_ID = 'official/codex';
+const CODEX_PROVIDER_PACKAGE_ID = 'rync/codex';
 
 export interface PendingApproval {
   requestId: string;

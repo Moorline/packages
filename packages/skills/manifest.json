@@ -1,6 +1,6 @@
 {
-  "id": "official/skills",
-  "name": "official/skills",
+  "id": "rync/skills",
+  "name": "rync/skills",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Exposes the visible skill catalog and the load_skill tool.",

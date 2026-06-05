@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/admin-control",
+  "name": "@rync/moorline-admin-control",
   "version": "0.0.1",
   "description": "Provides admin-only runtime and provider lifecycle controls.",
   "type": "module",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/admin-control",
+    "packageId": "rync/admin-control",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

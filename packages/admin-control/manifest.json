@@ -1,6 +1,6 @@
 {
-  "id": "official/admin-control",
-  "name": "official/admin-control",
+  "id": "rync/admin-control",
+  "name": "rync/admin-control",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Provides admin-only runtime and provider lifecycle controls.",
@@ -16,9 +16,9 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
-      "reason": "Admin controls are exposed through the official Discord transport."
+      "reason": "Admin controls are exposed through the rync Discord transport."
     }
   ]
 }

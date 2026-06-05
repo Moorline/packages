@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/missions",
+  "name": "@rync/moorline-missions",
   "version": "0.0.1",
   "description": "Package-owned scheduled missions implemented as durable sessions.",
   "type": "module",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/missions",
+    "packageId": "rync/missions",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

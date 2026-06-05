@@ -1,6 +1,6 @@
 {
-  "id": "official/missions",
-  "name": "official/missions",
+  "id": "rync/missions",
+  "name": "rync/missions",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Package-owned scheduled missions implemented as durable sessions.",

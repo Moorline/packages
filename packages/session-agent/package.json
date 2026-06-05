@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/session-agent",
+  "name": "@rync/moorline-session-agent",
   "version": "0.0.1",
   "description": "Routes session-resource messages into worker sessions.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/session-agent",
+    "packageId": "rync/session-agent",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

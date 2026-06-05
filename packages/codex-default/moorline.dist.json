@@ -2,14 +2,21 @@
   "schemaVersion": 1,
   "display": {
     "name": "Codex Default",
-    "description": "Official Codex provider for local Moorline sessions.",
+    "description": "Rync Codex provider for local Moorline sessions.",
     "version": "0.0.1",
     "category": "Recommended Providers",
-    "tags": ["official", "codex", "bundle", "provider"],
-    "publisher": "Moorline"
+    "tags": [
+      "rync",
+      "codex",
+      "bundle",
+      "provider"
+    ],
+    "publisher": "Rync"
   },
   "distribution": {
-    "audiences": ["setup"],
+    "audiences": [
+      "setup"
+    ],
     "setupOrder": 20
   },
   "release": {

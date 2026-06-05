@@ -1,6 +1,6 @@
 # Terminology
 
-Use these terms consistently in official package docs, prompts, and package metadata.
+Use these terms consistently in personal package docs, prompts, and package metadata.
 
 ## Preferred Terms
 

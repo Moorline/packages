@@ -1,6 +1,6 @@
 {
-  "id": "official/status",
-  "name": "official/status",
+  "id": "rync/status",
+  "name": "rync/status",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Provides runtime status and control actions.",
@@ -18,9 +18,9 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
-      "reason": "Status actions are delivered through the official Discord transport."
+      "reason": "Status actions are delivered through the rync Discord transport."
     }
   ]
 }

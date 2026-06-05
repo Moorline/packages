@@ -1,16 +1,51 @@
 {
-  "id": "official/basic-essentials",
-  "name": "official/basic-essentials",
+  "id": "rync/basic-essentials",
+  "name": "rync/basic-essentials",
   "version": "0.0.1",
   "type": "bundle",
   "description": "Shared Moorline essentials for memory, model selection, skills, self-editing, and orchestration.",
   "members": [
-    { "kind": "plugin", "packageId": "official/memory", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/missions", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/model-picker", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/persona", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/self-edit", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/session-orchestration", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/skills", "version": "~0.0.1", "activation": "enable" }
+    {
+      "kind": "plugin",
+      "packageId": "rync/memory",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/missions",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/model-picker",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/persona",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/self-edit",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/session-orchestration",
+      "version": "~0.0.1",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/skills",
+      "version": "~0.0.1",
+      "activation": "enable"
+    }
   ]
 }

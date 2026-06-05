@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/status",
+  "name": "@rync/moorline-status",
   "version": "0.0.1",
   "description": "Provides runtime status and control actions.",
   "type": "module",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/status",
+    "packageId": "rync/status",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

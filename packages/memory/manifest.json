@@ -1,6 +1,6 @@
 {
-  "id": "official/memory",
-  "name": "official/memory",
+  "id": "rync/memory",
+  "name": "rync/memory",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Layered memory retrieval and memory writing for Moorline sessions.",

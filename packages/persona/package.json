@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/persona",
+  "name": "@rync/moorline-persona",
   "version": "0.0.1",
   "description": "Contributes the default Moorline persona and system prompt.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/persona",
+    "packageId": "rync/persona",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

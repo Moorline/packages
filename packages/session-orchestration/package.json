@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/session-orchestration",
+  "name": "@rync/moorline-session-orchestration",
   "version": "0.0.1",
   "description": "Agent-facing tools for managing bounded worker sessions.",
   "type": "module",
@@ -23,7 +23,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/session-orchestration",
+    "packageId": "rync/session-orchestration",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

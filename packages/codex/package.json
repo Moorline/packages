@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/codex",
+  "name": "@rync/moorline-codex",
   "version": "0.0.1",
-  "description": "Official Codex provider package.",
+  "description": "Rync Codex provider package.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
@@ -21,7 +21,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/codex",
+    "packageId": "rync/codex",
     "kind": "provider",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

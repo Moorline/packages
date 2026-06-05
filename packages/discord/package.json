@@ -1,7 +1,7 @@
 {
-  "name": "@moorline/discord",
+  "name": "@rync/moorline-discord",
   "version": "0.0.1",
-  "description": "Official Discord transport package.",
+  "description": "Rync Discord transport package.",
   "type": "module",
   "private": false,
   "main": "./index.mjs",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/discord",
+    "packageId": "rync/discord",
     "kind": "transport",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

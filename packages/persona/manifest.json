@@ -1,6 +1,6 @@
 {
-  "id": "official/persona",
-  "name": "official/persona",
+  "id": "rync/persona",
+  "name": "rync/persona",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Contributes the default Moorline persona and system prompt.",

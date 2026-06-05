@@ -101,8 +101,8 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
     this.diagnostics = nextDiagnostics;
     this.emit('providerEvent', {
       eventId: randomUUID(),
-      providerPackageId: providerSession.providerPackageId ?? providerSession.provider ?? 'official/codex',
-      provider: providerSession.providerPackageId ?? providerSession.provider ?? 'official/codex',
+      providerPackageId: providerSession.providerPackageId ?? providerSession.provider ?? 'rync/codex',
+      provider: providerSession.providerPackageId ?? providerSession.provider ?? 'rync/codex',
       threadId: providerSession.threadId,
       createdAt: new Date().toISOString(),
       type: 'session.state.changed',
@@ -113,8 +113,8 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
     });
     this.emit('providerEvent', {
       eventId: randomUUID(),
-      providerPackageId: providerSession.providerPackageId ?? providerSession.provider ?? 'official/codex',
-      provider: providerSession.providerPackageId ?? providerSession.provider ?? 'official/codex',
+      providerPackageId: providerSession.providerPackageId ?? providerSession.provider ?? 'rync/codex',
+      provider: providerSession.providerPackageId ?? providerSession.provider ?? 'rync/codex',
       threadId: providerSession.threadId,
       createdAt: new Date().toISOString(),
       type: 'provider.metadata.updated',
@@ -152,8 +152,8 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
         const occurredAt = new Date().toISOString();
         this.emit('providerEvent', {
           eventId: randomUUID(),
-          providerPackageId: 'official/codex',
-          provider: 'official/codex',
+          providerPackageId: 'rync/codex',
+          provider: 'rync/codex',
           threadId: session.threadId,
           createdAt: occurredAt,
           type: 'session.state.changed',
@@ -164,8 +164,8 @@ export class ProviderService extends EventEmitter<ProviderServiceEvents> impleme
         });
         this.emit('providerEvent', {
           eventId: randomUUID(),
-          providerPackageId: 'official/codex',
-          provider: 'official/codex',
+          providerPackageId: 'rync/codex',
+          provider: 'rync/codex',
           threadId: session.threadId,
           createdAt: occurredAt,
           type: 'runtime.error',

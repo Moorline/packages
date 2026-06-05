@@ -1,5 +1,5 @@
 {
-  "name": "@moorline/model-picker",
+  "name": "@rync/moorline-model-picker",
   "version": "0.0.1",
   "description": "Provides actions for listing and selecting the default Moorline model.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/model-picker",
+    "packageId": "rync/model-picker",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

@@ -11,7 +11,7 @@ async function readSoul(context) {
     return readFile(new URL('./SOUL.md', import.meta.url), 'utf8').then((value) => value.trim());
   }
   try {
-    return (await readFile(pathToFileURL(join(runtimeRoot, 'packages', 'plugins', 'official', 'persona', 'SOUL.md')), 'utf8')).trim();
+    return (await readFile(pathToFileURL(join(runtimeRoot, 'packages', 'plugins', 'rync', 'persona', 'SOUL.md')), 'utf8')).trim();
   } catch {
     return readFile(new URL('./SOUL.md', import.meta.url), 'utf8').then((value) => value.trim());
   }

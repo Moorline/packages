@@ -1,6 +1,6 @@
-# Moorline Official Packages
+# Rync Moorline Packages
 
-This repository owns the official installable Moorline packages: providers, transports, plugins, skills, and bundles.
+This repository owns the personal installable Moorline packages: providers, transports, plugins, skills, and bundles.
 
 The host runtime, CLI, contracts, control API, and default HTTP adapter live in `Moorline/moorline`. Package authoring tools live in `Moorline/kit`.
 
@@ -42,11 +42,11 @@ bun run build
 
 `bun run build` generates installable archives in `dist/installable-archives`. Published npm package metadata is the package discovery surface.
 
-`bun run build:official-npm-packages` generates only the public official bundle npm packages for now:
+`bun run build:personal-npm-packages` generates only the public personal bundle npm packages for now:
 
-- `@moorline/basic-essentials`
-- `@moorline/codex-default`
-- `@moorline/discord-default`
+- `@rync/moorline-basic-essentials`
+- `@rync/moorline-codex-default`
+- `@rync/moorline-discord-default`
 
 Those bundle packages embed their member provider, transport, and plugin packages so the public npm surface stays focused on user-meaningful install choices.
 
@@ -54,8 +54,8 @@ Those bundle packages embed their member provider, transport, and plugin package
 
 Publishing is manual for now. The initial public npm bundle packages are:
 
-- `@moorline/basic-essentials@0.0.1`
-- `@moorline/codex-default@0.0.1`
-- `@moorline/discord-default@0.0.1`
+- `@rync/moorline-basic-essentials@0.0.1`
+- `@rync/moorline-codex-default@0.0.1`
+- `@rync/moorline-discord-default@0.0.1`
 
 The release workflow only builds and smoke-tests artifacts; it does not publish npm packages or upload GitHub release assets.

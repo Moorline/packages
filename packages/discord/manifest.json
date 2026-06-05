@@ -1,17 +1,20 @@
 {
-  "id": "official/discord",
-  "name": "official/discord",
+  "id": "rync/discord",
+  "name": "rync/discord",
   "version": "0.0.1",
   "type": "transport",
-  "description": "Official Discord transport package.",
+  "description": "Rync Discord transport package.",
   "entrypoint": "index.mjs",
-  "displayCategory": "Official Transports",
+  "displayCategory": "Rync Transports",
   "activation": {
     "uniqueKey": "transport"
   },
   "configSchema": {
     "type": "object",
-    "required": ["authToken", "scopeId"],
+    "required": [
+      "authToken",
+      "scopeId"
+    ],
     "properties": {
       "authToken": {
         "type": "string",

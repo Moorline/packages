@@ -1,6 +1,6 @@
 {
-  "id": "official/model-picker",
-  "name": "official/model-picker",
+  "id": "rync/model-picker",
+  "name": "rync/model-picker",
   "version": "0.0.1",
   "type": "plugin",
   "description": "Provides actions for listing and selecting the default Moorline model.",
