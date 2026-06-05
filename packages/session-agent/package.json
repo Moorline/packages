@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-session-agent",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Routes session-resource messages into worker sessions.",
   "type": "module",
   "private": false,
@@ -18,7 +18,7 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,

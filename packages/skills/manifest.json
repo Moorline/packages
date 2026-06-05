@@ -1,7 +1,7 @@
 {
   "id": "rync/skills",
   "name": "rync/skills",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Exposes the visible skill catalog and the load_skill tool.",
   "entrypoint": "index.mjs",

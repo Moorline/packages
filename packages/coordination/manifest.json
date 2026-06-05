@@ -1,7 +1,7 @@
 {
   "id": "rync/coordination",
   "name": "rync/coordination",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Routes #moorline-coordination to the main coordination assistant.",
   "entrypoint": "index.mjs",

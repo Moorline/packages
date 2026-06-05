@@ -1,7 +1,7 @@
 {
   "id": "rync/self-edit",
   "name": "rync/self-edit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Allows Moorline to generate and update visible runtime skills.",
   "entrypoint": "index.mjs",

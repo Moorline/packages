@@ -1,7 +1,7 @@
 {
   "id": "rync/session-commands",
   "name": "rync/session-commands",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Provides Discord actions for creating, listing, archiving, and deleting sessions.",
   "entrypoint": "index.mjs",

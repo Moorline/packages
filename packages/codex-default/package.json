@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-codex-default",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Rync Codex provider bundle.",
   "type": "module",
   "private": false,

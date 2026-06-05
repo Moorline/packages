@@ -3,6 +3,6 @@
   "display": {
     "name": "Session Agent",
     "description": "Session routing for Discord resources.",
-    "version": "0.0.1"
+    "version": "0.0.2"
   }
 }

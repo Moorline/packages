@@ -1,7 +1,7 @@
 {
   "id": "rync/session-agent",
   "name": "rync/session-agent",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Routes session-resource messages into worker sessions.",
   "entrypoint": "index.mjs",

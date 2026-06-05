@@ -1,50 +1,50 @@
 {
   "id": "rync/basic-essentials",
   "name": "rync/basic-essentials",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "bundle",
   "description": "Shared Moorline essentials for memory, model selection, skills, self-editing, and orchestration.",
   "members": [
     {
       "kind": "plugin",
       "packageId": "rync/memory",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/missions",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/model-picker",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/persona",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/self-edit",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/session-orchestration",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/skills",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "enable"
     }
   ]

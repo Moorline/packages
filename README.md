@@ -54,8 +54,8 @@ Those bundle packages embed their member provider, transport, and plugin package
 
 Publishing is manual for now. The initial public npm bundle packages are:
 
-- `@rync/moorline-basic-essentials@0.0.1`
-- `@rync/moorline-codex-default@0.0.1`
-- `@rync/moorline-discord-default@0.0.1`
+- `@rync/moorline-basic-essentials@0.0.2`
+- `@rync/moorline-codex-default@0.0.2`
+- `@rync/moorline-discord-default@0.0.2`
 
 The release workflow only builds and smoke-tests artifacts; it does not publish npm packages or upload GitHub release assets.

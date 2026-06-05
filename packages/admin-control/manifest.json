@@ -1,7 +1,7 @@
 {
   "id": "rync/admin-control",
   "name": "rync/admin-control",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Provides admin-only runtime and provider lifecycle controls.",
   "entrypoint": "index.mjs",

@@ -6,7 +6,7 @@
       "name": "moorline-packages-workspace",
       "devDependencies": {
         "@eslint/js": "^9.21.0",
-        "@moorline/package-kit": "0.0.1",
+        "@moorline/package-kit": "0.0.2",
         "@types/node": "^22.13.10",
         "@typescript-eslint/eslint-plugin": "^8.56.1",
         "@typescript-eslint/parser": "^8.56.1",
@@ -19,120 +19,120 @@
     },
     "packages/admin-control": {
       "name": "@rync/moorline-admin-control",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/basic-essentials": {
       "name": "@rync/moorline-basic-essentials",
-      "version": "0.0.1",
+      "version": "0.0.2",
     },
     "packages/channel-lifecycle": {
       "name": "@rync/moorline-channel-lifecycle",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/codex": {
       "name": "@rync/moorline-codex",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/codex-default": {
       "name": "@rync/moorline-codex-default",
-      "version": "0.0.1",
+      "version": "0.0.2",
     },
     "packages/coordination": {
       "name": "@rync/moorline-coordination",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/discord": {
       "name": "@rync/moorline-discord",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
         "discord.js": "^14.22.1",
       },
     },
     "packages/discord-default": {
       "name": "@rync/moorline-discord-default",
-      "version": "0.0.1",
+      "version": "0.0.2",
     },
     "packages/memory": {
       "name": "@rync/moorline-memory",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/missions": {
       "name": "@rync/moorline-missions",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/model-picker": {
       "name": "@rync/moorline-model-picker",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/persona": {
       "name": "@rync/moorline-persona",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/self-edit": {
       "name": "@rync/moorline-self-edit",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/session-agent": {
       "name": "@rync/moorline-session-agent",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/session-commands": {
       "name": "@rync/moorline-session-commands",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/session-orchestration": {
       "name": "@rync/moorline-session-orchestration",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/skills": {
       "name": "@rync/moorline-skills",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
     "packages/status": {
       "name": "@rync/moorline-status",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
-        "@moorline/contracts": "0.0.1",
+        "@moorline/contracts": "0.0.2",
       },
     },
   },
@@ -255,9 +255,9 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@moorline/contracts": ["@moorline/contracts@0.0.1", "", {}, "sha512-P08ZAIAVrHn7X2eIjc9SddmUgajBXOBOI6/6ByiS+vXML46CGqh7loqsWXlRusB3I9OwksDIox6I9c/Ulsds2w=="],
+    "@moorline/contracts": ["@moorline/contracts@0.0.2", "", {}, "sha512-P08ZAIAVrHn7X2eIjc9SddmUgajBXOBOI6/6ByiS+vXML46CGqh7loqsWXlRusB3I9OwksDIox6I9c/Ulsds2w=="],
 
-    "@moorline/package-kit": ["@moorline/package-kit@0.0.1", "", { "dependencies": { "@moorline/contracts": "0.0.1", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }, "sha512-jnHFJFNjgIjLXe3BKCgubWaIc8CNV1Bl8yHqzamUzHaWKYWQ0RSBzaEE8g72Njmytbv9lYs3OQvvJucUpMK15A=="],
+    "@moorline/package-kit": ["@moorline/package-kit@0.0.2", "", { "dependencies": { "@moorline/contracts": "0.0.2", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }, "sha512-jnHFJFNjgIjLXe3BKCgubWaIc8CNV1Bl8yHqzamUzHaWKYWQ0RSBzaEE8g72Njmytbv9lYs3OQvvJucUpMK15A=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
@@ -421,7 +421,7 @@
 
     "balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
 
-    "brace-expansion": ["brace-expansion@1.1.15", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-EwOCDEex4quD37XhqM3omwtMoJjr//isUZz1JopUNWms+4Z2ViyM/k1YIRePpoVNnQhENnxtFjLaxNHrT7xIUg=="],
+    "brace-expansion": ["brace-expansion@1.1.15", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.2" } }, "sha512-EwOCDEex4quD37XhqM3omwtMoJjr//isUZz1JopUNWms+4Z2ViyM/k1YIRePpoVNnQhENnxtFjLaxNHrT7xIUg=="],
 
     "cac": ["cac@6.7.14", "", {}, "sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ=="],
 
@@ -439,7 +439,7 @@
 
     "color-name": ["color-name@1.1.4", "", {}, "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="],
 
-    "concat-map": ["concat-map@0.0.1", "", {}, "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg=="],
+    "concat-map": ["concat-map@0.0.2", "", {}, "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 

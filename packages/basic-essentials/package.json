@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-basic-essentials",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Shared Moorline essentials for memory, model selection, skills, self-editing, and orchestration.",
   "type": "module",
   "private": false,

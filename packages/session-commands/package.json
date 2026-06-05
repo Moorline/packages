@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-session-commands",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provides Discord actions for creating, listing, archiving, and deleting sessions.",
   "type": "module",
   "private": false,
@@ -19,7 +19,7 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,

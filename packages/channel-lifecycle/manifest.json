@@ -1,7 +1,7 @@
 {
   "id": "rync/channel-lifecycle",
   "name": "rync/channel-lifecycle",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Provides archive and delete controls for Moorline-managed Discord resources.",
   "entrypoint": "index.mjs",

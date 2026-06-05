@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-session-orchestration",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Agent-facing tools for managing bounded worker sessions.",
   "type": "module",
   "private": false,
@@ -19,7 +19,7 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,

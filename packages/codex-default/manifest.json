@@ -1,14 +1,14 @@
 {
   "id": "rync/codex-default",
   "name": "rync/codex-default",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "bundle",
   "description": "Rync Codex provider bundle.",
   "members": [
     {
       "kind": "provider",
       "packageId": "rync/codex",
-      "version": "~0.0.1",
+      "version": "~0.0.2",
       "activation": "select"
     }
   ]

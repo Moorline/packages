@@ -3,6 +3,6 @@
   "display": {
     "name": "Session Commands",
     "description": "Session lifecycle commands for Discord.",
-    "version": "0.0.1"
+    "version": "0.0.2"
   }
 }
