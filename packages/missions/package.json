@@ -1,6 +1,6 @@
 {
-  "name": "@moorline/missions",
-  "version": "0.0.1",
+  "name": "@rync/moorline-missions",
+  "version": "0.0.2",
   "description": "Package-owned scheduled missions implemented as durable sessions.",
   "type": "module",
   "private": false,
@@ -19,11 +19,11 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/missions",
+    "packageId": "rync/missions",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

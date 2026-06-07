@@ -20,27 +20,27 @@ function listPackageDirs(surface) {
     .filter((dir) => existsSync(join(dir, 'manifest.json')))
     .filter((dir) => {
       const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
-      return manifest.type === surface && typeof manifest.id === 'string' && manifest.id.startsWith('official/');
+      return manifest.type === surface && typeof manifest.id === 'string' && manifest.id.startsWith('rync/');
     })
     .sort();
 }
 
-function officialNpmName(packageId) {
+function personalNpmName(packageId) {
   const [namespace, name] = packageId.split('/');
-  if (namespace !== 'official' || !name) {
-    throw new Error(`Official npm packages must use official/* package ids: ${packageId}`);
+  if (namespace !== 'rync' || !name) {
+    throw new Error(`Personal npm packages must use rync/* package ids: ${packageId}`);
   }
-  return `@moorline/${name}`;
+  return `@rync/moorline-${name}`;
 }
 
-function packageDirForOfficialPackageId(packageId) {
+function packageDirForPersonalPackageId(packageId) {
   const [namespace, name] = packageId.split('/');
-  if (namespace !== 'official' || !name) {
-    throw new Error(`Official bundle members must use official/* package ids: ${packageId}`);
+  if (namespace !== 'rync' || !name) {
+    throw new Error(`Personal bundle members must use rync/* package ids: ${packageId}`);
   }
   const dir = join(projectRoot, 'packages', name);
   if (!existsSync(join(dir, 'manifest.json'))) {
-    throw new Error(`Unable to find official bundle member source for ${packageId}: ${dir}`);
+    throw new Error(`Unable to find personal bundle member source for ${packageId}: ${dir}`);
   }
   return dir;
 }
@@ -62,13 +62,13 @@ for (const surface of surfaces) {
       path: packageDir,
       surface
     });
-    const npmName = officialNpmName(validated.manifest.id);
+    const npmName = personalNpmName(validated.manifest.id);
     const packed = await npmPackPackage({
       sourceDir: packageDir,
       outDir: packageRoot,
       npmName,
       access: 'public',
-      embeddedMemberSourceDirs: (validated.manifest.members ?? []).map((member) => packageDirForOfficialPackageId(member.packageId))
+      embeddedMemberSourceDirs: (validated.manifest.members ?? []).map((member) => packageDirForPersonalPackageId(member.packageId))
     });
     packages.push({
       packageId: packed.packageId,
@@ -88,4 +88,4 @@ const summary = {
   packages
 };
 writeFileSync(join(packageRoot, 'moorline-npm-summary.json'), `${JSON.stringify(summary, null, 2)}\n`, 'utf8');
-console.log(`[moorline] built ${packages.length} official npm package(s).`);
+console.log(`[moorline] built ${packages.length} personal npm package(s).`);

@@ -1,7 +1,7 @@
 {
-  "id": "official/session-agent",
-  "name": "official/session-agent",
-  "version": "0.0.1",
+  "id": "rync/session-agent",
+  "name": "rync/session-agent",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Routes session-resource messages into worker sessions.",
   "entrypoint": "index.mjs",
@@ -18,9 +18,9 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
-      "reason": "Session routing depends on the official Discord transport."
+      "reason": "Session routing depends on the rync Discord transport."
     }
   ]
 }

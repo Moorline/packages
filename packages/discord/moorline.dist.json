@@ -2,19 +2,25 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Transport",
-    "description": "Official Discord transport package for Moorline.",
-    "version": "0.0.1",
-    "category": "Official Transports",
-    "tags": ["official", "discord", "transport"],
-    "publisher": "Moorline",
+    "description": "Rync Discord transport package for Moorline.",
+    "version": "0.0.2",
+    "category": "Rync Transports",
+    "tags": [
+      "rync",
+      "discord",
+      "transport"
+    ],
+    "publisher": "Rync",
     "experimental": false
   },
   "distribution": {
-    "audiences": ["advanced"],
+    "audiences": [
+      "advanced"
+    ],
     "setupOrder": 10
   },
   "release": {
-    "recommendedRef": "v0.0.1",
+    "recommendedRef": "v0.0.2",
     "channel": "stable"
   }
 }

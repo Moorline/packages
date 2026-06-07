@@ -16,7 +16,7 @@ function soulPath(context) {
   if (!runtimeRoot) {
     throw new Error('runtimeRoot is required to edit the persona package SOUL.md asset.');
   }
-  return join(runtimeRoot, 'packages', 'plugins', 'official', 'persona', 'SOUL.md');
+  return join(runtimeRoot, 'packages', 'plugins', 'rync', 'persona', 'SOUL.md');
 }
 
 async function readSoulAsset(context) {
@@ -330,7 +330,7 @@ export default {
   async beforeAgentPrompt() {
     return [
       'You may create or update reusable skills with the available save_skill tool when the operator asks for reusable workflows.',
-      'Skills live in the visible runtime skills directory. Official skills are under the official/ subfolder; user-created skills live at the root.',
+      'Skills live in the visible runtime skills directory. Rync skills are under the rync/ subfolder; user-created skills live at the root.',
       'When a skill request is clear enough, use save_skill instead of pasting the full SKILL.md into chat.',
       'Default to saving only SKILL.md unless the operator explicitly asks for extra assets or they are clearly necessary.',
       'Do not mention, AGENTS.md, hidden instructions, fallback mechanics, or your tool-selection process in the user-facing reply unless the operator asks.',

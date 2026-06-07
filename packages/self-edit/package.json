@@ -1,6 +1,6 @@
 {
-  "name": "@moorline/self-edit",
-  "version": "0.0.1",
+  "name": "@rync/moorline-self-edit",
+  "version": "0.0.2",
   "description": "Allows Moorline to generate and update visible runtime skills.",
   "type": "module",
   "private": false,
@@ -18,11 +18,11 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/self-edit",
+    "packageId": "rync/self-edit",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

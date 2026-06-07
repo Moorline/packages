@@ -57,7 +57,7 @@ export interface CodexAppServerManagerEvents {
 
 export const DEFAULT_APP_SERVER_REQUEST_TIMEOUT_MS = 30_000;
 export const MIN_STARTUP_REQUEST_TIMEOUT_MS = 1_500;
-export const CODEX_PROVIDER_PACKAGE_ID = 'official/codex';
+export const CODEX_PROVIDER_PACKAGE_ID = 'rync/codex';
 
 export class CodexAppServerRequestTimeoutError extends Error {
   readonly code = 'CODEX_APP_SERVER_REQUEST_TIMEOUT';

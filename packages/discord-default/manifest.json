@@ -1,17 +1,57 @@
 {
-  "id": "official/discord-default",
-  "name": "official/discord-default",
-  "version": "0.0.1",
+  "id": "rync/discord-default",
+  "name": "rync/discord-default",
+  "version": "0.0.2",
   "type": "bundle",
-  "description": "Official Discord transport and Discord runtime features.",
+  "description": "Rync Discord transport and Discord runtime features.",
   "members": [
-    { "kind": "transport", "packageId": "official/discord", "version": "~0.0.1", "activation": "select" },
-    { "kind": "plugin", "packageId": "official/admin-control", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/channel-lifecycle", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/coordination", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/missions", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/session-agent", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/session-commands", "version": "~0.0.1", "activation": "enable" },
-    { "kind": "plugin", "packageId": "official/status", "version": "~0.0.1", "activation": "enable" }
+    {
+      "kind": "transport",
+      "packageId": "rync/discord",
+      "version": "~0.0.2",
+      "activation": "select"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/admin-control",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/channel-lifecycle",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/coordination",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/missions",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/session-agent",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/session-commands",
+      "version": "~0.0.2",
+      "activation": "enable"
+    },
+    {
+      "kind": "plugin",
+      "packageId": "rync/status",
+      "version": "~0.0.2",
+      "activation": "enable"
+    }
   ]
 }

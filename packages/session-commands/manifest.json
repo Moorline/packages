@@ -1,7 +1,7 @@
 {
-  "id": "official/session-commands",
-  "name": "official/session-commands",
-  "version": "0.0.1",
+  "id": "rync/session-commands",
+  "name": "rync/session-commands",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Provides Discord actions for creating, listing, archiving, and deleting sessions.",
   "entrypoint": "index.mjs",
@@ -21,9 +21,9 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
-      "reason": "Session controls are delivered through the official Discord transport."
+      "reason": "Session controls are delivered through the rync Discord transport."
     }
   ]
 }

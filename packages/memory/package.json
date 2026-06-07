@@ -1,6 +1,6 @@
 {
-  "name": "@moorline/memory",
-  "version": "0.0.1",
+  "name": "@rync/moorline-memory",
+  "version": "0.0.2",
   "description": "Layered memory retrieval and memory writing for Moorline sessions.",
   "type": "module",
   "private": false,
@@ -18,11 +18,11 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/memory",
+    "packageId": "rync/memory",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

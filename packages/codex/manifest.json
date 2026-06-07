@@ -1,11 +1,11 @@
 {
-  "id": "official/codex",
-  "name": "official/codex",
-  "version": "0.0.1",
+  "id": "rync/codex",
+  "name": "rync/codex",
+  "version": "0.0.2",
   "type": "provider",
-  "description": "Official Codex provider package.",
+  "description": "Rync Codex provider package.",
   "entrypoint": "index.mjs",
-  "displayCategory": "Official Providers",
+  "displayCategory": "Rync Providers",
   "activation": {
     "uniqueKey": "provider"
   },

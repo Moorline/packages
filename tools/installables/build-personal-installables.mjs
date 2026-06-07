@@ -31,7 +31,7 @@ function listPackageDirs(surface) {
     .filter((dir) => existsSync(join(dir, 'manifest.json')))
     .filter((dir) => {
       const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
-      return manifest.type === surface && typeof manifest.id === 'string' && manifest.id.startsWith('official/');
+      return manifest.type === surface && typeof manifest.id === 'string' && manifest.id.startsWith('rync/');
     })
     .sort();
 }

@@ -2,18 +2,25 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Default",
-    "description": "Discord transport plus the official Discord coordination, session, status, admin, lifecycle, and mission plugins.",
-    "version": "0.0.1",
+    "description": "Discord transport plus the rync Discord coordination, session, status, admin, lifecycle, and mission plugins.",
+    "version": "0.0.2",
     "category": "Recommended Transports",
-    "tags": ["official", "discord", "bundle", "transport"],
-    "publisher": "Moorline"
+    "tags": [
+      "rync",
+      "discord",
+      "bundle",
+      "transport"
+    ],
+    "publisher": "Rync"
   },
   "distribution": {
-    "audiences": ["setup"],
+    "audiences": [
+      "setup"
+    ],
     "setupOrder": 10
   },
   "release": {
-    "recommendedRef": "v0.0.1",
+    "recommendedRef": "v0.0.2",
     "channel": "stable"
   }
 }

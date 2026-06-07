@@ -1,6 +1,6 @@
 {
-  "name": "@moorline/basic-essentials",
-  "version": "0.0.1",
+  "name": "@rync/moorline-basic-essentials",
+  "version": "0.0.2",
   "description": "Shared Moorline essentials for memory, model selection, skills, self-editing, and orchestration.",
   "type": "module",
   "private": false,
@@ -18,7 +18,7 @@
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/basic-essentials",
+    "packageId": "rync/basic-essentials",
     "kind": "bundle",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

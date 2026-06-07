@@ -3,6 +3,6 @@
   "display": {
     "name": "Self Edit",
     "description": "Allows Moorline to generate and update visible runtime skills.",
-    "version": "0.0.1"
+    "version": "0.0.2"
   }
 }

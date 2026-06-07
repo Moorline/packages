@@ -3,6 +3,6 @@
   "display": {
     "name": "Status",
     "description": "Status and request-control commands for Discord.",
-    "version": "0.0.1"
+    "version": "0.0.2"
   }
 }

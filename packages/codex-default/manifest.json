@@ -1,10 +1,15 @@
 {
-  "id": "official/codex-default",
-  "name": "official/codex-default",
-  "version": "0.0.1",
+  "id": "rync/codex-default",
+  "name": "rync/codex-default",
+  "version": "0.0.2",
   "type": "bundle",
-  "description": "Official Codex provider bundle.",
+  "description": "Rync Codex provider bundle.",
   "members": [
-    { "kind": "provider", "packageId": "official/codex", "version": "~0.0.1", "activation": "select" }
+    {
+      "kind": "provider",
+      "packageId": "rync/codex",
+      "version": "~0.0.2",
+      "activation": "select"
+    }
   ]
 }

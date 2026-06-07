@@ -206,7 +206,7 @@ async function createMission(context, input) {
       requestedName: title,
       runtimeMode,
       objective: goal,
-      owner: { kind: 'package:official/missions.mission', id: missionId, label: title },
+      owner: { kind: 'package:rync/missions.mission', id: missionId, label: title },
       tags: ['mission']
     });
     const mission = {

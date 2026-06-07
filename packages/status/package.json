@@ -1,6 +1,6 @@
 {
-  "name": "@moorline/status",
-  "version": "0.0.1",
+  "name": "@rync/moorline-status",
+  "version": "0.0.2",
   "description": "Provides runtime status and control actions.",
   "type": "module",
   "private": false,
@@ -19,11 +19,11 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.1"
+    "@moorline/contracts": "0.0.2"
   },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "official/status",
+    "packageId": "rync/status",
     "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"

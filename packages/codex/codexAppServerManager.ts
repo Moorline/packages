@@ -113,7 +113,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
         clientInfo: {
           name: 'moorline',
           title: 'Moorline',
-          version: '0.0.1'
+          version: '0.0.2'
         },
         capabilities: {
           experimentalApi: true

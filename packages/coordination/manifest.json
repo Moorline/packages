@@ -1,7 +1,7 @@
 {
-  "id": "official/coordination",
-  "name": "official/coordination",
-  "version": "0.0.1",
+  "id": "rync/coordination",
+  "name": "rync/coordination",
+  "version": "0.0.2",
   "type": "plugin",
   "description": "Routes #moorline-coordination to the main coordination assistant.",
   "entrypoint": "index.mjs",
@@ -18,9 +18,9 @@
   "dependencies": [
     {
       "surface": "transport",
-      "packageId": "official/discord",
+      "packageId": "rync/discord",
       "requiredState": "active",
-      "reason": "Coordination routing depends on the official Discord transport."
+      "reason": "Coordination routing depends on the rync Discord transport."
     }
   ]
 }
