@@ -1,81 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
-
-const piMock = vi.hoisted(() => {
-  const state = {
-    resourceLoaderOptions: [] as Array<Record<string, unknown>>,
-    createAgentSessionInputs: [] as Array<Record<string, unknown>>,
-    openedSessionFiles: [] as string[],
-    customMessages: [] as Array<{ message: Record<string, unknown>; options: Record<string, unknown> }>,
-    prompts: [] as Array<{ text: string; options: Record<string, unknown> }>,
-    customTools: [] as Array<Record<string, unknown>>
-  };
-  class DefaultResourceLoader {
-    options: Record<string, unknown>;
-    constructor(options: Record<string, unknown>) {
-      this.options = options;
-      state.resourceLoaderOptions.push(options);
-    }
-    async reload() {}
-  }
-  class SessionManager {
-    static create(cwd: string, sessionDir: string) {
-      return { kind: 'created', cwd, sessionDir };
-    }
-    static open(sessionFile: string) {
-      state.openedSessionFiles.push(sessionFile);
-      return { kind: 'opened', sessionFile };
-    }
-  }
-  return {
-    state,
-    DefaultResourceLoader,
-    SessionManager
-  };
-});
-
-vi.mock('@earendil-works/pi-coding-agent', () => ({
-  AuthStorage: {
-    create: () => ({})
-  },
-  ModelRegistry: {
-    inMemory: () => ({
-      find: (provider: string, id: string) => ({ provider, id })
-    })
-  },
-  DefaultResourceLoader: piMock.DefaultResourceLoader,
-  SessionManager: piMock.SessionManager,
-  createSyntheticSourceInfo: (filePath: string, metadata: Record<string, unknown>) => ({ filePath, metadata }),
-  defineTool: (tool: Record<string, unknown>) => {
-    piMock.state.customTools.push(tool);
-    return tool;
-  },
-  createAgentSession: async (input: Record<string, unknown>) => {
-    piMock.state.createAgentSessionInputs.push(input);
-    return {
-      session: {
-        sessionId: `pi-${piMock.state.createAgentSessionInputs.length}`,
-        sessionFile: `/tmp/pi-${piMock.state.createAgentSessionInputs.length}.json`,
-        model: null,
-        subscribe() {
-          return () => {};
-        },
-        async sendCustomMessage(message: Record<string, unknown>, options: Record<string, unknown>) {
-          piMock.state.customMessages.push({ message, options });
-        },
-        async prompt(text: string, options: Record<string, unknown>) {
-          piMock.state.prompts.push({ text, options });
-        },
-        getLastAssistantText() {
-          return 'done';
-        },
-        async setModel() {},
-        async compact() {},
-        async abort() {},
-        dispose() {}
-      }
-    };
-  }
-}));
+import { beforeEach, describe, expect, it } from 'vitest';
+import { piCodingAgentMockState as piMockState, resetPiCodingAgentMock } from '../fixtures/pi-coding-agent-mock';
 
 const { PiProviderService } = await import('../../packages/pi/providerService.js');
 
@@ -91,6 +15,10 @@ const defaultToolPolicy = {
 };
 
 describe('Pi provider-native runtime mapping', () => {
+  beforeEach(() => {
+    resetPiCodingAgentMock();
+  });
+
   it('maps workspace sessions to controlled Pi resources, native tools, custom tools, and cursors', async () => {
     const provider = new PiProviderService({ packageId: 'rync/pi' });
     const record = await provider.startOrResumeSession({
@@ -135,8 +63,8 @@ describe('Pi provider-native runtime mapping', () => {
     });
 
     expect(record.resumeCursor).toBeUndefined();
-    expect(piMock.state.resourceLoaderOptions).toHaveLength(1);
-    const resourceLoader = piMock.state.resourceLoaderOptions[0];
+    expect(piMockState.resourceLoaderOptions).toHaveLength(1);
+    const resourceLoader = piMockState.resourceLoaderOptions[0];
     expect(resourceLoader).toMatchObject({
       cwd: '/tmp/workspace',
       noExtensions: true,
@@ -153,14 +81,14 @@ describe('Pi provider-native runtime mapping', () => {
       filePath: '/tmp/skills/proof/SKILL.md',
       baseDir: '/tmp/skills/proof'
     });
-    expect(piMock.state.createAgentSessionInputs[0].tools).toEqual([
+    expect(piMockState.createAgentSessionInputs[0].tools).toEqual([
       'read',
       'bash',
       'edit',
       'write',
       'moorline_plugin_rync_persona_edit_soul'
     ]);
-    expect(piMock.state.customTools[0]).toMatchObject({
+    expect(piMockState.customTools[0]).toMatchObject({
       name: 'moorline_plugin_rync_persona_edit_soul',
       label: 'edit_soul',
       parameters: { type: 'object' }
@@ -197,9 +125,9 @@ describe('Pi provider-native runtime mapping', () => {
       }
     });
 
-    const resourceLoader = piMock.state.resourceLoaderOptions.at(-1)!;
+    const resourceLoader = piMockState.resourceLoaderOptions.at(-1)!;
     expect((resourceLoader.systemPromptOverride as (base: string) => string)('Pi base')).toContain('Moorline ephemeral runtime agent');
-    expect(piMock.state.createAgentSessionInputs.at(-1)?.tools).toEqual(['moorline_core_moorline_session']);
+    expect(piMockState.createAgentSessionInputs.at(-1)?.tools).toEqual(['moorline_core_moorline_session']);
 
     await provider.sendTurn('thread-2', {
       text: 'hello from user',
@@ -209,11 +137,11 @@ describe('Pi provider-native runtime mapping', () => {
         source: 'test'
       }]
     });
-    for (let attempt = 0; attempt < 20 && piMock.state.prompts.length === 0; attempt++) {
+    for (let attempt = 0; attempt < 20 && piMockState.prompts.length === 0; attempt++) {
       await new Promise((resolve) => globalThis.setTimeout(resolve, 5));
     }
 
-    expect(piMock.state.customMessages.at(-1)).toEqual({
+    expect(piMockState.customMessages.at(-1)).toEqual({
       message: {
         customType: 'moorline.context',
         content: '<moorline_context title="Memory context" source="test">\nremember this internally\n</moorline_context>',
@@ -221,7 +149,7 @@ describe('Pi provider-native runtime mapping', () => {
       },
       options: { deliverAs: 'nextTurn' }
     });
-    expect(piMock.state.prompts.at(-1)).toMatchObject({
+    expect(piMockState.prompts.at(-1)).toMatchObject({
       text: 'hello from user'
     });
   });

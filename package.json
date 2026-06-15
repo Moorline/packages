@@ -12,6 +12,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "overrides": {
+    "@moorline/contracts": "file:../moorline/packages/contracts",
+    "@moorline/package-kit": "file:../kit/packages/package-kit"
+  },
   "type": "module",
   "scripts": {
     "build": "node scripts/clean-dist.mjs && bun run build:packages && bun run build:installables",

@@ -35,7 +35,14 @@ jobs:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
       - run: cd ../moorline && bun run --filter '@moorline/contracts' build
-      - run: cd ../kit && bun install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile --filter '!@moorline/package-kit'
+      - name: Install package-kit runtime dependencies
+        run: |
+          deps_dir="$(mktemp -d)"
+          npm install --prefix "$deps_dir" --ignore-scripts esbuild@0.25.12 semver@7.8.1 tar@7.5.15
+          rm -rf ../kit/node_modules/@esbuild ../kit/node_modules/@isaacs ../kit/node_modules/chownr ../kit/node_modules/esbuild ../kit/node_modules/minipass ../kit/node_modules/minizlib ../kit/node_modules/semver ../kit/node_modules/tar ../kit/node_modules/yallist
+          cp -R "$deps_dir/node_modules/." ../kit/node_modules/
+          rm -rf "$deps_dir"
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
@@ -78,7 +85,14 @@ jobs:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
       - run: cd ../moorline && bun run --filter '@moorline/contracts' build
-      - run: cd ../kit && bun install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile --filter '!@moorline/package-kit'
+      - name: Install package-kit runtime dependencies
+        run: |
+          deps_dir="$(mktemp -d)"
+          npm install --prefix "$deps_dir" --ignore-scripts esbuild@0.25.12 semver@7.8.1 tar@7.5.15
+          rm -rf ../kit/node_modules/@esbuild ../kit/node_modules/@isaacs ../kit/node_modules/chownr ../kit/node_modules/esbuild ../kit/node_modules/minipass ../kit/node_modules/minizlib ../kit/node_modules/semver ../kit/node_modules/tar ../kit/node_modules/yallist
+          cp -R "$deps_dir/node_modules/." ../kit/node_modules/
+          rm -rf "$deps_dir"
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
@@ -93,10 +107,11 @@ jobs:
           ln -s "${GITHUB_WORKSPACE}/moorline/packages/contracts" node_modules/@moorline/contracts
           ln -s "${GITHUB_WORKSPACE}/kit/packages/package-kit" node_modules/@moorline/package-kit
       - run: bun run build
-      - run: bun run build:official-npm-packages
+      - run: bun run build:personal-npm-packages
       - run: find dist/installable-archives -type f -name '*.tar.gz' -print | sort
-      - run: npm pack ./dist/npm-packages/@moorline/basic-essentials
-      - run: npm pack ./dist/npm-packages/@moorline/discord-default
+      - run: npm pack ./dist/npm-packages/@rync/moorline-basic-essentials
+      - run: npm pack ./dist/npm-packages/@rync/moorline-discord-default
+      - run: npm pack ./dist/npm-packages/@rync/moorline-pi
 
   full-gate:
     needs: installable-smoke
@@ -124,7 +139,14 @@ jobs:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
       - run: cd ../moorline && bun run --filter '@moorline/contracts' build
-      - run: cd ../kit && bun install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile --filter '!@moorline/package-kit'
+      - name: Install package-kit runtime dependencies
+        run: |
+          deps_dir="$(mktemp -d)"
+          npm install --prefix "$deps_dir" --ignore-scripts esbuild@0.25.12 semver@7.8.1 tar@7.5.15
+          rm -rf ../kit/node_modules/@esbuild ../kit/node_modules/@isaacs ../kit/node_modules/chownr ../kit/node_modules/esbuild ../kit/node_modules/minipass ../kit/node_modules/minizlib ../kit/node_modules/semver ../kit/node_modules/tar ../kit/node_modules/yallist
+          cp -R "$deps_dir/node_modules/." ../kit/node_modules/
+          rm -rf "$deps_dir"
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline

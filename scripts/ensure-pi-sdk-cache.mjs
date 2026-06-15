@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -19,6 +19,18 @@ function installedVersion() {
 
 if (installedVersion() !== piCodingAgentVersion) {
   mkdirSync(cacheRoot, { recursive: true });
+  writeFileSync(
+    join(cacheRoot, 'package.json'),
+    `${JSON.stringify(
+      {
+        private: true,
+        type: 'module',
+        overrides: {}
+      },
+      null,
+      2
+    )}\n`
+  );
   const result = spawnSync(
     'npm',
     [
