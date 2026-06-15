@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Basic Essentials",
-    "description": "Shared rync plugins for memory, missions, model selection, skills, self-editing, and session orchestration.",
+    "description": "Shared rync plugins for memory and persona.",
     "version": "0.0.2",
     "category": "Recommended Essentials",
     "tags": [

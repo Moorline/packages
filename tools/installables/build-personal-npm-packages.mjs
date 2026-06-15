@@ -54,7 +54,7 @@ mkdirSync(tarballRoot, { recursive: true });
 
 const { npmPackPackage, validatePackagePath } = await loadPackageKit();
 const packages = [];
-const surfaces = ['bundle'];
+const surfaces = ['provider', 'bundle'];
 
 for (const surface of surfaces) {
   for (const packageDir of listPackageDirs(surface)) {
@@ -68,7 +68,10 @@ for (const surface of surfaces) {
       outDir: packageRoot,
       npmName,
       access: 'public',
-      embeddedMemberSourceDirs: (validated.manifest.members ?? []).map((member) => packageDirForPersonalPackageId(member.packageId))
+      embeddedMemberSourceDirs:
+        surface === 'bundle'
+          ? (validated.manifest.members ?? []).map((member) => packageDirForPersonalPackageId(member.packageId))
+          : undefined
     });
     packages.push({
       packageId: packed.packageId,

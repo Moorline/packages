@@ -1,0 +1,50 @@
+{
+  "id": "rync/pi",
+  "name": "rync/pi",
+  "version": "0.0.2",
+  "type": "provider",
+  "description": "Rync Pi SDK provider package.",
+  "entrypoint": "index.mjs",
+  "displayCategory": "Rync Providers",
+  "toolPolicy": {
+    "workspace": {
+      "nativePreset": "provider-default",
+      "allowNativeTools": [
+        "read",
+        "bash",
+        "edit",
+        "write"
+      ]
+    },
+    "ephemeral": {
+      "nativePreset": "none",
+      "grants": [
+        "core.moorline_session"
+      ]
+    }
+  },
+  "nativeToolDocumentation": {
+    "nativeToolNames": [
+      "read",
+      "bash",
+      "edit",
+      "write"
+    ],
+    "defaultWorkspacePreset": "provider-default",
+    "defaultEphemeralPreset": "none",
+    "grantMapping": "Moorline ProviderToolDefinition entries are exposed as Pi custom tools with stable moorline_* names derived from Moorline tool IDs. Ephemeral sessions receive only session-granted tools, including core.moorline_session by default."
+  },
+  "activation": {
+    "uniqueKey": "provider"
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "agentDir": {
+        "type": "string",
+        "title": "Pi agent directory",
+        "description": "Optional Pi agent config directory. Defaults to Pi SDK standard discovery."
+      }
+    }
+  }
+}

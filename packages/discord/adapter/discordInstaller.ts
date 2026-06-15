@@ -1192,13 +1192,13 @@ export class DiscordJsOperator implements DiscordOperator {
     const roles = await this.listRoles(input.scopeId);
     const tracked = input.previousId ? roles.find((role) => role.id === input.previousId) : undefined;
     const named = roles.find((role) => role.name === input.name);
-    const verifiedAt = new Date().toISOString();
+    const syncedAt = new Date().toISOString();
 
     const toAccessGroup = (role: DiscordRoleRecord): RuntimeAccessGroupRecord => ({
       id: role.id,
       kind: input.kind,
       name: role.name,
-      verifiedAt,
+      syncedAt,
       metadata: {
         nativeKind: 'discord-role'
       }

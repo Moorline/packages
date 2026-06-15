@@ -32,7 +32,7 @@ function extractTasks(reply) {
 export default {
   id: manifest.id,
   manifest,
-  async beforeAgentPrompt(input, context) {
+  async contributeAgentContext(input, context) {
     const scopeId = context.config.transport.scopeId;
     const retrieval = await context.retrieveMemory({
       query: input.text,
@@ -42,10 +42,18 @@ export default {
       maxResults: input.surface === 'session' ? 5 : 4,
       enableRerank: true
     });
-    if (input.surface === 'coordination') {
-      return ['Memory context:', summarizeSessions(context.listSessions()), ...formatRetrievedMemory(retrieval)];
-    }
-    return [`Current session summary: ${input.session?.summary ?? 'No prior summary recorded yet.'}`, ...formatRetrievedMemory(retrieval)];
+    const content = input.surface === 'coordination'
+      ? ['Memory context:', summarizeSessions(context.listSessions()), ...formatRetrievedMemory(retrieval)].join('\n')
+      : [`Current session summary: ${input.session?.summary ?? 'No prior summary recorded yet.'}`, ...formatRetrievedMemory(retrieval)].join('\n');
+    return {
+      perTurnContext: [
+        {
+          title: 'Memory context',
+          content,
+          source: manifest.id
+        }
+      ]
+    };
   },
   async afterAgentResponse(input, context) {
     if (input.surface !== 'session' || !input.session) return;

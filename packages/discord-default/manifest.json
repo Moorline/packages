@@ -13,43 +13,7 @@
     },
     {
       "kind": "plugin",
-      "packageId": "rync/admin-control",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/channel-lifecycle",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/coordination",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/missions",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/session-agent",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/session-commands",
-      "version": "~0.0.2",
-      "activation": "enable"
-    },
-    {
-      "kind": "plugin",
-      "packageId": "rync/status",
+      "packageId": "rync/discord-runtime",
       "version": "~0.0.2",
       "activation": "enable"
     }

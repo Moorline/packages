@@ -3,13 +3,14 @@
   "name": "rync/persona",
   "version": "0.0.2",
   "type": "plugin",
-  "description": "Contributes the default Moorline persona and system prompt.",
+  "description": "Contributes the default Moorline persona, system prompt, and editable SOUL guidance.",
   "entrypoint": "index.mjs",
   "capabilities": [
-    "fs.read"
+    "fs.read",
+    "fs.write"
   ],
   "hooks": [
-    "beforeAgentPrompt"
+    "contributeAgentContext"
   ],
   "defaultEnabled": true
 }

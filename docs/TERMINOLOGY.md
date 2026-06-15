@@ -7,7 +7,7 @@ Use these terms consistently in personal package docs, prompts, and package meta
 - `operator-controlled runtime`
   - The person or team running Moorline controls package activation, provider/transport selection, policy, state, audit, and deployment environment.
 - `external surface`
-  - A system Moorline connects to through a transport or adapter. Discord is one external surface; GitHub, CI, email, incident tools, and custom APIs can be others.
+  - A system Moorline connects to through a transport or adapter. GitHub, CI, email, incident tools, and custom APIs can all be external surfaces.
 - `transport`
   - An installable package that connects Moorline to an external surface and emits runtime transport events.
 - `provider`

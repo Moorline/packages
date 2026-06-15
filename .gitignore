@@ -6,3 +6,4 @@ coverage/
 .env
 .sandbox/
 .tmp_audit/
+.cache/

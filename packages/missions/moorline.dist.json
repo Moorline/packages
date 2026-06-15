@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Missions",
-    "description": "Scheduled recurring objectives implemented as durable sessions.",
-    "version": "0.0.2"
-  }
-}

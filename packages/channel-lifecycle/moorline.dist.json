@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Channel Lifecycle",
-    "description": "Archive and delete controls for Discord-managed channels.",
-    "version": "0.0.2"
-  }
-}
