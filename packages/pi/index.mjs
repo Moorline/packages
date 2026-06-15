@@ -10,7 +10,7 @@ const implementationPath = [
 ].find((candidate) => existsSync(candidate));
 
 if (!implementationPath) {
-  throw new Error('Unable to locate Discord runtimePackage implementation.');
+  throw new Error('Unable to locate Pi runtimePackage implementation.');
 }
 
 const module = await import(pathToFileURL(implementationPath).href);

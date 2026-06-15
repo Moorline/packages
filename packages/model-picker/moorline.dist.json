@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Model Picker",
-    "description": "Commands for listing and selecting the default Moorline model.",
-    "version": "0.0.2"
-  }
-}

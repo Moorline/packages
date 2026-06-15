@@ -11,7 +11,7 @@
     "fs.write"
   ],
   "hooks": [
-    "beforeAgentPrompt",
+    "contributeAgentContext",
     "afterAgentResponse"
   ],
   "defaultEnabled": true

@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Coordination",
-    "description": "Routes Moorline coordination resource messages through the Discord transport.",
-    "version": "0.0.2"
-  }
-}

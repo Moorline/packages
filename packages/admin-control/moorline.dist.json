@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Admin Control",
-    "description": "Runtime and provider lifecycle controls for Discord surfaces.",
-    "version": "0.0.2"
-  }
-}

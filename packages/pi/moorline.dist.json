@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "display": {
+    "name": "Pi Provider",
+    "description": "Rync Pi SDK provider package for Moorline.",
+    "version": "0.0.2",
+    "category": "Rync Providers",
+    "tags": [
+      "rync",
+      "pi",
+      "provider"
+    ],
+    "publisher": "Rync",
+    "experimental": false
+  },
+  "distribution": {
+    "audiences": [
+      "advanced"
+    ],
+    "setupOrder": 20
+  },
+  "release": {
+    "recommendedRef": "v0.0.2",
+    "channel": "stable"
+  }
+}

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Default",
-    "description": "Discord transport plus the rync Discord coordination, session, status, admin, lifecycle, and mission plugins.",
+    "description": "Discord transport plus Moorline runtime commands and message routing.",
     "version": "0.0.2",
     "category": "Recommended Transports",
     "tags": [

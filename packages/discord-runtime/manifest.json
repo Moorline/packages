@@ -1,0 +1,37 @@
+{
+  "id": "rync/discord-runtime",
+  "name": "rync/discord-runtime",
+  "version": "0.0.2",
+  "type": "plugin",
+  "description": "Discord runtime commands and message routing for Moorline.",
+  "entrypoint": "index.mjs",
+  "priority": 100,
+  "capabilities": [
+    "runtime.control",
+    "memory.read",
+    "transport.message.send",
+    "transport.resource.create",
+    "transport.resource.update",
+    "transport.resource.delete",
+    "net.connect",
+    "fs.read",
+    "session.inspect",
+    "session.create",
+    "session.archive",
+    "session.delete"
+  ],
+  "hooks": [
+    "onAction",
+    "onDomainEvent",
+    "onTransportEvent"
+  ],
+  "defaultEnabled": true,
+  "dependencies": [
+    {
+      "surface": "transport",
+      "packageId": "rync/discord",
+      "requiredState": "active",
+      "reason": "Discord runtime routing and commands depend on the rync Discord transport."
+    }
+  ]
+}

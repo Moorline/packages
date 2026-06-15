@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "display": {
-    "name": "Skills",
-    "description": "Exposes the visible skill catalog and the load_skill tool.",
-    "version": "0.0.2"
-  }
-}

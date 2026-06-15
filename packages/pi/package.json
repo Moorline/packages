@@ -1,0 +1,36 @@
+{
+  "name": "@rync/moorline-pi",
+  "version": "0.0.2",
+  "description": "Rync Pi SDK provider package.",
+  "type": "module",
+  "private": false,
+  "main": "./index.mjs",
+  "types": "./dist/runtimePackage.d.ts",
+  "files": [
+    "dist",
+    "index.mjs",
+    "manifest.json",
+    "moorline.dist.json"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/ensure-pi-sdk-cache.mjs && node ../../scripts/clean-package-dist.mjs pi && tsc -p tsconfig.json && bun build ./runtimePackage.ts --target node --format esm --packages external --outfile dist/packages/pi/runtimePackage.js && node ../../scripts/flatten-package-dist.mjs pi",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "0.79.3",
+    "@moorline/contracts": "0.0.2"
+  },
+  "moorline": {
+    "schemaVersion": 1,
+    "packageId": "rync/pi",
+    "kind": "provider",
+    "manifestPath": "manifest.json",
+    "distroPath": "moorline.dist.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Moorline/packages.git",
+    "directory": "packages/pi"
+  }
+}

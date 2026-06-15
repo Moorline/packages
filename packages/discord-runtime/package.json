@@ -1,24 +1,27 @@
 {
-  "name": "@rync/moorline-basic-essentials",
+  "name": "@rync/moorline-discord-runtime",
   "version": "0.0.2",
-  "description": "Shared Moorline essentials for memory and persona.",
+  "description": "Discord runtime commands and message routing for Moorline.",
   "type": "module",
   "private": false,
+  "main": "./index.mjs",
   "files": [
+    "index.mjs",
     "manifest.json",
     "moorline.dist.json",
-    "*.mjs",
-    "*.mjs.d.ts",
-    "*.md"
+    "modules"
   ],
   "scripts": {
     "build": "true",
     "typecheck": "true"
   },
+  "dependencies": {
+    "@moorline/contracts": "0.0.2"
+  },
   "moorline": {
     "schemaVersion": 1,
-    "packageId": "rync/basic-essentials",
-    "kind": "bundle",
+    "packageId": "rync/discord-runtime",
+    "kind": "plugin",
     "manifestPath": "manifest.json",
     "distroPath": "moorline.dist.json"
   },
@@ -26,6 +29,6 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Moorline/packages.git",
-    "directory": "packages/basic-essentials"
+    "directory": "packages/discord-runtime"
   }
 }

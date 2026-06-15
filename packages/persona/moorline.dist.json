@@ -2,11 +2,12 @@
   "schemaVersion": 1,
   "display": {
     "name": "Moorline Persona",
-    "description": "Default Moorline persona and system prompt contribution.",
+    "description": "Default Moorline persona, system prompt, and editable SOUL guidance.",
     "version": "0.0.2",
     "tags": [
       "persona",
-      "prompt"
+      "prompt",
+      "soul"
     ]
   }
 }

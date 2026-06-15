@@ -41,6 +41,18 @@ function archiveFileName(surface, packageDir, version) {
   return `moorline-${surface}-${rel}-${version}.tar.gz`;
 }
 
+function packageDirForPersonalPackageId(packageId) {
+  const [namespace, name] = packageId.split('/');
+  if (namespace !== 'rync' || !name) {
+    throw new Error(`Personal bundle members must use rync/* package ids: ${packageId}`);
+  }
+  const dir = join(projectRoot, 'packages', name);
+  if (!existsSync(join(dir, 'manifest.json'))) {
+    throw new Error(`Unable to find personal bundle member source for ${packageId}: ${dir}`);
+  }
+  return dir;
+}
+
 const bundleRoot = join(projectRoot, 'dist', 'installables');
 const archiveRoot = join(projectRoot, 'dist', 'installable-archives');
 
@@ -74,7 +86,11 @@ for (const surface of surfaces) {
         surface,
         archiveFileName: archiveName,
         archiveOutDir: join(archiveRoot, `${surface}s`, dirname(rel)),
-        runtimeSmoke: false
+        runtimeSmoke: false,
+        embeddedMemberSourceDirs:
+          surface === 'bundle'
+            ? (validated.manifest.members ?? []).map((member) => packageDirForPersonalPackageId(member.packageId))
+            : undefined
       });
     } else {
       await validatePackagePath({
