@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  build-official-packages:
+  build-personal-packages:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,7 +32,14 @@ jobs:
           node-version: 22
       - run: cd ../moorline && bun install --frozen-lockfile
       - run: cd ../moorline && bun run --filter '@moorline/contracts' build
-      - run: cd ../kit && bun install --frozen-lockfile
+      - run: cd ../kit && bun install --frozen-lockfile --filter '!@moorline/package-kit'
+      - name: Install package-kit runtime dependencies
+        run: |
+          deps_dir="$(mktemp -d)"
+          npm install --prefix "$deps_dir" --ignore-scripts esbuild@0.25.12 semver@7.8.1 tar@7.5.15
+          rm -rf ../kit/node_modules/@esbuild ../kit/node_modules/@isaacs ../kit/node_modules/chownr ../kit/node_modules/esbuild ../kit/node_modules/minipass ../kit/node_modules/minizlib ../kit/node_modules/semver ../kit/node_modules/tar ../kit/node_modules/yallist
+          cp -R "$deps_dir/node_modules/." ../kit/node_modules/
+          rm -rf "$deps_dir"
       - name: Link local contracts into kit checkout
         run: |
           mkdir -p ../kit/node_modules/@moorline
@@ -48,15 +55,15 @@ jobs:
           ln -s "${GITHUB_WORKSPACE}/kit/packages/package-kit" node_modules/@moorline/package-kit
       - run: bun run check
       - run: bun run build
-      - run: bun run build:official-npm-packages
+      - run: bun run build:personal-npm-packages
       - run: find dist/installable-archives -type f -name '*.tar.gz' -print0 | sort -z | xargs -0 sha256sum > dist/installable-archives/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: official-installable-archives
+          name: personal-installable-archives
           path: |
             dist/installable-archives/**/*.tar.gz
             dist/installable-archives/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: official-npm-package-directories
+          name: personal-npm-package-directories
           path: dist/npm-packages

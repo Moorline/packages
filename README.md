@@ -50,6 +50,17 @@ bun run build
 
 Bundle packages embed their member transport and plugin packages so the public npm surface stays focused on user-meaningful install choices. Single installable packages like `rync/pi` are published directly.
 
+Users install these packages through the Moorline CLI or Control API by Moorline package id:
+
+```bash
+moorline package search rync
+moorline package install rync/basic-essentials --kind bundle
+moorline package install rync/discord-default --kind bundle
+moorline package install rync/pi --kind provider
+```
+
+The npm packages are the distribution and discovery surface. They all carry the shared `moorline-package` keyword, but users should not install runtime packages with `npm install` directly.
+
 ## Releases
 
 Publishing is manual for now. The initial public npm bundle packages are:
