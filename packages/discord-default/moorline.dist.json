@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Default",
-    "description": "Discord transport plus Moorline runtime commands and message routing.",
-    "version": "0.0.2",
+    "description": "Discord transport plus status command and project resource routing.",
+    "version": "0.0.3",
     "category": "Recommended Transports",
     "tags": [
       "rync",
@@ -20,7 +20,7 @@
     "setupOrder": 10
   },
   "release": {
-    "recommendedRef": "v0.0.2",
+    "recommendedRef": "v0.0.3",
     "channel": "stable"
   }
 }

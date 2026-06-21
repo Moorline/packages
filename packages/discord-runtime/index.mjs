@@ -1,15 +1,9 @@
 import manifest from './manifest.json' with { type: 'json' };
-import adminControl from './modules/admin-control/index.mjs';
-import channelLifecycle from './modules/channel-lifecycle/index.mjs';
 import routing from './modules/routing/index.mjs';
-import sessionCommands from './modules/session-commands/index.mjs';
 import status from './modules/status/index.mjs';
 
 const modules = [
-  adminControl,
-  channelLifecycle,
   routing,
-  sessionCommands,
   status
 ];
 
@@ -36,10 +30,7 @@ export default {
   async onAction(event, context) {
     return await firstHandled('onAction', [event, context]);
   },
-  async onDomainEvent(event, context) {
-    return await firstHandled('onDomainEvent', [event, context]);
-  },
-  async onTransportEvent(event, context) {
-    return await firstHandled('onTransportEvent', [event, context]);
+  async onTransportIntent(intent, context) {
+    return await firstHandled('onTransportIntent', [intent, context]);
   }
 };

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Runtime",
-    "description": "Discord commands, coordination routing, session routing, and runtime controls.",
-    "version": "0.0.2"
+    "description": "Discord status command and project resource message routing.",
+    "version": "0.0.3"
   }
 }
