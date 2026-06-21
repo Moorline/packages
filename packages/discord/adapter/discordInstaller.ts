@@ -2,27 +2,32 @@ import {
   ChannelType,
   Client,
   Events,
-  PermissionsBitField,
   PermissionFlagsBits,
   type GuildBasedChannel,
   type TextChannel
 } from 'discord.js';
 import { URLSearchParams } from 'node:url';
-import type { RuntimeSurfaceBootstrapInput, RuntimeSurfaceState } from '@moorline/contracts';
 import type {
-  RuntimeAccessGroupInput,
-  RuntimeAccessGroupRecord,
   RuntimeActionDefinition,
   RuntimeActorIdentity,
+  RuntimeCreateTransportResourceInput,
+  RuntimeDeleteTransportResourceInput,
   RuntimeMessagePayload,
   RuntimeMessageReceipt,
+  RuntimeMessageTarget,
   RuntimeNativeActionRegistration,
   RuntimeScopeId,
+  RuntimeTransport,
   RuntimeTransportAccessInput,
   RuntimeTransportAuth,
+  RuntimeTransportCapabilities,
+  RuntimeTransportEffect,
+  RuntimeTransportEffectReceipt,
+  RuntimeTransportIntent,
+  RuntimeTransportResourceRecord,
+  RuntimeUpdateTransportResourceInput,
   RuntimeTransportVerification,
 } from '@moorline/contracts';
-import { bootstrapManagedSurface } from '../mapping/managedSurface.js';
 import {
   DISCORD_EPHEMERAL_FLAG,
   resolveReplyFlags,
@@ -33,7 +38,6 @@ import {
 } from './discordPayload.js';
 import {
   asChannelRecord,
-  asRoleRecord,
   assertTextChannel,
   collectStringOptions,
   createDiscordClient,
@@ -44,7 +48,7 @@ import {
 } from './discordMapping.js';
 
 export const REQUIRED_DISCORD_PERMISSIONS = '268528720';
-const DISCORD_MANAGED_ADMIN_ROLE_PERMISSIONS = new PermissionsBitField(PermissionFlagsBits.ManageRoles).bitfield.toString();
+const DISCORD_START_CHANNEL_NAME = 'moorline-start';
 
 export interface RuntimePermissionOverwrite {
   subject: 'everyone' | 'role' | 'member';
@@ -67,105 +71,6 @@ export interface DiscordChannelRecord {
   name: string;
   type: 'text' | 'category' | 'thread';
   parentId: string | null;
-}
-
-export interface DiscordRoleRecord {
-  id: string;
-  name: string;
-  permissions: string;
-}
-
-type RuntimeTransportResourceKind = 'root' | 'collection' | 'conversation' | 'item' | 'direct' | 'external';
-
-interface RuntimeTransportResourceRecord {
-  id: string;
-  name: string;
-  kind: RuntimeTransportResourceKind;
-  parentId: string | null;
-  metadata?: Record<string, unknown>;
-}
-
-interface RuntimeCreateTransportResourceInput {
-  scopeId: RuntimeScopeId;
-  name: string;
-  kind: RuntimeTransportResourceKind;
-  parentId?: string | null;
-  metadata?: Record<string, unknown>;
-}
-
-interface RuntimeUpdateTransportResourceInput {
-  scopeId: RuntimeScopeId;
-  transportResourceId: string;
-  name?: string;
-  parentId?: string | null;
-  metadata?: Record<string, unknown>;
-}
-
-interface RuntimeDeleteTransportResourceInput {
-  scopeId: RuntimeScopeId;
-  transportResourceId: string;
-}
-
-interface RuntimeMessageTarget {
-  scopeId?: RuntimeScopeId;
-  transportResourceId: string;
-  threadId?: string;
-}
-
-interface RuntimeTransportCapabilities {
-  nativeActions: boolean;
-  resources: {
-    list: boolean;
-    create: boolean;
-    update: boolean;
-    delete: boolean;
-  };
-  presence: boolean;
-  maxMessageTextLength?: number;
-  maxAttachmentBytes?: number;
-  metadata?: Record<string, unknown>;
-}
-
-type RuntimeTransportEvent =
-  | {
-      type: 'message.received';
-      scopeId: RuntimeScopeId;
-      transportResourceId: string;
-      actor: RuntimeActorIdentity;
-      message: { id?: string; text: string; attachments?: unknown[]; metadata?: Record<string, unknown> };
-    }
-  | {
-      type: 'action.invoked';
-      scopeId: RuntimeScopeId;
-      transportResourceId?: string;
-      actor: RuntimeActorIdentity;
-      actionId: string;
-      input: Record<string, unknown>;
-      native?: { kind: string; id?: string; payload?: unknown };
-    }
-  | {
-      type: 'resource.lifecycle';
-      scopeId: RuntimeScopeId;
-      resource: RuntimeTransportResourceRecord;
-      action: 'created' | 'updated' | 'deleted';
-      previous?: Partial<RuntimeTransportResourceRecord>;
-    };
-
-interface RuntimeTransport {
-  verifyAccess(input: RuntimeTransportAccessInput): Promise<RuntimeTransportVerification>;
-  start(auth: RuntimeTransportAuth): Promise<void>;
-  stop(): Promise<void>;
-  capabilities(): RuntimeTransportCapabilities;
-  onEvent(handler: (event: RuntimeTransportEvent) => Promise<void>): void;
-  sendMessage(target: RuntimeMessageTarget, payload: RuntimeMessagePayload): Promise<RuntimeMessageReceipt>;
-}
-
-interface RuntimeSurfaceNames {
-  mainCategoryName: string;
-  coordinationResourceName: string;
-  statusResourceName: string;
-  sessionsGroupName: string;
-  archiveGroupName: string;
 }
 
 export interface DiscordCommandDefinition {
@@ -228,6 +133,8 @@ export interface DiscordMessageEvent {
   scopeId: string;
   guildId: string;
   channelId: string;
+  messageId: string;
+  channel: DiscordChannelRecord | null;
   authorId: string;
   authorUsername: string;
   authorGlobalName: string | null;
@@ -245,6 +152,7 @@ export interface SlashCommandEvent {
   scopeId: string;
   guildId: string;
   channelId: string;
+  interactionId: string;
   userId: string;
   userMention: string;
   memberRoleIds: string[];
@@ -263,18 +171,6 @@ export interface DiscordNativeActionPayload {
   messageId?: string;
   reply?(payload: DiscordMessagePayload): Promise<void>;
   defer?(input?: { ephemeral?: boolean; flags?: number }): Promise<void>;
-}
-
-export interface DiscordReactionEvent {
-  scopeId: string;
-  guildId: string;
-  channelId: string;
-  messageId: string;
-  userId: string;
-  memberRoleIds: string[];
-  isTransportAdmin: boolean;
-  emoji: string;
-  bot: boolean;
 }
 
 export interface DiscordButtonInteractionEvent {
@@ -314,14 +210,11 @@ export type DiscordTransportLifecycleEvent =
 
 export interface DiscordOperator extends RuntimeTransport {
   registerCommands(scopeId: string, commands: DiscordCommandDefinition[]): Promise<void>;
-  reconcileRuntimeSurface(input: RuntimeSurfaceBootstrapInput): Promise<RuntimeSurfaceState>;
   onMessage(handler: (event: DiscordMessageEvent) => Promise<void>): void;
   onSlashCommand(handler: (event: SlashCommandEvent) => Promise<void>): void;
-  onReaction(handler: (event: DiscordReactionEvent) => Promise<void>): void;
   onButtonInteraction(handler: (event: DiscordButtonInteractionEvent) => Promise<void>): void;
   onLifecycleEvent(handler: (event: DiscordTransportLifecycleEvent) => Promise<void>): void;
   listChannels(scopeId: string): Promise<DiscordChannelRecord[]>;
-  listRoles(scopeId: string): Promise<DiscordRoleRecord[]>;
   createCategory(scopeId: string, name: string, permissionOverwrites?: RuntimePermissionOverwrite[]): Promise<DiscordChannelRecord>;
   createTextChannel(
     scopeId: string,
@@ -329,21 +222,17 @@ export interface DiscordOperator extends RuntimeTransport {
     parentId: string | null,
     permissionOverwrites?: RuntimePermissionOverwrite[]
   ): Promise<DiscordChannelRecord>;
-  createRole(scopeId: string, name: string): Promise<DiscordRoleRecord>;
   updateChannel(
     scopeId: string,
     channelId: string,
     update: { name?: string; parentId?: string | null; permissionOverwrites?: RuntimePermissionOverwrite[] }
   ): Promise<DiscordChannelRecord>;
-  updateRole(scopeId: string, roleId: string, update: { name?: string; permissions?: string }): Promise<DiscordRoleRecord>;
   deleteChannel(scopeId: string, channelId: string): Promise<void>;
-  deleteRole(scopeId: string, roleId: string): Promise<void>;
   triggerTyping(channelId: string): Promise<void>;
-  addReaction(channelId: string, messageId: string, emoji: string): Promise<void>;
 }
 
 interface DiscordListenerErrorContext {
-  surface: 'message' | 'slash' | 'button' | 'lifecycle' | 'reaction';
+  surface: 'message' | 'slash' | 'button' | 'lifecycle';
   guildId?: string;
   channelId?: string;
   commandName?: string;
@@ -391,9 +280,10 @@ export function buildDiscordInviteUrl(applicationId: string, permissions = REQUI
 export class DiscordJsOperator implements DiscordOperator {
   private readonly client: Client;
   private static readonly EPHEMERAL_FLAG = DISCORD_EPHEMERAL_FLAG;
-  private transportEventHandler: ((event: RuntimeTransportEvent) => Promise<void>) | null = null;
+  private transportIntentHandler: ((intent: RuntimeTransportIntent) => Promise<void>) | null = null;
   private genericBindingsRegistered = false;
   private readonly nativeActionIdsByDiscordPath = new Map<string, string>();
+  private readonly knownSessionChannelIds = new Set<string>();
 
   constructor(
     client = createDiscordClient(),
@@ -408,10 +298,10 @@ export class DiscordJsOperator implements DiscordOperator {
     return {
       nativeActions: true,
       resources: {
-        list: true,
-        create: true,
-        update: true,
-        delete: true
+        list: false,
+        create: false,
+        update: false,
+        delete: false
       },
       presence: false,
       metadata: {
@@ -452,24 +342,27 @@ export class DiscordJsOperator implements DiscordOperator {
   }
 
   async start(auth: RuntimeTransportAuth): Promise<void> {
-    if (this.client.isReady()) {
-      return;
+    if (!this.client.isReady()) {
+      const token = auth.token?.trim();
+      if (!token) {
+        throw new Error('Discord transport auth token is required');
+      }
+      await this.client.login(token);
+      await this.waitForReady();
     }
-
-    const token = auth.token?.trim();
-    if (!token) {
-      throw new Error('Discord transport auth token is required');
+    const scopeId = typeof auth.metadata?.scopeId === 'string' ? auth.metadata.scopeId : undefined;
+    if (scopeId) {
+      await this.ensureStartChannel(scopeId);
+      await this.hydrateKnownSessionChannels(scopeId);
     }
-    await this.client.login(token);
-    await this.waitForReady();
   }
 
   async stop(): Promise<void> {
     this.client.destroy();
   }
 
-  onEvent(handler: (event: RuntimeTransportEvent) => Promise<void>): void {
-    this.transportEventHandler = handler;
+  onIntent(handler: (intent: RuntimeTransportIntent) => Promise<void>): void {
+    this.transportIntentHandler = handler;
     if (this.genericBindingsRegistered) {
       return;
     }
@@ -479,9 +372,28 @@ export class DiscordJsOperator implements DiscordOperator {
       if (event.bot) {
         return;
       }
-      await this.transportEventHandler?.({
-        type: 'message.received',
+      if (!this.isSessionTextChannel(event.channel) && !this.knownSessionChannelIds.has(event.channelId)) {
+        return;
+      }
+      if (this.isSessionTextChannel(event.channel)) {
+        this.knownSessionChannelIds.add(event.channel.id);
+        await this.emitSessionEnsureIntent(
+          {
+            kind: 'channel',
+            action: 'updated',
+            scopeId: event.scopeId,
+            guildId: event.guildId,
+            channel: event.channel
+          },
+          this.sessionEnsureIntentId('message', event.guildId, event.channel)
+        );
+      }
+      await this.transportIntentHandler?.({
+        type: 'transport.message.received',
+        intentId: `discord:message:${event.guildId}:${event.messageId}`,
         scopeId: event.scopeId,
+        transportPackageId: 'rync/discord',
+        occurredAt: new Date().toISOString(),
         transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.authorId,
@@ -501,12 +413,22 @@ export class DiscordJsOperator implements DiscordOperator {
       });
     });
     this.onSlashCommand(async (event) => {
+      if (event.commandName !== 'status' || event.subcommandName) {
+        await event.reply({
+          content: 'Only `/status` is available in this Discord surface.',
+          ephemeral: true
+        });
+        return;
+      }
       const mappedActionId =
         this.nativeActionIdsByDiscordPath.get(this.discordActionPath(event.commandName, event.subcommandName)) ??
         `discord.command.${event.commandName}${event.subcommandName ? `.${event.subcommandName}` : ''}`;
-      await this.transportEventHandler?.({
-        type: 'action.invoked',
+      await this.transportIntentHandler?.({
+        type: 'transport.action.invoked',
+        intentId: `discord:command:${event.guildId}:${event.interactionId}`,
         scopeId: event.scopeId,
+        transportPackageId: 'rync/discord',
+        occurredAt: new Date().toISOString(),
         transportResourceId: event.channelId,
         actor: this.toRuntimeActor({
           actorId: event.userId,
@@ -529,69 +451,81 @@ export class DiscordJsOperator implements DiscordOperator {
       });
     });
     this.onButtonInteraction(async (event) => {
-      await this.transportEventHandler?.({
-        type: 'action.invoked',
-        scopeId: event.scopeId,
-        transportResourceId: event.channelId,
-        actor: this.toRuntimeActor({
-          actorId: event.userId,
-          accessGroupIds: event.memberRoleIds,
-          isSurfaceAdmin: event.isTransportAdmin
-        }),
-        actionId: event.buttonId,
-        input: {},
-        native: {
-          kind: 'discord.button',
-          id: event.messageId,
-          payload: {
-            buttonId: event.buttonId,
-            channelId: event.channelId,
-            messageId: event.messageId,
-            reply: event.reply,
-            defer: event.defer
-          }
-        }
-      });
-    });
-    this.onReaction(async (event) => {
-      if (event.bot) {
-        return;
-      }
-      await this.transportEventHandler?.({
-        type: 'action.invoked',
-        scopeId: event.scopeId,
-        transportResourceId: event.channelId,
-        actor: this.toRuntimeActor({
-          actorId: event.userId,
-          accessGroupIds: event.memberRoleIds,
-          isSurfaceAdmin: event.isTransportAdmin
-        }),
-        actionId: `discord.reaction.${event.emoji}`,
-        input: {
-          emoji: event.emoji,
-          messageId: event.messageId
-        },
-        native: {
-          kind: 'discord.reaction',
-          id: event.messageId,
-          payload: {
-            emoji: event.emoji
-          }
-        }
+      await event.reply({
+        content: 'This Discord action is no longer available.',
+        ephemeral: true
       });
     });
     this.onLifecycleEvent(async (event) => {
       if (event.kind !== 'channel') {
         return;
       }
-      await this.transportEventHandler?.({
-        type: 'resource.lifecycle',
-        scopeId: event.scopeId,
-        action: event.action,
-        resource: this.toRuntimeTransportResourceRecord(event.channel),
-        ...(event.previous ? { previous: this.toRuntimeTransportResourceRecord(event.previous) } : {})
-      });
+      if (event.action === 'created') {
+        if (!this.isSessionTextChannel(event.channel)) {
+          return;
+        }
+        this.knownSessionChannelIds.add(event.channel.id);
+        await this.emitSessionEnsureIntent(event, this.sessionEnsureIntentId('created', event.guildId, event.channel));
+        return;
+      }
+      if (event.action === 'updated') {
+        const wasSession = this.isSessionTextChannel(event.previous ?? null) || this.knownSessionChannelIds.has(event.channel.id);
+        const isSession = this.isSessionTextChannel(event.channel);
+        if (!isSession) {
+          return;
+        }
+        this.knownSessionChannelIds.add(event.channel.id);
+        if (!wasSession || event.previous?.parentId !== event.channel.parentId || event.previous?.name !== event.channel.name) {
+          await this.emitSessionEnsureIntent(event, this.sessionEnsureIntentId('updated', event.guildId, event.channel));
+        }
+        return;
+      }
+      if (event.action === 'deleted') {
+        const deletedChannelId = event.channel.id;
+        if (!this.isSessionTextChannel(event.channel) && !this.knownSessionChannelIds.has(deletedChannelId)) {
+          return;
+        }
+        this.knownSessionChannelIds.delete(deletedChannelId);
+        await this.transportIntentHandler?.({
+          type: 'transport.session.delete',
+          intentId: `discord:channel.deleted:${event.guildId}:${deletedChannelId}`,
+          scopeId: event.scopeId,
+          transportPackageId: 'rync/discord',
+          occurredAt: new Date().toISOString(),
+          transportResourceId: deletedChannelId,
+          reason: 'Discord text channel deleted',
+          deleteWorkspace: true
+        });
+      }
     });
+  }
+
+  private async emitSessionEnsureIntent(event: Extract<DiscordTransportLifecycleEvent, { kind: 'channel' }>, intentId: string): Promise<void> {
+    await this.transportIntentHandler?.({
+      type: 'transport.session.ensure',
+      intentId,
+      scopeId: event.scopeId,
+      transportPackageId: 'rync/discord',
+      occurredAt: new Date().toISOString(),
+      transportResourceId: event.channel.id,
+      requestedName: event.channel.name,
+      owner: {
+        kind: 'work_item',
+        id: event.channel.parentId ?? event.guildId,
+        label: event.channel.parentId ? `Discord category ${event.channel.parentId}` : event.guildId
+      }
+    });
+  }
+
+  private sessionEnsureIntentId(reason: 'created' | 'updated' | 'message', guildId: string, channel: DiscordChannelRecord): string {
+    return [
+      'discord:channel.ensure',
+      reason,
+      guildId,
+      channel.id,
+      channel.parentId ?? 'orphan',
+      encodeURIComponent(channel.name)
+    ].join(':');
   }
 
   async registerCommands(scopeId: string, commands: DiscordCommandDefinition[]): Promise<void> {
@@ -653,24 +587,6 @@ export class DiscordJsOperator implements DiscordOperator {
     }
   }
 
-  async reconcileRuntimeSurface(input: RuntimeSurfaceBootstrapInput): Promise<RuntimeSurfaceState> {
-    if (!input.actorId || !input.names || !input.managedAdminAccessGroup || !input.managedMemberAccessGroup) {
-      throw new Error('Discord runtime surface reconciliation requires actor, names, and managed access group configuration.');
-    }
-    const names = input.names as unknown as RuntimeSurfaceNames;
-    return await bootstrapManagedSurface(this, {
-      scopeId: input.scopeId,
-      actorId: input.actorId,
-      names,
-      managedAdminAccessGroup: input.managedAdminAccessGroup,
-      managedMemberAccessGroup: input.managedMemberAccessGroup,
-      explicitAdminRoleIds: input.explicitAdminRoleIds ?? [],
-      explicitAdminUserIds: input.explicitAdminUserIds ?? [],
-      previousState: input.previousState,
-      nowIso: input.nowIso
-    }) as unknown as RuntimeSurfaceState;
-  }
-
   onMessage(handler: (event: DiscordMessageEvent) => Promise<void>): void {
     this.client.on(Events.MessageCreate, (message) => {
       if (!message.guildId) {
@@ -686,6 +602,8 @@ export class DiscordJsOperator implements DiscordOperator {
         scopeId: message.guildId,
         guildId: message.guildId,
         channelId: message.channelId,
+        messageId: message.id,
+        channel: asChannelRecord(message.channel as GuildBasedChannel),
         authorId: message.author.id,
         authorUsername: message.author.username,
         authorGlobalName: message.author.globalName ?? null,
@@ -718,6 +636,7 @@ export class DiscordJsOperator implements DiscordOperator {
         scopeId: interaction.guildId,
         guildId: interaction.guildId,
         channelId: interaction.channelId,
+        interactionId: interaction.id,
         userId,
         userMention: `<@${userId}>`,
         memberRoleIds: extractMemberRoleIds(interaction.member),
@@ -788,58 +707,6 @@ export class DiscordJsOperator implements DiscordOperator {
             commandName: interaction.commandName
           });
         }
-      });
-    });
-  }
-
-  onReaction(handler: (event: DiscordReactionEvent) => Promise<void>): void {
-    this.client.on(Events.MessageReactionAdd, (reaction, user) => {
-      const guildId = reaction.message.guildId;
-      const channelId = reaction.message.channelId;
-      if (!guildId || !channelId) {
-        return;
-      }
-
-      void (async () => {
-        const guild = await this.client.guilds.fetch(guildId);
-        let member:
-          | {
-              permissions?: {
-                has?(permission: bigint | number): boolean;
-              };
-            }
-          | null = null;
-        try {
-          member = (await guild.members.fetch(user.id)) as {
-            permissions?: {
-              has?(permission: bigint | number): boolean;
-            };
-          };
-        } catch (error) {
-          this.reportListenerFailure(error, {
-            surface: 'reaction',
-            guildId,
-            channelId,
-            commandName: reaction.emoji.name ?? undefined
-          });
-        }
-        await handler({
-          scopeId: guildId,
-          guildId,
-          channelId,
-          messageId: reaction.message.id,
-          userId: user.id,
-          memberRoleIds: extractMemberRoleIds(member as unknown),
-          isTransportAdmin: member?.permissions?.has?.(PermissionFlagsBits.Administrator) ?? false,
-          emoji: reaction.emoji.name ?? '',
-          bot: user.bot
-        });
-      })().catch((error: unknown) => {
-        this.reportListenerFailure(error, {
-          surface: 'reaction',
-          guildId,
-          channelId
-        });
       });
     });
   }
@@ -1080,15 +947,6 @@ export class DiscordJsOperator implements DiscordOperator {
       .filter((channel): channel is DiscordChannelRecord => channel !== null);
   }
 
-  async listRoles(scopeId: string): Promise<DiscordRoleRecord[]> {
-    await this.waitForReady();
-    const guild = await this.client.guilds.fetch(scopeId);
-    const roles = await guild.roles.fetch();
-    return roles
-      .map((role) => (role ? asRoleRecord(role) : null))
-      .filter((role): role is DiscordRoleRecord => role !== null);
-  }
-
   async createCategory(
     scopeId: string,
     name: string,
@@ -1119,16 +977,6 @@ export class DiscordJsOperator implements DiscordOperator {
       ...(permissionOverwrites ? { permissionOverwrites: toDiscordPermissionOverwrites(guild.id, permissionOverwrites) } : {})
     });
     return assertRecord(asChannelRecord(created), 'text');
-  }
-
-  async createRole(scopeId: string, name: string): Promise<DiscordRoleRecord> {
-    await this.waitForReady();
-    const guild = await this.client.guilds.fetch(scopeId);
-    const created = await guild.roles.create({
-      name,
-      permissions: new PermissionsBitField(0n)
-    });
-    return asRoleRecord(created);
   }
 
   async updateChannel(
@@ -1164,71 +1012,6 @@ export class DiscordJsOperator implements DiscordOperator {
     return assertRecord(refreshed ? asChannelRecord(refreshed) : null, 'channel');
   }
 
-  async updateRole(scopeId: string, roleId: string, update: { name?: string; permissions?: string }): Promise<DiscordRoleRecord> {
-    await this.waitForReady();
-    const guild = await this.client.guilds.fetch(scopeId);
-    const role = await guild.roles.fetch(roleId);
-    if (!role) {
-      throw new Error(`Role not found: ${roleId}`);
-    }
-
-    if (update.name && role.name !== update.name) {
-      await role.setName(update.name);
-    }
-
-    if (update.permissions !== undefined && role.permissions.bitfield.toString() !== update.permissions) {
-      await role.setPermissions(new PermissionsBitField(BigInt(update.permissions)));
-    }
-
-    const refreshed = await guild.roles.fetch(roleId);
-    if (!refreshed) {
-      throw new Error(`Role not found after update: ${roleId}`);
-    }
-    return asRoleRecord(refreshed);
-  }
-
-  async ensureAccessGroup(input: RuntimeAccessGroupInput): Promise<RuntimeAccessGroupRecord> {
-    const permissions = input.kind === 'admin' ? DISCORD_MANAGED_ADMIN_ROLE_PERMISSIONS : undefined;
-    const roles = await this.listRoles(input.scopeId);
-    const tracked = input.previousId ? roles.find((role) => role.id === input.previousId) : undefined;
-    const named = roles.find((role) => role.name === input.name);
-    const syncedAt = new Date().toISOString();
-
-    const toAccessGroup = (role: DiscordRoleRecord): RuntimeAccessGroupRecord => ({
-      id: role.id,
-      kind: input.kind,
-      name: role.name,
-      syncedAt,
-      metadata: {
-        nativeKind: 'discord-role'
-      }
-    });
-
-    if (tracked) {
-      if (tracked.name !== input.name || (permissions !== undefined && tracked.permissions !== permissions)) {
-        return toAccessGroup(
-          await this.updateRole(input.scopeId, tracked.id, {
-            name: input.name,
-            ...(permissions !== undefined ? { permissions } : {})
-          })
-        );
-      }
-      return toAccessGroup(tracked);
-    }
-
-    if (named) {
-      if (permissions !== undefined && named.permissions !== permissions) {
-        return toAccessGroup(await this.updateRole(input.scopeId, named.id, { permissions }));
-      }
-      return toAccessGroup(named);
-    }
-
-    const created = await this.createRole(input.scopeId, input.name);
-    return toAccessGroup(
-      permissions !== undefined ? await this.updateRole(input.scopeId, created.id, { permissions }) : created
-    );
-  }
-
   async listTransportResources(scopeId: RuntimeScopeId): Promise<RuntimeTransportResourceRecord[]> {
     return (await this.listChannels(scopeId)).map((channel) => this.toRuntimeTransportResourceRecord(channel));
   }
@@ -1254,12 +1037,59 @@ export class DiscordJsOperator implements DiscordOperator {
   }
 
   async registerNativeActions(input: RuntimeNativeActionRegistration): Promise<void> {
-    const registration = this.toDiscordNativeActionRegistration(input.actions);
+    const registration = this.toDiscordNativeActionRegistration(
+      input.actions.filter((action) => action.id === 'runtime.status')
+    );
     this.nativeActionIdsByDiscordPath.clear();
     for (const [path, actionId] of registration.actionIdsByPath.entries()) {
       this.nativeActionIdsByDiscordPath.set(path, actionId);
     }
     await this.registerCommands(input.scopeId, registration.commands);
+  }
+
+  async applyEffect(effect: RuntimeTransportEffect): Promise<RuntimeTransportEffectReceipt> {
+    const appliedAt = new Date().toISOString();
+    switch (effect.type) {
+      case 'transport.message.send': {
+        const receipt = await this.sendMessage(effect.target, effect.payload);
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          nativeId: receipt.nativeId ?? receipt.id,
+          metadata: receipt.metadata
+        };
+      }
+      case 'transport.actions.register':
+        await this.registerNativeActions(effect.input);
+        return { effectId: effect.effectId, appliedAt };
+      case 'transport.resource.create': {
+        const resource = await this.createTransportResource(effect.input);
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          nativeId: resource.id,
+          metadata: { resource }
+        };
+      }
+      case 'transport.resource.update': {
+        const resource = await this.updateTransportResource(effect.input);
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          nativeId: resource.id,
+          metadata: { resource }
+        };
+      }
+      case 'transport.resource.delete':
+        await this.deleteTransportResource(effect.input);
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          nativeId: effect.input.transportResourceId
+        };
+      case 'transport.presence.set':
+        return { effectId: effect.effectId, appliedAt };
+    }
   }
 
   async sendMessage(target: RuntimeMessageTarget, payload: RuntimeMessagePayload): Promise<DiscordMessageReceipt>;
@@ -1286,13 +1116,6 @@ export class DiscordJsOperator implements DiscordOperator {
     });
   }
 
-  async addReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
-    await this.withTextChannel(channelId, async (channel) => {
-      const message = await channel.messages.fetch(messageId);
-      await message.react(emoji);
-    });
-  }
-
   async deleteChannel(scopeId: string, channelId: string): Promise<void> {
     await this.waitForReady();
     const guild = await this.client.guilds.fetch(scopeId);
@@ -1303,14 +1126,41 @@ export class DiscordJsOperator implements DiscordOperator {
     await channel.delete();
   }
 
-  async deleteRole(scopeId: string, roleId: string): Promise<void> {
-    await this.waitForReady();
-    const guild = await this.client.guilds.fetch(scopeId);
-    const role = await guild.roles.fetch(roleId);
-    if (!role) {
+  private isStartChannel(channel: DiscordChannelRecord | null): boolean {
+    return channel?.type === 'text' && channel.name === DISCORD_START_CHANNEL_NAME;
+  }
+
+  private isSessionTextChannel(channel: DiscordChannelRecord | null): channel is DiscordChannelRecord {
+    return channel?.type === 'text' && channel.parentId !== null && !this.isStartChannel(channel);
+  }
+
+  private async hydrateKnownSessionChannels(scopeId: string): Promise<void> {
+    const channels = await this.listChannels(scopeId);
+    for (const channel of channels) {
+      if (this.isSessionTextChannel(channel)) {
+        this.knownSessionChannelIds.add(channel.id);
+      }
+    }
+  }
+
+  private async ensureStartChannel(scopeId: string): Promise<void> {
+    const channels = await this.listChannels(scopeId);
+    const existing = channels.find((channel) => this.isStartChannel(channel));
+    if (existing) {
+      if (existing.parentId !== null) {
+        await this.updateChannel(scopeId, existing.id, { parentId: null });
+      }
       return;
     }
-    await role.delete();
+
+    const created = await this.createTextChannel(scopeId, DISCORD_START_CHANNEL_NAME, null);
+    await this.sendMessage(created.id, {
+      text: [
+        'Moorline is ready.',
+        'Create a Discord category for a project, then create text channels inside it to start Moorline sessions.',
+        'Deleting a session channel deletes that Moorline session. Use `/status` for runtime status.'
+      ].join('\n')
+    });
   }
 
   private async waitForReady(): Promise<void> {
@@ -1467,17 +1317,4 @@ function assertRecord(record: DiscordChannelRecord | null, label: string): Disco
     throw new Error(`Expected ${label} channel`);
   }
   return record;
-}
-
-export interface SurfaceBootstrapInput {
-  scopeId?: string;
-  guildId?: string;
-  actorId: string;
-  names: RuntimeSurfaceNames;
-  managedAdminAccessGroup: NonNullable<RuntimeSurfaceBootstrapInput['managedAdminAccessGroup']>;
-  managedMemberAccessGroup: NonNullable<RuntimeSurfaceBootstrapInput['managedMemberAccessGroup']>;
-  explicitAdminRoleIds: string[];
-  explicitAdminUserIds: string[];
-  previousState: RuntimeSurfaceState | null;
-  nowIso: string;
 }

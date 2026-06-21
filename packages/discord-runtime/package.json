@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-discord-runtime",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Discord runtime commands and message routing for Moorline.",
   "type": "module",
   "private": false,
@@ -16,7 +16,7 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.2"
+    "@moorline/contracts": "0.0.3"
   },
   "moorline": {
     "schemaVersion": 1,

@@ -1,7 +1,7 @@
 {
   "id": "rync/discord",
   "name": "rync/discord",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "transport",
   "description": "Rync Discord transport package.",
   "entrypoint": "index.mjs",
@@ -40,7 +40,7 @@
       "invitePermissions": {
         "type": "string",
         "title": "Invite permissions",
-        "description": "System-managed Discord invite permissions bitfield required for the managed surface.",
+        "description": "System-managed Discord invite permissions bitfield required for the simplified Discord transport.",
         "default": "268528720"
       }
     }

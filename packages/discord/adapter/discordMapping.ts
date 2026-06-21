@@ -1,5 +1,5 @@
-import { ChannelType, Client, GatewayIntentBits, PermissionsBitField, PermissionFlagsBits, Partials, type GuildBasedChannel, type Role, type TextChannel } from 'discord.js';
-import type { RuntimeInputImageAttachment, RuntimePermissionOverwrite, DiscordChannelRecord, DiscordRoleRecord } from './discordInstaller.js';
+import { ChannelType, Client, GatewayIntentBits, PermissionsBitField, PermissionFlagsBits, Partials, type GuildBasedChannel, type TextChannel } from 'discord.js';
+import type { RuntimeInputImageAttachment, RuntimePermissionOverwrite, DiscordChannelRecord } from './discordInstaller.js';
 
 export function asChannelRecord(channel: GuildBasedChannel): DiscordChannelRecord | null {
   if (channel.type === ChannelType.GuildCategory) {
@@ -61,14 +61,6 @@ export function extractImageAttachments(message: {
     }));
 }
 
-export function asRoleRecord(role: Role): DiscordRoleRecord {
-  return {
-    id: role.id,
-    name: role.name,
-    permissions: role.permissions.bitfield.toString()
-  };
-}
-
 export function toDiscordPermissionOverwrites(
   guildId: string,
   overwrites: RuntimePermissionOverwrite[] | undefined
@@ -101,10 +93,9 @@ export function createDiscordClient(): Client {
     intents: [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.MessageContent
     ],
-    partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+    partials: [Partials.Message, Partials.Channel]
   });
 }
 

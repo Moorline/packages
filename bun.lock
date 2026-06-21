@@ -23,21 +23,21 @@
     },
     "packages/discord": {
       "name": "@rync/moorline-discord",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "dependencies": {
-        "@moorline/contracts": "0.0.2",
+        "@moorline/contracts": "0.0.3",
         "discord.js": "^14.22.1",
       },
     },
     "packages/discord-default": {
       "name": "@rync/moorline-discord-default",
-      "version": "0.0.2",
+      "version": "0.0.3",
     },
     "packages/discord-runtime": {
       "name": "@rync/moorline-discord-runtime",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "dependencies": {
-        "@moorline/contracts": "0.0.2",
+        "@moorline/contracts": "0.0.3",
       },
     },
     "packages/memory": {

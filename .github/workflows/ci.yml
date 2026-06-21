@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  MOORLINE_PULL_REQUEST_REF: codex/transport-intents-effects
+  PACKAGES_PAIRED_PULL_REQUEST_REF: codex/discord-intent-migration-doc
+
 jobs:
   fast-gate:
     runs-on: ubuntu-latest
@@ -23,6 +27,7 @@ jobs:
         with:
           repository: Moorline/moorline
           path: moorline
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref == env.PACKAGES_PAIRED_PULL_REQUEST_REF && env.MOORLINE_PULL_REQUEST_REF || 'main' }}
       - uses: actions/checkout@v4
         with:
           repository: Moorline/kit
@@ -73,6 +78,7 @@ jobs:
         with:
           repository: Moorline/moorline
           path: moorline
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref == env.PACKAGES_PAIRED_PULL_REQUEST_REF && env.MOORLINE_PULL_REQUEST_REF || 'main' }}
       - uses: actions/checkout@v4
         with:
           repository: Moorline/kit
@@ -127,6 +133,7 @@ jobs:
         with:
           repository: Moorline/moorline
           path: moorline
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref == env.PACKAGES_PAIRED_PULL_REQUEST_REF && env.MOORLINE_PULL_REQUEST_REF || 'main' }}
       - uses: actions/checkout@v4
         with:
           repository: Moorline/kit
