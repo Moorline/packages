@@ -11,7 +11,7 @@ The Discord UX should not be built around Moorline-managed coordination, status,
 - `/status` is the only normal command,
 - archive is not a visible Discord workflow.
 
-Moorline 0.1.0 uses a transport intent/effect contract so Discord can interpret native Discord events and let Moorline core own durable consequences.
+Moorline 0.0.3 uses a transport intent/effect contract so Discord can interpret native Discord events and let Moorline core own durable consequences.
 
 ## Later Discord Work
 
