@@ -56,7 +56,7 @@ It should not create:
 
 ### Runtime Plugin
 
-Update `rync/discord-runtime` to remove:
+`rync/discord-runtime` no longer includes:
 
 - admin controls,
 - session create/archive/delete/list commands,
