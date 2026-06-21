@@ -9,7 +9,7 @@ Use these terms consistently in personal package docs, prompts, and package meta
 - `external surface`
   - A system Moorline connects to through a transport or adapter. GitHub, CI, email, incident tools, and custom APIs can all be external surfaces.
 - `transport`
-  - An installable package that connects Moorline to an external surface and emits runtime transport events.
+  - An installable package that connects Moorline to an external surface by emitting transport intents and applying transport effects.
 - `provider`
   - An installable package that executes runtime work.
 - `plugin`
