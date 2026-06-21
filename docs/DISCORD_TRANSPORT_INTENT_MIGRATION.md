@@ -13,9 +13,9 @@ The Discord UX should not be built around Moorline-managed coordination, status,
 
 Moorline 0.0.3 uses a transport intent/effect contract so Discord can interpret native Discord events and let Moorline core own durable consequences.
 
-## Later Discord Work
+## Discord Work
 
-Update `rync/discord` to implement `onIntent` and `applyEffect` instead of relying on the old fixed managed surface.
+`rync/discord` implements `onIntent` and `applyEffect` instead of relying on the old fixed managed surface.
 
 ### Native Event Mapping
 
@@ -25,9 +25,13 @@ flowchart TD
   B -->|yes| C[transport.session.ensure]
   B -->|no| D[Ignore or transport.resource.observed]
 
-  E[Discord MessageCreate] --> F{Known session channel?}
-  F -->|yes| G[transport.message.received]
+  E[Discord MessageCreate] --> F{Categorized or known session channel?}
+  F -->|yes| G[transport.session.ensure then transport.message.received]
   F -->|no| H[Ignore]
+
+  M[Discord ChannelUpdate] --> N{Moved into category or renamed session channel?}
+  N -->|yes| O[transport.session.ensure]
+  N -->|no| P[Ignore]
 
   I[Discord ChannelDelete] --> J{Known session channel?}
   J -->|yes| K[transport.session.delete deleteWorkspace=true]
@@ -68,10 +72,12 @@ Later, if needed:
 
 - add `/wake`, but prefer host-level auto-resume on message first.
 
-## First-Pass Decisions
+## Current Decisions
 
-- Existing categorized channels on startup are ignored.
-- Only new categorized text channels become sessions.
+- Existing categorized channels on startup are remembered for classification but are not bulk-created as sessions.
+- New categorized text channels become sessions.
+- Moving a text channel into a category also ensures a session.
+- A user message in a categorized channel ensures the session before routing the message, which repairs missed channel-create events while the bot was offline.
 - Deleting a session channel deletes the session workspace.
 - Archived Discord sessions wake automatically when the user sends a message for the same transport resource.
 

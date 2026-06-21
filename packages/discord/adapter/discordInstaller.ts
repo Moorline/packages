@@ -173,18 +173,6 @@ export interface DiscordNativeActionPayload {
   defer?(input?: { ephemeral?: boolean; flags?: number }): Promise<void>;
 }
 
-export interface DiscordReactionEvent {
-  scopeId: string;
-  guildId: string;
-  channelId: string;
-  messageId: string;
-  userId: string;
-  memberRoleIds: string[];
-  isTransportAdmin: boolean;
-  emoji: string;
-  bot: boolean;
-}
-
 export interface DiscordButtonInteractionEvent {
   scopeId: string;
   guildId: string;
@@ -241,11 +229,10 @@ export interface DiscordOperator extends RuntimeTransport {
   ): Promise<DiscordChannelRecord>;
   deleteChannel(scopeId: string, channelId: string): Promise<void>;
   triggerTyping(channelId: string): Promise<void>;
-  addReaction(channelId: string, messageId: string, emoji: string): Promise<void>;
 }
 
 interface DiscordListenerErrorContext {
-  surface: 'message' | 'slash' | 'button' | 'lifecycle' | 'reaction';
+  surface: 'message' | 'slash' | 'button' | 'lifecycle';
   guildId?: string;
   channelId?: string;
   commandName?: string;
@@ -355,19 +342,18 @@ export class DiscordJsOperator implements DiscordOperator {
   }
 
   async start(auth: RuntimeTransportAuth): Promise<void> {
-    if (this.client.isReady()) {
-      return;
+    if (!this.client.isReady()) {
+      const token = auth.token?.trim();
+      if (!token) {
+        throw new Error('Discord transport auth token is required');
+      }
+      await this.client.login(token);
+      await this.waitForReady();
     }
-
-    const token = auth.token?.trim();
-    if (!token) {
-      throw new Error('Discord transport auth token is required');
-    }
-    await this.client.login(token);
-    await this.waitForReady();
     const scopeId = typeof auth.metadata?.scopeId === 'string' ? auth.metadata.scopeId : undefined;
     if (scopeId) {
       await this.ensureStartChannel(scopeId);
+      await this.hydrateKnownSessionChannels(scopeId);
     }
   }
 
@@ -388,6 +374,19 @@ export class DiscordJsOperator implements DiscordOperator {
       }
       if (!this.isSessionTextChannel(event.channel) && !this.knownSessionChannelIds.has(event.channelId)) {
         return;
+      }
+      if (this.isSessionTextChannel(event.channel)) {
+        this.knownSessionChannelIds.add(event.channel.id);
+        await this.emitSessionEnsureIntent(
+          {
+            kind: 'channel',
+            action: 'updated',
+            scopeId: event.scopeId,
+            guildId: event.guildId,
+            channel: event.channel
+          },
+          this.sessionEnsureIntentId('message', event.guildId, event.channel)
+        );
       }
       await this.transportIntentHandler?.({
         type: 'transport.message.received',
@@ -466,20 +465,19 @@ export class DiscordJsOperator implements DiscordOperator {
           return;
         }
         this.knownSessionChannelIds.add(event.channel.id);
-        await this.transportIntentHandler?.({
-          type: 'transport.session.ensure',
-          intentId: `discord:channel.created:${event.guildId}:${event.channel.id}`,
-          scopeId: event.scopeId,
-          transportPackageId: 'rync/discord',
-          occurredAt: new Date().toISOString(),
-          transportResourceId: event.channel.id,
-          requestedName: event.channel.name,
-          owner: {
-            kind: 'work_item',
-            id: event.channel.parentId ?? event.guildId,
-            label: event.channel.parentId ? `Discord category ${event.channel.parentId}` : event.guildId
-          }
-        });
+        await this.emitSessionEnsureIntent(event, this.sessionEnsureIntentId('created', event.guildId, event.channel));
+        return;
+      }
+      if (event.action === 'updated') {
+        const wasSession = this.isSessionTextChannel(event.previous ?? null) || this.knownSessionChannelIds.has(event.channel.id);
+        const isSession = this.isSessionTextChannel(event.channel);
+        if (!isSession) {
+          return;
+        }
+        this.knownSessionChannelIds.add(event.channel.id);
+        if (!wasSession || event.previous?.parentId !== event.channel.parentId || event.previous?.name !== event.channel.name) {
+          await this.emitSessionEnsureIntent(event, this.sessionEnsureIntentId('updated', event.guildId, event.channel));
+        }
         return;
       }
       if (event.action === 'deleted') {
@@ -500,6 +498,34 @@ export class DiscordJsOperator implements DiscordOperator {
         });
       }
     });
+  }
+
+  private async emitSessionEnsureIntent(event: Extract<DiscordTransportLifecycleEvent, { kind: 'channel' }>, intentId: string): Promise<void> {
+    await this.transportIntentHandler?.({
+      type: 'transport.session.ensure',
+      intentId,
+      scopeId: event.scopeId,
+      transportPackageId: 'rync/discord',
+      occurredAt: new Date().toISOString(),
+      transportResourceId: event.channel.id,
+      requestedName: event.channel.name,
+      owner: {
+        kind: 'work_item',
+        id: event.channel.parentId ?? event.guildId,
+        label: event.channel.parentId ? `Discord category ${event.channel.parentId}` : event.guildId
+      }
+    });
+  }
+
+  private sessionEnsureIntentId(reason: 'created' | 'updated' | 'message', guildId: string, channel: DiscordChannelRecord): string {
+    return [
+      'discord:channel.ensure',
+      reason,
+      guildId,
+      channel.id,
+      channel.parentId ?? 'orphan',
+      encodeURIComponent(channel.name)
+    ].join(':');
   }
 
   async registerCommands(scopeId: string, commands: DiscordCommandDefinition[]): Promise<void> {
@@ -681,58 +707,6 @@ export class DiscordJsOperator implements DiscordOperator {
             commandName: interaction.commandName
           });
         }
-      });
-    });
-  }
-
-  onReaction(handler: (event: DiscordReactionEvent) => Promise<void>): void {
-    this.client.on(Events.MessageReactionAdd, (reaction, user) => {
-      const guildId = reaction.message.guildId;
-      const channelId = reaction.message.channelId;
-      if (!guildId || !channelId) {
-        return;
-      }
-
-      void (async () => {
-        const guild = await this.client.guilds.fetch(guildId);
-        let member:
-          | {
-              permissions?: {
-                has?(permission: bigint | number): boolean;
-              };
-            }
-          | null = null;
-        try {
-          member = (await guild.members.fetch(user.id)) as {
-            permissions?: {
-              has?(permission: bigint | number): boolean;
-            };
-          };
-        } catch (error) {
-          this.reportListenerFailure(error, {
-            surface: 'reaction',
-            guildId,
-            channelId,
-            commandName: reaction.emoji.name ?? undefined
-          });
-        }
-        await handler({
-          scopeId: guildId,
-          guildId,
-          channelId,
-          messageId: reaction.message.id,
-          userId: user.id,
-          memberRoleIds: extractMemberRoleIds(member as unknown),
-          isTransportAdmin: member?.permissions?.has?.(PermissionFlagsBits.Administrator) ?? false,
-          emoji: reaction.emoji.name ?? '',
-          bot: user.bot
-        });
-      })().catch((error: unknown) => {
-        this.reportListenerFailure(error, {
-          surface: 'reaction',
-          guildId,
-          channelId
-        });
       });
     });
   }
@@ -1142,13 +1116,6 @@ export class DiscordJsOperator implements DiscordOperator {
     });
   }
 
-  async addReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
-    await this.withTextChannel(channelId, async (channel) => {
-      const message = await channel.messages.fetch(messageId);
-      await message.react(emoji);
-    });
-  }
-
   async deleteChannel(scopeId: string, channelId: string): Promise<void> {
     await this.waitForReady();
     const guild = await this.client.guilds.fetch(scopeId);
@@ -1165,6 +1132,15 @@ export class DiscordJsOperator implements DiscordOperator {
 
   private isSessionTextChannel(channel: DiscordChannelRecord | null): channel is DiscordChannelRecord {
     return channel?.type === 'text' && channel.parentId !== null && !this.isStartChannel(channel);
+  }
+
+  private async hydrateKnownSessionChannels(scopeId: string): Promise<void> {
+    const channels = await this.listChannels(scopeId);
+    for (const channel of channels) {
+      if (this.isSessionTextChannel(channel)) {
+        this.knownSessionChannelIds.add(channel.id);
+      }
+    }
   }
 
   private async ensureStartChannel(scopeId: string): Promise<void> {

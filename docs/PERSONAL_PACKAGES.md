@@ -21,7 +21,7 @@ Discord package notes:
 
 - `rync/discord` needs a Discord bot token and a scope/server id.
 - Verification may derive package-owned metadata such as application id, actor id, and invite permissions.
-- The Discord package creates and repairs only its Moorline-managed surface.
+- The Discord package creates or repairs only `moorline-start`; project categories and session channels are user-owned Discord state.
 
 Pi package notes:
 
