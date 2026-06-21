@@ -27,5 +27,8 @@
     "type": "git",
     "url": "git+ssh://git@github.com/Moorline/packages.git",
     "directory": "packages/basic-essentials"
-  }
+  },
+  "keywords": [
+    "moorline-package"
+  ]
 }

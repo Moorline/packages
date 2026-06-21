@@ -30,5 +30,8 @@
     "type": "git",
     "url": "git+ssh://git@github.com/Moorline/packages.git",
     "directory": "packages/discord-runtime"
-  }
+  },
+  "keywords": [
+    "moorline-package"
+  ]
 }
