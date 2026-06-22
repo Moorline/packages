@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-basic-essentials",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Shared Moorline essentials for memory and persona.",
   "type": "module",
   "private": false,

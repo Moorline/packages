@@ -53,7 +53,7 @@ describe('personal package repository contract', () => {
     expect(pkg.repository).toMatchObject({
       url: 'git+ssh://git@github.com/Moorline/packages.git'
     });
-    expect((pkg.devDependencies as Record<string, string>)['@moorline/package-kit']).toBe('0.0.2');
+    expect((pkg.devDependencies as Record<string, string>)['@moorline/package-kit']).toBe('0.0.3');
   });
 
   it('keeps personal package metadata aligned with manifest surfaces', () => {

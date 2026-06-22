@@ -1,7 +1,7 @@
 {
   "id": "rync/pi",
   "name": "rync/pi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "provider",
   "description": "Rync Pi SDK provider package.",
   "entrypoint": "index.mjs",

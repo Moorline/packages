@@ -6,7 +6,7 @@
       "name": "moorline-packages-workspace",
       "devDependencies": {
         "@eslint/js": "^9.21.0",
-        "@moorline/package-kit": "0.0.2",
+        "@moorline/package-kit": "0.0.3",
         "@types/node": "^22.13.10",
         "@typescript-eslint/eslint-plugin": "^8.56.1",
         "@typescript-eslint/parser": "^8.56.1",
@@ -19,7 +19,7 @@
     },
     "packages/basic-essentials": {
       "name": "@rync/moorline-basic-essentials",
-      "version": "0.0.2",
+      "version": "0.0.3",
     },
     "packages/discord": {
       "name": "@rync/moorline-discord",
@@ -31,13 +31,13 @@
     },
     "packages/discord-default": {
       "name": "@rync/moorline-discord-default",
-      "version": "0.0.3",
+      "version": "0.0.4",
     },
     "packages/discord-runtime": {
       "name": "@rync/moorline-discord-runtime",
-      "version": "0.0.3",
+      "version": "0.0.4",
       "dependencies": {
-        "@moorline/contracts": "0.0.3",
+        "@moorline/contracts": "0.0.4",
       },
     },
     "packages/memory": {
@@ -56,16 +56,16 @@
     },
     "packages/pi": {
       "name": "@rync/moorline-pi",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "dependencies": {
         "@earendil-works/pi-coding-agent": "0.79.3",
-        "@moorline/contracts": "0.0.2",
+        "@moorline/contracts": "0.0.4",
       },
     },
   },
   "overrides": {
     "@moorline/contracts": "file:../moorline/packages/contracts",
-    "@moorline/package-kit": "file:../kit/packages/package-kit",
+    "@moorline/package-kit": "0.0.3",
   },
   "packages": {
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
@@ -274,7 +274,7 @@
 
     "@mistralai/mistralai": ["@mistralai/mistralai@2.2.1", "", { "dependencies": { "ws": "^8.18.0", "zod": "^3.25.0 || ^4.0.0", "zod-to-json-schema": "^3.25.0" } }, "sha512-uKU8CZmL2RzYKmplsU01hii4p3pe4HqJefpWNRWXm1Tcm0Sm4xXfwSLIy4k7ZCPlbETCGcp69E7hZs+WOJ5itQ=="],
 
-    "@moorline/package-kit": ["@moorline/package-kit@file:../kit/packages/package-kit", { "dependencies": { "@moorline/contracts": "0.0.2", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }],
+    "@moorline/package-kit": ["@moorline/package-kit@0.0.3", "", { "dependencies": { "@moorline/contracts": "0.0.4", "esbuild": "^0.25.9", "semver": "^7.7.4", "tar": "^7.4.3" }, "bin": { "moorline-package-kit": "dist/cli.js" } }, "sha512-CXmIviMbYpXErVm7YAYspdNldSLPnddDYcdmcznTaKcymQrH6PimNl6RIzim7rdfHNmXk9GduhsJtp/rPqLH1Q=="],
 
     "@nodable/entities": ["@nodable/entities@2.2.0", "", {}, "sha512-9uGyhaQavEUMC8AIddIjau4NsnsXhou+j5sBAGojCM1oxmQpVKTWR/9JxABD6UAv12vpIms55fPZKFQEhG6uBg=="],
 
