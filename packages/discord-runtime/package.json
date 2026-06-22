@@ -9,6 +9,7 @@
     "index.mjs",
     "manifest.json",
     "moorline.dist.json",
+    "session.md",
     "modules"
   ],
   "scripts": {
