@@ -83,6 +83,14 @@ describe('personal package repository contract', () => {
     expect(existsSync(join(root, 'packages', 'persona', 'SOUL.md'))).toBe(true);
   });
 
+  it('keeps Discord runtime prompt files available to both source and bundled entrypoints', () => {
+    const routingPrompt = readFileSync(join(root, 'packages', 'discord-runtime', 'modules', 'routing', 'session.md'), 'utf8');
+    const bundledPrompt = readFileSync(join(root, 'packages', 'discord-runtime', 'session.md'), 'utf8');
+    const packageFiles = packageJson('discord-runtime').files as string[];
+    expect(bundledPrompt).toBe(routingPrompt);
+    expect(packageFiles).toContain('session.md');
+  });
+
   it('keeps source-checkout provider and transport entrypoints compatible with built dist output', () => {
     for (const name of ['discord', 'pi']) {
       const source = readFileSync(join(root, 'packages', name, 'index.mjs'), 'utf8');
