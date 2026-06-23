@@ -102,6 +102,18 @@ describe('personal package repository contract', () => {
     ]));
   });
 
+  it('keeps workflow-coder exposed as a workflow package', () => {
+    const manifest = readJson(join(root, 'packages', 'workflow-coder', 'manifest.json')) as {
+      capabilities: string[];
+      hooks: string[];
+    };
+    const source = readFileSync(join(root, 'packages', 'workflow-coder', 'index.mjs'), 'utf8');
+    expect(manifest.hooks).toEqual(expect.arrayContaining(['workflows', 'onAction']));
+    expect(manifest.capabilities).toEqual(expect.arrayContaining(['session.create', 'provider.headless.run']));
+    expect(source).toContain("id: 'coding-workflow'");
+    expect(source).toContain('__workflowRunId');
+  });
+
   it('splits long Discord message content into Discord-sized sends', () => {
     expect(toDiscordSendPayloads({ content: 'a'.repeat(2000) })).toHaveLength(1);
 
