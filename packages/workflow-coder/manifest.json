@@ -1,0 +1,22 @@
+{
+  "id": "rync/workflow-coder",
+  "name": "rync/workflow-coder",
+  "version": "0.0.1",
+  "type": "plugin",
+  "description": "Turns a feature idea into a spec, implementation loop, reviewer loop, and completion report.",
+  "entrypoint": "index.mjs",
+  "priority": 120,
+  "capabilities": [
+    "transport.message.send",
+    "session.create",
+    "session.direct",
+    "session.inspect",
+    "provider.headless.run",
+    "net.connect"
+  ],
+  "hooks": [
+    "workflows",
+    "onAction"
+  ],
+  "defaultEnabled": false
+}

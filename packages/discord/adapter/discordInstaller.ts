@@ -1253,36 +1253,81 @@ export class DiscordJsOperator implements DiscordOperator {
 
   private discordCommandMetadata(action: RuntimeActionDefinition): DiscordRuntimeActionCommandMetadata | null {
     const metadata = action.metadata;
-    if (!metadata || typeof metadata !== 'object' || !('discordCommand' in metadata)) {
+    if (!metadata || typeof metadata !== 'object') {
       return null;
     }
-    const raw = (metadata as { discordCommand?: unknown }).discordCommand;
-    if (!raw || typeof raw !== 'object') {
+    if ('discordCommand' in metadata) {
+      const raw = (metadata as { discordCommand?: unknown }).discordCommand;
+      if (!raw || typeof raw !== 'object') {
+        return null;
+      }
+      const command = raw as {
+        commandName?: unknown;
+        commandDescription?: unknown;
+        subcommandName?: unknown;
+        subcommandDescription?: unknown;
+        options?: unknown;
+      };
+      if (typeof command.commandName !== 'string' || typeof command.commandDescription !== 'string') {
+        return null;
+      }
+      const options =
+        Array.isArray(command.options) && command.options.every((entry) => !!entry && typeof entry === 'object')
+          ? (command.options as DiscordCommandDefinition['options'])
+          : undefined;
+      return {
+        commandName: command.commandName,
+        commandDescription: command.commandDescription,
+        ...(typeof command.subcommandName === 'string' ? { subcommandName: command.subcommandName } : {}),
+        ...(typeof command.subcommandDescription === 'string'
+          ? { subcommandDescription: command.subcommandDescription }
+          : {}),
+        ...(options ? { options } : {})
+      };
+    }
+    return this.workflowCommandMetadata(action);
+  }
+
+  private workflowCommandMetadata(action: RuntimeActionDefinition): DiscordRuntimeActionCommandMetadata | null {
+    const workflow = action.metadata?.workflow;
+    if (!workflow || typeof workflow !== 'object') {
       return null;
     }
-    const command = raw as {
-      commandName?: unknown;
-      commandDescription?: unknown;
-      subcommandName?: unknown;
-      subcommandDescription?: unknown;
-      options?: unknown;
-    };
-    if (typeof command.commandName !== 'string' || typeof command.commandDescription !== 'string') {
+    const commandName = action.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase().slice(0, 32).replace(/^-+|-+$/g, '');
+    if (!commandName) {
       return null;
     }
-    const options =
-      Array.isArray(command.options) && command.options.every((entry) => !!entry && typeof entry === 'object')
-        ? (command.options as DiscordCommandDefinition['options'])
-        : undefined;
+    const options = this.workflowStringOptions(action);
     return {
-      commandName: command.commandName,
-      commandDescription: command.commandDescription,
-      ...(typeof command.subcommandName === 'string' ? { subcommandName: command.subcommandName } : {}),
-      ...(typeof command.subcommandDescription === 'string'
-        ? { subcommandDescription: command.subcommandDescription }
-        : {}),
-      ...(options ? { options } : {})
+      commandName,
+      commandDescription: (action.description ?? action.title).slice(0, 100),
+      ...(options.length > 0 ? { options } : {})
     };
+  }
+
+  private workflowStringOptions(action: RuntimeActionDefinition): NonNullable<DiscordCommandDefinition['options']> {
+    const schema = action.inputSchema;
+    const schemaRecord = schema && typeof schema === 'object' && !Array.isArray(schema) ? schema : null;
+    if (!schemaRecord) {
+      return [];
+    }
+    const properties = schemaRecord.properties;
+    if (!properties || typeof properties !== 'object' || Array.isArray(properties)) {
+      return [];
+    }
+    const required = new Set(Array.isArray(schemaRecord.required) ? schemaRecord.required.filter((entry): entry is string => typeof entry === 'string') : []);
+    return Object.entries(properties)
+      .filter(([, value]) => !!value && typeof value === 'object' && !Array.isArray(value) && (value as { type?: unknown }).type === 'string')
+      .slice(0, 25)
+      .map(([name, value]) => {
+        const property = value as { description?: unknown; title?: unknown };
+        return {
+          type: 'string' as const,
+          name: name.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase().slice(0, 32).replace(/^-+|-+$/g, '') || 'value',
+          description: String(property.description ?? property.title ?? name).slice(0, 100),
+          required: required.has(name)
+        };
+      });
   }
 
   private toDiscordNativeActionRegistration(actions: RuntimeActionDefinition[]): {

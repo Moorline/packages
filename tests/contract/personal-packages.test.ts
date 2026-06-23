@@ -15,7 +15,8 @@ const ryncPackages = [
   'discord-runtime',
   'memory',
   'persona',
-  'pi'
+  'pi',
+  'workflow-coder'
 ];
 
 function readJson(path: string): Record<string, unknown> {

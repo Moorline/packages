@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 env:
-  MOORLINE_PULL_REQUEST_REF: codex/transport-intents-effects
-  PACKAGES_PAIRED_PULL_REQUEST_REF: codex/discord-intent-migration-doc
+  MOORLINE_PULL_REQUEST_REF: workflow-plugin-declarations
+  PACKAGES_PAIRED_PULL_REQUEST_REF: coding-workflow-package
 
 jobs:
   fast-gate:
