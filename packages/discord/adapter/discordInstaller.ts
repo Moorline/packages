@@ -21,6 +21,7 @@ import type {
   RuntimeSurfaceState,
   RuntimeTransport,
   RuntimeTransportAccessInput,
+  RuntimeTransportActivityInput,
   RuntimeTransportAuth,
   RuntimeTransportCapabilities,
   RuntimeTransportEffect,
@@ -52,6 +53,8 @@ import {
 
 export const REQUIRED_DISCORD_PERMISSIONS = '268528720';
 const DISCORD_START_CHANNEL_NAME = 'moorline-start';
+const DISCORD_ACTIVITY_RENDER_INTERVAL_MS = 8_000;
+const DEFAULT_ACTIVITY_LEASE_MS = 15_000;
 
 export interface RuntimePermissionOverwrite {
   subject: 'everyone' | 'role' | 'member';
@@ -249,6 +252,11 @@ interface DiscordRuntimeActionCommandMetadata {
   options?: DiscordCommandDefinition['options'];
 }
 
+interface DiscordActivityState {
+  leases: Map<string, number>;
+  interval: ReturnType<typeof globalThis.setInterval> | null;
+}
+
 const DISCORD_READY_TIMEOUT_MS_DEFAULT = 20_000;
 
 export class DiscordReadyTimeoutError extends Error {
@@ -287,6 +295,7 @@ export class DiscordJsOperator implements DiscordOperator {
   private genericBindingsRegistered = false;
   private readonly nativeActionIdsByDiscordPath = new Map<string, string>();
   private readonly knownSessionChannelIds = new Set<string>();
+  private readonly activityByChannelId = new Map<string, DiscordActivityState>();
 
   constructor(
     client = createDiscordClient(),
@@ -306,7 +315,8 @@ export class DiscordJsOperator implements DiscordOperator {
         update: false,
         delete: false
       },
-      presence: true,
+      activity: true,
+      presence: false,
       metadata: {
         packageId: 'rync/discord'
       }
@@ -376,6 +386,7 @@ export class DiscordJsOperator implements DiscordOperator {
   }
 
   async stop(): Promise<void> {
+    this.clearActivityState();
     this.client.destroy();
   }
 
@@ -1095,10 +1106,14 @@ export class DiscordJsOperator implements DiscordOperator {
           appliedAt,
           nativeId: effect.input.transportResourceId
         };
+      case 'transport.activity.set':
+        await this.applyActivity(effect.input);
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          nativeId: effect.input.transportResourceId
+        };
       case 'transport.presence.set':
-        if (effect.input.status === 'busy' && effect.input.transportResourceId) {
-          await this.triggerTyping(effect.input.transportResourceId);
-        }
         return {
           effectId: effect.effectId,
           appliedAt,
@@ -1149,6 +1164,93 @@ export class DiscordJsOperator implements DiscordOperator {
     await this.withTextChannel(channelId, async (channel) => {
       await channel.sendTyping();
     });
+  }
+
+  private async applyActivity(input: RuntimeTransportActivityInput): Promise<void> {
+    if (input.kind !== 'work') {
+      return;
+    }
+    const state = this.getActivityState(input.transportResourceId);
+    this.pruneExpiredActivities(state);
+
+    if (input.state === 'inactive') {
+      state.leases.delete(input.activityId);
+      this.stopActivityLoopIfIdle(input.transportResourceId, state);
+      return;
+    }
+
+    const wasActive = state.leases.size > 0;
+    const leaseMs = this.normalizeActivityLeaseMs(input.leaseMs);
+    state.leases.set(input.activityId, Date.now() + leaseMs);
+    this.ensureActivityLoop(input.transportResourceId, state);
+    if (!wasActive) {
+      await this.renderActivity(input.transportResourceId);
+    }
+  }
+
+  private getActivityState(channelId: string): DiscordActivityState {
+    let state = this.activityByChannelId.get(channelId);
+    if (!state) {
+      state = { leases: new Map(), interval: null };
+      this.activityByChannelId.set(channelId, state);
+    }
+    return state;
+  }
+
+  private normalizeActivityLeaseMs(leaseMs: number | undefined): number {
+    return typeof leaseMs === 'number' && Number.isFinite(leaseMs) && leaseMs > 0 ? leaseMs : DEFAULT_ACTIVITY_LEASE_MS;
+  }
+
+  private ensureActivityLoop(channelId: string, state: DiscordActivityState): void {
+    if (state.interval) {
+      return;
+    }
+    state.interval = globalThis.setInterval(() => {
+      this.pruneExpiredActivities(state);
+      if (state.leases.size === 0) {
+        this.stopActivityLoopIfIdle(channelId, state);
+        return;
+      }
+      void this.renderActivity(channelId).catch((error: unknown) => {
+        this.onListenerError(error instanceof Error ? error : new Error(String(error)), {
+          surface: 'lifecycle',
+          channelId
+        });
+      });
+    }, DISCORD_ACTIVITY_RENDER_INTERVAL_MS);
+  }
+
+  private async renderActivity(channelId: string): Promise<void> {
+    await this.triggerTyping(channelId);
+  }
+
+  private pruneExpiredActivities(state: DiscordActivityState): void {
+    const now = Date.now();
+    for (const [activityId, expiresAt] of state.leases.entries()) {
+      if (expiresAt <= now) {
+        state.leases.delete(activityId);
+      }
+    }
+  }
+
+  private stopActivityLoopIfIdle(channelId: string, state: DiscordActivityState): void {
+    if (state.leases.size > 0) {
+      return;
+    }
+    if (state.interval) {
+      globalThis.clearInterval(state.interval);
+      state.interval = null;
+    }
+    this.activityByChannelId.delete(channelId);
+  }
+
+  private clearActivityState(): void {
+    for (const state of this.activityByChannelId.values()) {
+      if (state.interval) {
+        globalThis.clearInterval(state.interval);
+      }
+    }
+    this.activityByChannelId.clear();
   }
 
   async deleteChannel(scopeId: string, channelId: string): Promise<void> {

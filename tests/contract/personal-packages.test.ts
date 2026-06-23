@@ -2,7 +2,9 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFile
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { RuntimeTransportEffect } from '@moorline/contracts';
+import { DiscordJsOperator } from '../../packages/discord/adapter/discordInstaller.js';
 import { toDiscordSendPayloads } from '../../packages/discord/adapter/discordPayload.js';
 import { PiProviderService } from '../../packages/pi/providerService.js';
 
@@ -40,6 +42,91 @@ function collectFiles(dir: string, extensions: Set<string>): string[] {
     return extensions.has(entry.slice(entry.lastIndexOf('.'))) ? [path] : [];
   });
 }
+
+function discordActivityEffect(
+  activityId: string,
+  state: 'active' | 'inactive',
+  leaseMs = 15_000
+): RuntimeTransportEffect {
+  return {
+    type: 'transport.activity.set',
+    effectId: `effect-${activityId}-${state}`,
+    createdAt: '2026-06-23T00:00:00.000Z',
+    input: {
+      activityId,
+      transportResourceId: 'channel-1',
+      kind: 'work',
+      state,
+      leaseMs
+    }
+  };
+}
+
+describe('Discord transport activity', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('advertises activity without claiming presence support', () => {
+    const transport = new DiscordJsOperator({ destroy: () => {} } as never);
+
+    expect(transport.capabilities()).toMatchObject({
+      activity: true,
+      presence: false
+    });
+  });
+
+  it('renders leased work activity and stops after inactive', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-23T00:00:00.000Z'));
+    const transport = new DiscordJsOperator({ destroy: () => {} } as never);
+    const triggerTyping = vi.spyOn(transport, 'triggerTyping').mockResolvedValue(undefined);
+
+    await transport.applyEffect(discordActivityEffect('activity-1', 'active'));
+    expect(triggerTyping).toHaveBeenCalledTimes(1);
+
+    await transport.applyEffect(discordActivityEffect('activity-1', 'active'));
+    expect(triggerTyping).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(8_000);
+    expect(triggerTyping).toHaveBeenCalledTimes(2);
+
+    await transport.applyEffect(discordActivityEffect('activity-1', 'inactive'));
+    await vi.advanceTimersByTimeAsync(8_000);
+    expect(triggerTyping).toHaveBeenCalledTimes(2);
+  });
+
+  it('expires leased work activity when no inactive effect arrives', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-23T00:00:00.000Z'));
+    const transport = new DiscordJsOperator({ destroy: () => {} } as never);
+    const triggerTyping = vi.spyOn(transport, 'triggerTyping').mockResolvedValue(undefined);
+
+    await transport.applyEffect(discordActivityEffect('activity-1', 'active', 1_000));
+    expect(triggerTyping).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(8_000);
+    expect(triggerTyping).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render presence as activity', async () => {
+    const transport = new DiscordJsOperator({ destroy: () => {} } as never);
+    const triggerTyping = vi.spyOn(transport, 'triggerTyping').mockResolvedValue(undefined);
+
+    await transport.applyEffect({
+      type: 'transport.presence.set',
+      effectId: 'presence-effect',
+      createdAt: '2026-06-23T00:00:00.000Z',
+      input: {
+        transportResourceId: 'channel-1',
+        status: 'busy'
+      }
+    });
+
+    expect(triggerTyping).not.toHaveBeenCalled();
+  });
+});
 
 describe('personal package repository contract', () => {
   it('contains only personal installable packages', () => {
