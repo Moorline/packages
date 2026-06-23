@@ -306,7 +306,7 @@ export class DiscordJsOperator implements DiscordOperator {
         update: false,
         delete: false
       },
-      presence: false,
+      presence: true,
       metadata: {
         packageId: 'rync/discord'
       }
@@ -1096,7 +1096,14 @@ export class DiscordJsOperator implements DiscordOperator {
           nativeId: effect.input.transportResourceId
         };
       case 'transport.presence.set':
-        return { effectId: effect.effectId, appliedAt };
+        if (effect.input.status === 'busy' && effect.input.transportResourceId) {
+          await this.triggerTyping(effect.input.transportResourceId);
+        }
+        return {
+          effectId: effect.effectId,
+          appliedAt,
+          ...(effect.input.transportResourceId ? { nativeId: effect.input.transportResourceId } : {})
+        };
     }
   }
 
