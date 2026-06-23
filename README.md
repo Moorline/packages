@@ -67,6 +67,8 @@ Publishing is manual for now. The current public npm bundle packages are:
 
 - `@rync/moorline-basic-essentials@0.0.2`
 - `@rync/moorline-pi@0.0.2`
-- `@rync/moorline-discord-default@0.0.3`
+- `@rync/moorline-discord@0.0.4`
+- `@rync/moorline-discord-runtime@0.0.5`
+- `@rync/moorline-discord-default@0.0.5`
 
 The release workflow only builds and smoke-tests artifacts; it does not publish npm packages or upload GitHub release assets.

@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
+import { toDiscordSendPayloads } from '../../packages/discord/adapter/discordPayload.js';
 import { PiProviderService } from '../../packages/pi/providerService.js';
 
 const root = process.cwd();
@@ -89,6 +90,35 @@ describe('personal package repository contract', () => {
     const packageFiles = packageJson('discord-runtime').files as string[];
     expect(bundledPrompt).toBe(routingPrompt);
     expect(packageFiles).toContain('session.md');
+  });
+
+  it('keeps Discord runtime capabilities aligned with package behavior', () => {
+    const manifest = readJson(join(root, 'packages', 'discord-runtime', 'manifest.json')) as { capabilities: string[] };
+    expect(manifest.capabilities).toEqual(expect.arrayContaining([
+      'transport.message.send',
+      'provider.headless.run',
+      'net.connect'
+    ]));
+  });
+
+  it('splits long Discord message content into Discord-sized sends', () => {
+    expect(toDiscordSendPayloads({ content: 'a'.repeat(2000) })).toHaveLength(1);
+
+    const split = toDiscordSendPayloads({
+      content: `${'a'.repeat(1990)}\n\n${'b'.repeat(50)}`,
+      embeds: [{ title: 'Title' }],
+      buttons: [{ id: 'ok', label: 'OK', style: 'primary' }]
+    });
+    expect(split).toHaveLength(2);
+    expect(split.every((payload) => (payload.content?.length ?? 0) <= 2000)).toBe(true);
+    expect(split[0].embeds).toHaveLength(1);
+    expect(split[0].buttons).toHaveLength(1);
+    expect(split[1].embeds).toBeUndefined();
+    expect(split[1].buttons).toBeUndefined();
+
+    const hardSplit = toDiscordSendPayloads({ content: 'x'.repeat(2001) });
+    expect(hardSplit).toHaveLength(2);
+    expect(hardSplit.every((payload) => (payload.content?.length ?? 0) <= 2000)).toBe(true);
   });
 
   it('keeps source-checkout provider and transport entrypoints compatible with built dist output', () => {
