@@ -208,6 +208,9 @@ export default {
     if (!idea) {
       return { handled: true, reply: { text: 'Missing required `idea` input.' } };
     }
+    if (typeof event.input?.__workflowRunId === 'string') {
+      return await runCodingWorkflow(event, context);
+    }
     void runCodingWorkflow(event, context)
       .then(async (result) => {
         if (result?.reply) {
