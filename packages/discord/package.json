@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-discord",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Rync Discord transport package.",
   "type": "module",
   "private": false,
@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.3",
+    "@moorline/contracts": "0.0.5",
     "discord.js": "^14.22.1"
   },
   "moorline": {

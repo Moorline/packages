@@ -1,7 +1,7 @@
 {
   "id": "rync/discord-runtime",
   "name": "rync/discord-runtime",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "plugin",
   "description": "Discord runtime commands and message routing for Moorline.",
   "entrypoint": "index.mjs",
@@ -10,7 +10,8 @@
     "transport.message.send",
     "fs.read",
     "session.inspect",
-    "provider.headless.run"
+    "provider.headless.run",
+    "net.connect"
   ],
   "hooks": [
     "onAction",

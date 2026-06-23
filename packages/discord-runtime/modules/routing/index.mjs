@@ -50,7 +50,19 @@ async function routeSessionMessage(event, context, session) {
     }
   });
 
-  await context.sendMessage(event.transportResourceId, reply);
+  try {
+    await context.sendMessage(event.transportResourceId, reply);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    try {
+      await context.sendMessage(event.transportResourceId, {
+        text: `Moorline generated a reply, but Discord rejected the message: ${detail.slice(0, 300)}`
+      });
+    } catch {
+      // Preserve the original transport error for logs and retry behavior.
+    }
+    throw error;
+  }
   context.appendAuditEvent('session.replied', {
     sessionId: session.sessionId,
     transportResourceId: event.transportResourceId,

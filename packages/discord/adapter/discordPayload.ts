@@ -4,6 +4,7 @@ import type { RuntimeActionReference, RuntimeAttachmentPayload, RuntimeMessagePa
 import type { DiscordButtonPayload, DiscordEmbedPayload, DiscordMessagePayload } from './discordInstaller.js';
 
 export const DISCORD_EPHEMERAL_FLAG = 64;
+export const DISCORD_CONTENT_LIMIT = 2000;
 
 function sanitizeDiscordText(text: string): string {
   return text
@@ -79,6 +80,52 @@ export function toDiscordComponents(payload: Pick<DiscordMessagePayload, 'button
   }
 
   return rows;
+}
+
+function splitDiscordContent(content: string, limit = DISCORD_CONTENT_LIMIT): string[] {
+  if (content.length <= limit) {
+    return [content];
+  }
+
+  const chunks: string[] = [];
+  let remaining = content;
+  while (remaining.length > limit) {
+    const window = remaining.slice(0, limit + 1);
+    const boundaries = [
+      window.lastIndexOf('\n\n', limit),
+      window.lastIndexOf('\n', limit),
+      window.lastIndexOf(' ', limit)
+    ].filter((index) => index > 0);
+    const splitAt = boundaries.length > 0 ? Math.max(...boundaries) : limit;
+    const chunk = remaining.slice(0, splitAt).trimEnd();
+    chunks.push(chunk.length > 0 ? chunk : remaining.slice(0, limit));
+    remaining = remaining.slice(splitAt).trimStart();
+  }
+  if (remaining.length > 0) {
+    chunks.push(remaining);
+  }
+  return chunks;
+}
+
+export function toDiscordSendPayloads(payload: DiscordMessagePayload): DiscordMessagePayload[] {
+  const content = payload.content;
+  if (!content || content.length <= DISCORD_CONTENT_LIMIT) {
+    return [payload];
+  }
+  const chunks = splitDiscordContent(content);
+  return chunks.map((chunk, index) => {
+    if (index === 0) {
+      return {
+        ...payload,
+        content: chunk
+      };
+    }
+    return {
+      content: chunk,
+      ...(payload.ephemeral !== undefined ? { ephemeral: payload.ephemeral } : {}),
+      ...(payload.flags !== undefined ? { flags: payload.flags } : {})
+    };
+  });
 }
 
 export function resolveReplyFlags(input: { ephemeral?: boolean; flags?: number }): { flags?: number } {

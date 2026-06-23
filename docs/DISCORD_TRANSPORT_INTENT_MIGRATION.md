@@ -26,7 +26,7 @@ flowchart TD
   B -->|no| D[Ignore or transport.resource.observed]
 
   E[Discord MessageCreate] --> F{Categorized or known session channel?}
-  F -->|yes| G[transport.session.ensure then transport.message.received]
+  F -->|yes| G[transport.message.received]
   F -->|no| H[Ignore]
 
   M[Discord ChannelUpdate] --> N{Moved into category or renamed session channel?}
@@ -77,9 +77,10 @@ Later, if needed:
 - Existing categorized channels on startup are remembered for classification but are not bulk-created as sessions.
 - New categorized text channels become sessions.
 - Moving a text channel into a category also ensures a session.
-- A user message in a categorized channel ensures the session before routing the message, which repairs missed channel-create events while the bot was offline.
+- A user message in a categorized or known session channel routes to the existing session without emitting a session ensure intent.
+- Missed channel-create events are not repaired by message traffic; existing arbitrary channels may be ignored until a future explicit reconciliation flow exists.
 - Deleting a session channel deletes the session workspace.
-- Archived Discord sessions wake automatically when the user sends a message for the same transport resource.
+- Long Discord replies are split into multiple Discord messages before sending.
 
 ## Important Boundary
 

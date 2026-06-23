@@ -17,6 +17,8 @@ import type {
   RuntimeMessageTarget,
   RuntimeNativeActionRegistration,
   RuntimeScopeId,
+  RuntimeSurfaceBootstrapInput,
+  RuntimeSurfaceState,
   RuntimeTransport,
   RuntimeTransportAccessInput,
   RuntimeTransportAuth,
@@ -34,7 +36,8 @@ import {
   sanitizeDiscordPayload,
   toDiscordComponents,
   toDiscordFiles,
-  toDiscordPayload
+  toDiscordPayload,
+  toDiscordSendPayloads
 } from './discordPayload.js';
 import {
   asChannelRecord,
@@ -352,9 +355,24 @@ export class DiscordJsOperator implements DiscordOperator {
     }
     const scopeId = typeof auth.metadata?.scopeId === 'string' ? auth.metadata.scopeId : undefined;
     if (scopeId) {
-      await this.ensureStartChannel(scopeId);
       await this.hydrateKnownSessionChannels(scopeId);
     }
+  }
+
+  async bootstrapSurface(input: RuntimeSurfaceBootstrapInput): Promise<Partial<RuntimeSurfaceState>> {
+    if (!input.scopeId) {
+      return {};
+    }
+    const startChannel = await this.ensureStartChannel(input.scopeId);
+    return {
+      scopeId: input.scopeId,
+      surfaceId: input.scopeId,
+      statusResourceId: startChannel.id,
+      coordinationResourceId: startChannel.id,
+      metadata: {
+        startChannelName: startChannel.name
+      }
+    };
   }
 
   async stop(): Promise<void> {
@@ -377,16 +395,6 @@ export class DiscordJsOperator implements DiscordOperator {
       }
       if (this.isSessionTextChannel(event.channel)) {
         this.knownSessionChannelIds.add(event.channel.id);
-        await this.emitSessionEnsureIntent(
-          {
-            kind: 'channel',
-            action: 'updated',
-            scopeId: event.scopeId,
-            guildId: event.guildId,
-            channel: event.channel
-          },
-          this.sessionEnsureIntentId('message', event.guildId, event.channel)
-        );
       }
       await this.transportIntentHandler?.({
         type: 'transport.message.received',
@@ -517,7 +525,7 @@ export class DiscordJsOperator implements DiscordOperator {
     });
   }
 
-  private sessionEnsureIntentId(reason: 'created' | 'updated' | 'message', guildId: string, channel: DiscordChannelRecord): string {
+  private sessionEnsureIntentId(reason: 'created' | 'updated', guildId: string, channel: DiscordChannelRecord): string {
     return [
       'discord:channel.ensure',
       reason,
@@ -1097,17 +1105,37 @@ export class DiscordJsOperator implements DiscordOperator {
   async sendMessage(target: RuntimeMessageTarget | string, payload: RuntimeMessagePayload): Promise<DiscordMessageReceipt> {
     const channelId = typeof target === 'string' ? target : target.transportResourceId;
     const discordPayload = toDiscordPayload(payload);
-    const sent = await this.withTextChannel(channelId, async (channel) => {
-      const sanitized = sanitizeDiscordPayload(discordPayload);
-      const files = toDiscordFiles(discordPayload);
-      const components = toDiscordComponents(discordPayload);
-      return await channel.send({
-        ...sanitized,
-        ...(files ? { files } : {}),
-        ...(components ? { components } : {})
-      });
+    const sentMessages = await this.withTextChannel(channelId, async (channel) => {
+      const sent = [];
+      for (const sendPayload of toDiscordSendPayloads(discordPayload)) {
+        const sanitized = sanitizeDiscordPayload(sendPayload);
+        const files = toDiscordFiles(sendPayload);
+        const components = toDiscordComponents(sendPayload);
+        sent.push(
+          await channel.send({
+            ...sanitized,
+            ...(files ? { files } : {}),
+            ...(components ? { components } : {})
+          })
+        );
+      }
+      return sent;
     });
-    return { id: sent.id };
+    const first = sentMessages[0];
+    if (!first) {
+      throw new Error('Discord send did not return a message receipt.');
+    }
+    return {
+      id: first.id,
+      nativeId: first.id,
+      ...(sentMessages.length > 1
+        ? {
+            metadata: {
+              messageIds: sentMessages.map((message) => message.id)
+            }
+          }
+        : {})
+    };
   }
 
   async triggerTyping(channelId: string): Promise<void> {
@@ -1143,14 +1171,14 @@ export class DiscordJsOperator implements DiscordOperator {
     }
   }
 
-  private async ensureStartChannel(scopeId: string): Promise<void> {
+  private async ensureStartChannel(scopeId: string): Promise<DiscordChannelRecord> {
     const channels = await this.listChannels(scopeId);
     const existing = channels.find((channel) => this.isStartChannel(channel));
     if (existing) {
       if (existing.parentId !== null) {
-        await this.updateChannel(scopeId, existing.id, { parentId: null });
+        return await this.updateChannel(scopeId, existing.id, { parentId: null });
       }
-      return;
+      return existing;
     }
 
     const created = await this.createTextChannel(scopeId, DISCORD_START_CHANNEL_NAME, null);
@@ -1161,6 +1189,7 @@ export class DiscordJsOperator implements DiscordOperator {
         'Deleting a session channel deletes that Moorline session. Use `/status` for runtime status.'
       ].join('\n')
     });
+    return created;
   }
 
   private async waitForReady(): Promise<void> {
