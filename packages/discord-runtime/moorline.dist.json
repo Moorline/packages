@@ -3,6 +3,6 @@
   "display": {
     "name": "Discord Runtime",
     "description": "Discord status command and project resource message routing.",
-    "version": "0.0.5"
+    "version": "0.0.6"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-pi",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Rync Pi SDK provider package.",
   "type": "module",
   "private": false,
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "0.79.3",
-    "@moorline/contracts": "0.0.4"
+    "@moorline/contracts": "0.0.7"
   },
   "moorline": {
     "schemaVersion": 1,

@@ -1,7 +1,7 @@
 {
   "id": "rync/memory",
   "name": "rync/memory",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "plugin",
   "description": "Layered memory retrieval and memory writing for Moorline sessions.",
   "entrypoint": "index.mjs",

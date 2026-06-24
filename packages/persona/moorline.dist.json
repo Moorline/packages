@@ -3,7 +3,7 @@
   "display": {
     "name": "Moorline Persona",
     "description": "Default Moorline persona, system prompt, and editable SOUL guidance.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "tags": [
       "persona",
       "prompt",

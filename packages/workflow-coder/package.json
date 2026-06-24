@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-workflow-coder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Spec, implementation, review, and handoff coding workflow for Moorline.",
   "type": "module",
   "private": false,
@@ -15,7 +15,7 @@
     "typecheck": "true"
   },
   "dependencies": {
-    "@moorline/contracts": "0.0.6"
+    "@moorline/contracts": "0.0.7"
   },
   "moorline": {
     "schemaVersion": 1,

@@ -1,7 +1,7 @@
 {
   "id": "rync/discord",
   "name": "rync/discord",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "transport",
   "description": "Rync Discord transport package.",
   "entrypoint": "index.mjs",
