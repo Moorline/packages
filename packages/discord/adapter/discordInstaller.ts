@@ -433,8 +433,7 @@ export class DiscordJsOperator implements DiscordOperator {
     });
     this.onSlashCommand(async (event) => {
       const mappedActionId =
-        this.nativeActionIdsByDiscordPath.get(this.discordActionPath(event.commandName, event.subcommandName)) ??
-        (event.commandName === 'status' && !event.subcommandName ? 'runtime.status' : null);
+        this.nativeActionIdsByDiscordPath.get(this.discordActionPath(event.commandName, event.subcommandName)) ?? null;
       if (!mappedActionId) {
         await event.reply({
           content: `Unknown Moorline command: /${event.commandName}${event.subcommandName ? ` ${event.subcommandName}` : ''}`,
@@ -1293,7 +1292,7 @@ export class DiscordJsOperator implements DiscordOperator {
       text: [
         'Moorline is ready.',
         'Create a Discord category for a project, then create text channels inside it to start Moorline sessions.',
-        'Deleting a session channel deletes that Moorline session. Use `/status` for runtime status.'
+        'Deleting a session channel deletes that Moorline session.'
       ].join('\n')
     });
     return created;

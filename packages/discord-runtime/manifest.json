@@ -1,7 +1,7 @@
 {
   "id": "rync/discord-runtime",
   "name": "rync/discord-runtime",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "plugin",
   "description": "Discord runtime commands and message routing for Moorline.",
   "entrypoint": "index.mjs",

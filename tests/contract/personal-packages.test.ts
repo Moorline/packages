@@ -77,7 +77,7 @@ describe('Discord transport activity', () => {
     });
   });
 
-  it('registers workflow slash commands alongside status', async () => {
+  it('registers workflow slash commands without the removed status command', async () => {
     const transport = new DiscordJsOperator({ destroy: () => {} } as never);
     const registrations: Array<{ scopeId: string; commands: Array<{ name: string; options?: Array<{ name: string; required?: boolean }> }> }> = [];
     vi.spyOn(transport, 'registerCommands').mockImplementation(async (scopeId, commands) => {
@@ -87,23 +87,11 @@ describe('Discord transport activity', () => {
       scopeId: 'guild-1',
       actions: [
         {
-          id: 'runtime.status',
-          title: 'Status',
-          description: 'Show Moorline status',
-          metadata: {
-            discordCommand: {
-              commandName: 'status',
-              commandDescription: 'Show Moorline runtime status'
-            }
-          }
-        },
-        {
           id: 'coding-workflow',
           title: 'Coding workflow',
           description: 'Plan and implement a feature',
           inputSchema: {
             type: 'object',
-            required: ['idea'],
             properties: {
               idea: { type: 'string', description: 'Feature idea' }
             }
@@ -125,14 +113,14 @@ describe('Discord transport activity', () => {
       {
         scopeId: 'guild-1',
         commands: expect.arrayContaining([
-          expect.objectContaining({ name: 'status' }),
           expect.objectContaining({
             name: 'coding-workflow',
-            options: [expect.objectContaining({ name: 'idea', required: true })]
+            options: [expect.objectContaining({ name: 'idea', required: false })]
           })
         ])
       }
     ]);
+    expect(registrations[0]?.commands).not.toEqual(expect.arrayContaining([expect.objectContaining({ name: 'status' })]));
   });
 
   it('renders leased work activity and stops after inactive', async () => {

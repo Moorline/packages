@@ -1,10 +1,8 @@
 import manifest from './manifest.json' with { type: 'json' };
 import routing from './modules/routing/index.mjs';
-import status from './modules/status/index.mjs';
 
 const modules = [
-  routing,
-  status
+  routing
 ];
 
 async function firstHandled(hook, args) {

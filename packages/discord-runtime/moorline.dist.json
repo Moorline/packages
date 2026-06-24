@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "display": {
     "name": "Discord Runtime",
-    "description": "Discord status command and project resource message routing.",
-    "version": "0.0.6"
+    "description": "Discord project resource message routing.",
+    "version": "0.0.7"
   }
 }
