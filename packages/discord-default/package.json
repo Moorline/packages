@@ -1,6 +1,6 @@
 {
   "name": "@rync/moorline-discord-default",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Rync Discord transport and Discord runtime features.",
   "type": "module",
   "private": false,

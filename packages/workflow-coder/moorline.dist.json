@@ -3,6 +3,6 @@
   "display": {
     "name": "Coding Workflow",
     "description": "Plan, implement, review, and hand off coding features through Moorline agents.",
-    "version": "0.0.2"
+    "version": "0.0.3"
   }
 }

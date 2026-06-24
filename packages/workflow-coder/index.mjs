@@ -181,11 +181,10 @@ export default {
         description: 'Plan, implement, review, and iterate on a coding feature.',
         inputSchema: {
           type: 'object',
-          required: ['idea'],
           properties: {
             idea: {
               type: 'string',
-              description: 'Feature idea or implementation request'
+              description: 'Feature idea or implementation request. Direct starts are internal; normal starts use workflow setup.'
             }
           }
         },
@@ -193,6 +192,17 @@ export default {
         trigger: {
           label: 'Start coding workflow',
           sessionOnly: true
+        },
+        manualTrigger: {
+          enabled: true,
+          label: 'Start coding workflow',
+          description: 'Plan, implement, review, and iterate on a coding feature.',
+          requiresTransportResource: true
+        },
+        setup: {
+          enabled: true,
+          firstQuestion: 'What idea should this coding workflow work on?',
+          requiresConfirmation: true
         }
       }
     ];
@@ -206,7 +216,12 @@ export default {
     }
     const idea = option(event.input, 'idea');
     if (!idea) {
-      return { handled: true, reply: { text: 'Missing required `idea` input.' } };
+      return {
+        handled: true,
+        reply: {
+          text: 'What idea should this coding workflow work on?\n\nAfter you answer, I will turn it into start parameters and wait for your explicit approval before the coding loop begins.'
+        }
+      };
     }
     if (typeof event.input?.__workflowRunId === 'string') {
       return await runCodingWorkflow(event, context);
