@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { RuntimeTransportEffect } from '@moorline/contracts';
+import type { RuntimeNativeActionRegistration, RuntimeTransportEffect } from '@moorline/contracts';
 import { DiscordJsOperator } from '../../packages/discord/adapter/discordInstaller.js';
 import { toDiscordSendPayloads } from '../../packages/discord/adapter/discordPayload.js';
 import { PiProviderService } from '../../packages/pi/providerService.js';
@@ -75,6 +75,64 @@ describe('Discord transport activity', () => {
       activity: true,
       presence: false
     });
+  });
+
+  it('registers workflow slash commands alongside status', async () => {
+    const transport = new DiscordJsOperator({ destroy: () => {} } as never);
+    const registrations: Array<{ scopeId: string; commands: Array<{ name: string; options?: Array<{ name: string; required?: boolean }> }> }> = [];
+    vi.spyOn(transport, 'registerCommands').mockImplementation(async (scopeId, commands) => {
+      registrations.push({ scopeId, commands });
+    });
+    const registration: RuntimeNativeActionRegistration = {
+      scopeId: 'guild-1',
+      actions: [
+        {
+          id: 'runtime.status',
+          title: 'Status',
+          description: 'Show Moorline status',
+          metadata: {
+            discordCommand: {
+              commandName: 'status',
+              commandDescription: 'Show Moorline runtime status'
+            }
+          }
+        },
+        {
+          id: 'coding-workflow',
+          title: 'Coding workflow',
+          description: 'Plan and implement a feature',
+          inputSchema: {
+            type: 'object',
+            required: ['idea'],
+            properties: {
+              idea: { type: 'string', description: 'Feature idea' }
+            }
+          },
+          metadata: {
+            workflow: {
+              id: 'coding-workflow',
+              packageId: 'rync/workflow-coder',
+              title: 'Coding workflow'
+            }
+          }
+        }
+      ]
+    };
+
+    await transport.registerNativeActions(registration);
+
+    expect(registrations).toEqual([
+      {
+        scopeId: 'guild-1',
+        commands: expect.arrayContaining([
+          expect.objectContaining({ name: 'status' }),
+          expect.objectContaining({
+            name: 'coding-workflow',
+            options: [expect.objectContaining({ name: 'idea', required: true })]
+          })
+        ])
+      }
+    ]);
   });
 
   it('renders leased work activity and stops after inactive', async () => {

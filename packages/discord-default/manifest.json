@@ -1,14 +1,14 @@
 {
   "id": "rync/discord-default",
   "name": "rync/discord-default",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "bundle",
   "description": "Rync Discord transport and Discord runtime features.",
   "members": [
     {
       "kind": "transport",
       "packageId": "rync/discord",
-      "version": "~0.0.5",
+      "version": "~0.0.6",
       "activation": "select"
     },
     {

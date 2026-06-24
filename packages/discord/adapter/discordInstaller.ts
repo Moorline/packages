@@ -432,16 +432,16 @@ export class DiscordJsOperator implements DiscordOperator {
       });
     });
     this.onSlashCommand(async (event) => {
-      if (event.commandName !== 'status' || event.subcommandName) {
+      const mappedActionId =
+        this.nativeActionIdsByDiscordPath.get(this.discordActionPath(event.commandName, event.subcommandName)) ??
+        (event.commandName === 'status' && !event.subcommandName ? 'runtime.status' : null);
+      if (!mappedActionId) {
         await event.reply({
-          content: 'Only `/status` is available in this Discord surface.',
+          content: `Unknown Moorline command: /${event.commandName}${event.subcommandName ? ` ${event.subcommandName}` : ''}`,
           ephemeral: true
         });
         return;
       }
-      const mappedActionId =
-        this.nativeActionIdsByDiscordPath.get(this.discordActionPath(event.commandName, event.subcommandName)) ??
-        `discord.command.${event.commandName}${event.subcommandName ? `.${event.subcommandName}` : ''}`;
       await this.transportIntentHandler?.({
         type: 'transport.action.invoked',
         intentId: `discord:command:${event.guildId}:${event.interactionId}`,
@@ -1056,9 +1056,7 @@ export class DiscordJsOperator implements DiscordOperator {
   }
 
   async registerNativeActions(input: RuntimeNativeActionRegistration): Promise<void> {
-    const registration = this.toDiscordNativeActionRegistration(
-      input.actions.filter((action) => action.id === 'runtime.status')
-    );
+    const registration = this.toDiscordNativeActionRegistration(input.actions);
     this.nativeActionIdsByDiscordPath.clear();
     for (const [path, actionId] of registration.actionIdsByPath.entries()) {
       this.nativeActionIdsByDiscordPath.set(path, actionId);
