@@ -1,20 +1,20 @@
 {
   "id": "rync/basic-essentials",
   "name": "rync/basic-essentials",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "bundle",
   "description": "Shared Moorline essentials for memory and persona.",
   "members": [
     {
       "kind": "plugin",
       "packageId": "rync/memory",
-      "version": "~0.0.2",
+      "version": "~0.0.3",
       "activation": "enable"
     },
     {
       "kind": "plugin",
       "packageId": "rync/persona",
-      "version": "~0.0.2",
+      "version": "~0.0.3",
       "activation": "enable"
     }
   ]

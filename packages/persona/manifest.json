@@ -1,7 +1,7 @@
 {
   "id": "rync/persona",
   "name": "rync/persona",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "plugin",
   "description": "Contributes the default Moorline persona, system prompt, and editable SOUL guidance.",
   "entrypoint": "index.mjs",
