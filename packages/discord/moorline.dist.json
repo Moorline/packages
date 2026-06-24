@@ -3,7 +3,7 @@
   "display": {
     "name": "Discord Transport",
     "description": "Rync Discord transport package for Moorline.",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "category": "Rync Transports",
     "tags": [
       "rync",
@@ -20,7 +20,7 @@
     "setupOrder": 10
   },
   "release": {
-    "recommendedRef": "v0.0.5",
+    "recommendedRef": "v0.0.6",
     "channel": "stable"
   }
 }
